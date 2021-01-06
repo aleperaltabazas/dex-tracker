@@ -1,3 +1,5 @@
+$sides: bottom, top, right, left;
+
 body {
   color: rgba(0, 0, 0, 0.87);
   margin: 0;
@@ -7,4 +9,111 @@ body {
   line-height: 1.43;
   letter-spacing: 0.01071em;
   background-color: #f5f5f5;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.center-v {
+  display: flex;
+  align-items: center;
+}
+
+.center-h {
+  display: flex;
+  justify-content: center;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+@for $i from 0 through 5 {
+  .ml-#{$i} {
+    margin-left: #{$i * 15}px;
+  }
+
+  .mr-#{$i} {
+    margin-right: #{$i * 15}px;
+  }
+
+  .mt-#{$i} {
+    margin-top: #{$i * 15}px;
+  }
+
+  .mb-#{$i} {
+    margin-bottom: #{$i * 15}px;
+  }
+
+  .ml-md-#{$i} {
+    @media screen and (min-width: 960px) {
+      margin-left: #{$i * 15}px;
+    }
+  }
+
+  .mr-md-#{$i} {
+    @media screen and (min-width: 960px) {
+      margin-right: #{$i * 15}px;
+    }
+  }
+
+  .mt-md-#{$i} {
+    @media screen and (min-width: 960px) {
+      margin-top: #{$i * 15}px;
+    }
+  }
+
+  .mb-md-#{$i} {
+    @media screen and (min-width: 960px) {
+      margin-bottom: #{$i * 15}px;
+    }
+  }
+
+  .pl-#{$i} {
+    padding-left: #{$i * 15}px;
+  }
+
+  .pr-#{$i} {
+    padding-right: #{$i * 15}px;
+  }
+
+  .pt-#{$i} {
+    padding-top: #{$i * 15}px;
+  }
+
+  .pb-#{$i} {
+    padding-bottom: #{$i * 15}px;
+  }
+
+  .pl-md-#{$i} {
+    @media screen and (min-width: 960px) {
+      padding-left: #{$i * 15}px;
+    }
+  }
+
+  .pr-md-#{$i} {
+    @media screen and (min-width: 960px) {
+      padding-right: #{$i * 15}px;
+    }
+  }
+
+  .pt-md-#{$i} {
+    @media screen and (min-width: 960px) {
+      padding-top: #{$i * 15}px;
+    }
+  }
+
+  .pb-md-#{$i} {
+    @media screen and (min-width: 960px) {
+      padding-bottom: #{$i * 15}px;
+    }
+  }
+}
+
+.dex-container {
+  max-height: 1280px;
+  overflow: scroll;
 }
