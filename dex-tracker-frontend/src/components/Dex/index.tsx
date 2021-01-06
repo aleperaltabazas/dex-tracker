@@ -1,27 +1,25 @@
 import {
   Accordion,
-  AccordionActions,
   AccordionDetails,
   AccordionSummary,
-  Button,
-  Chip,
   Divider,
   Grid,
   Hidden,
   Input,
   InputAdornment,
-  InputLabel,
   makeStyles,
   OutlinedInput,
-  TextField,
   Typography,
 } from "@material-ui/core";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { hot } from "react-hot-loader";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import className from "classnames";
-import { Dex } from "../../types";
+import { Dex, Pokemon } from "../../types";
 import { Search } from "@material-ui/icons";
+import "./styles.scss";
+import Column from "../Column";
+import Row from "../Row";
 
 type DexProps = {
   dex: Dex;
@@ -38,30 +36,33 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
   },
-  icon: {
-    verticalAlign: "bottom",
-    height: 20,
-    width: 20,
-  },
   details: {
     display: "block",
   },
-  column: {
-    flexBasis: "33.33%",
-  },
-  helper: {
-    borderLeft: `2px solid ${theme.palette.divider}`,
-    padding: theme.spacing(1, 2),
-  },
-  link: {
-    color: theme.palette.primary.main,
-    textDecoration: "none",
-    "&:hover": {
-      textDecoration: "underline",
-    },
-  },
   listItem: {
     fontSize: "16px",
+    height: "72px",
+  },
+  dexContainer: {
+    overflow: "scroll",
+    [theme.breakpoints.only("xs")]: {
+      maxHeight: "320px",
+    },
+    [theme.breakpoints.only("sm")]: {
+      maxHeight: "400px",
+    },
+    [theme.breakpoints.only("md")]: {
+      maxHeight: "480px",
+    },
+    [theme.breakpoints.only("lg")]: {
+      maxHeight: "560px",
+    },
+    [theme.breakpoints.only("xl")]: {
+      maxHeight: "640px",
+    },
+  },
+  rowLine: {
+    borderTop: "solid 1px rgba(0, 0, 0, 0.12)",
   },
 }));
 
@@ -69,98 +70,85 @@ const Dex = (props: DexProps) => {
   const classes = useStyles();
   const [search, setSearch] = useState<string | undefined>(undefined);
 
-  const pokemons = () => {
-    const columns: ReactNode[] = [];
-
-    props.dex.pokemons
-      .filter(
-        (p) =>
-          search == undefined ||
-          p.name.toLowerCase().includes(search.toLowerCase()) ||
-          p.number.toString().includes(search)
-      )
-      .forEach((p, idx) => {
-        columns.push(
-          <Grid
-            item
-            xs={3}
-            md={1}
-            className={className("center", classes.listItem)}
-            key={`${idx}-sprite`}
-          >
-            <span className={`pokesprite pokemon ${p.name}`} />
-          </Grid>
-        );
-        columns.push(
-          <Hidden smDown>
-            <Grid
-              item
-              md={1}
-              className={className("center", classes.listItem)}
-              key={`${idx}-number`}
-            >
-              {p.number}
-            </Grid>
-          </Hidden>
-        );
-        columns.push(
-          <Grid
-            item
-            xs={6}
-            md={9}
-            className={className("center-v", classes.listItem)}
-            key={`${idx}-poke`}
-          >
-            {p.name}
-          </Grid>
-        );
-        columns.push(
-          <Grid
-            item
-            xs={3}
-            md={1}
-            className={className("center", classes.listItem)}
-            key={`${idx}-caught`}
-          >
-            {p.captured}
-          </Grid>
-        );
-      });
-
-    return columns;
-  };
-
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSearch(event.currentTarget.value);
+
+  const shouldRender = (p: Pokemon) =>
+    search == undefined ||
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.number.toString().includes(search);
+
+  const PokemonRow = (firstRow: boolean) => (pokemon: Pokemon, idx: number) => (
+    <Row key={idx} className={firstRow ? "" : classes.rowLine}>
+      <Grid
+        item
+        xs={3}
+        md={1}
+        className={className("center-h", classes.listItem)}
+        key={`${idx}-sprite`}
+      >
+        <span className={`pokesprite pokemon ${pokemon.name}`} />
+      </Grid>
+      <Hidden smDown>
+        <Grid
+          item
+          md={1}
+          className={className("center", classes.listItem)}
+          key={`${idx}-number`}
+        >
+          {pokemon.number}
+        </Grid>
+      </Hidden>
+      <Grid
+        item
+        xs={6}
+        md={8}
+        className={className("center-v", "capitalize", classes.listItem)}
+        key={`${idx}-poke`}
+      >
+        {pokemon.name}
+      </Grid>
+      <Column
+        item
+        xs={3}
+        md={1}
+        className={className("center", classes.listItem)}
+        key={`${idx}-caught`}
+      >
+        {pokemon.captured ? (
+          <span className="pokesprite ball poke" />
+        ) : (
+          <span className="pokesprite ball poke gray-scale" />
+        )}
+      </Column>
+    </Row>
+  );
 
   return (
     <div className={classes.root}>
       <Accordion defaultExpanded>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1c-content"
-          id="panel1c-header"
-        >
-          <div className={classes.column}>
-            <Typography className={classes.heading}>
-              {props.dex.game}
-            </Typography>
-          </div>
-          <div className={classes.column}>
-            <Typography className={classes.secondaryHeading}>
-              Regional
-            </Typography>
-          </div>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Row>
+            <Column xs={4}>
+              <div className="ml-2">
+                <div className={className(classes.heading, "bold")}>
+                  {props.dex.game}
+                </div>
+              </div>
+            </Column>
+            <Column xs={4}>
+              <Typography className={classes.secondaryHeading}>
+                Regional
+              </Typography>
+            </Column>
+          </Row>
         </AccordionSummary>
-        <AccordionDetails className={classes.details}>
-          <Grid container>
+        <AccordionDetails
+          className={className(classes.details, "ml-1 mr-1 ml-md-2 mr-md-2")}
+        >
+          <Row>
             <Hidden smDown>
-              <Grid
-                item
-                xs={12}
-                md={12}
-                className="pb-2 pl-1 pr-1 pl-md-2 pr-md-2"
-              >
+              <Column xs={12} md={12} className="pb-2">
                 <Input
                   value={search}
                   fullWidth
@@ -172,11 +160,10 @@ const Dex = (props: DexProps) => {
                     </InputAdornment>
                   }
                 />
-              </Grid>
+              </Column>
             </Hidden>
             <Hidden mdUp>
-              <Grid
-                item
+              <Column
                 xs={12}
                 md={12}
                 className="pb-2 pl-1 pr-1 pl-md-2 pr-md-2"
@@ -192,49 +179,42 @@ const Dex = (props: DexProps) => {
                     </InputAdornment>
                   }
                 />
-              </Grid>
+              </Column>
             </Hidden>
-            <Grid item xs={3} md={1} className="center">
-              <span className="pokesprite ball poke" />
-            </Grid>
+            <Column xs={3} md={1} className="center" />
             <Hidden smDown>
-              <Grid
-                item
+              <Column
                 md={1}
                 className={className("center", "bold", classes.listItem)}
               >
                 Number
-              </Grid>
+              </Column>
             </Hidden>
-            <Grid
-              item
+            <Column
               xs={6}
-              md={9}
+              md={8}
               className={className("center-v", "bold", classes.listItem)}
             >
               Pokemon
-            </Grid>
-            <Grid
-              item
+            </Column>
+            <Column
               xs={3}
               md={1}
               className={className("center", "bold", classes.listItem)}
             >
-              Caught
-            </Grid>
-          </Grid>
+              <span className="pokesprite ball poke" />
+            </Column>
+          </Row>
           <Divider />
-          <Grid container className="dex-container">
-            {pokemons()}
-          </Grid>
+          <Row className={classes.dexContainer}>
+            {shouldRender(props.dex.pokemons[0]) &&
+              PokemonRow(true)(props.dex.pokemons[0], 0)}
+            {props.dex.pokemons
+              .slice(1)
+              .filter(shouldRender)
+              .map(PokemonRow(false))}
+          </Row>
         </AccordionDetails>
-        <Divider />
-        <AccordionActions>
-          <Button size="small">Cancel</Button>
-          <Button size="small" color="primary">
-            Save
-          </Button>
-        </AccordionActions>
       </Accordion>
     </div>
   );

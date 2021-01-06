@@ -31,6 +31,10 @@ body {
   font-weight: bold;
 }
 
+.capitalize {
+  text-transform: capitalize;
+}
+
 @for $i from 0 through 5 {
   .ml-#{$i} {
     margin-left: #{$i * 15}px;
@@ -111,9 +115,4 @@ body {
       padding-bottom: #{$i * 15}px;
     }
   }
-}
-
-.dex-container {
-  max-height: 1280px;
-  overflow: scroll;
 }
