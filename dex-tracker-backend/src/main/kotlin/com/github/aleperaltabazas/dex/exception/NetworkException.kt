@@ -1,3 +1,3 @@
 package com.github.aleperaltabazas.dex.exception
 
-class NetworkException(val cause: Throwable, val message: String)
+class NetworkException(cause: Throwable, message: String) : RuntimeException(message, cause)
