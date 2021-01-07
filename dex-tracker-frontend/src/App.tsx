@@ -6,7 +6,6 @@ import "./styles.scss";
 import "pokesprite-spritesheet/assets/pokesprite-inventory.css";
 import "pokesprite-spritesheet/assets/pokesprite-pokemon-gen8.css";
 import { Container } from "@material-ui/core";
-import Dex from "./components/Dex";
 import HomePage from "./views/HomePage";
 
 const App = () => {

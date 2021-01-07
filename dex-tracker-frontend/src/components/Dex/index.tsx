@@ -19,6 +19,8 @@ import { Search } from "@material-ui/icons";
 import "./styles.scss";
 import Column from "../Column";
 import Row from "../Row";
+import store from "../../store";
+import { addToSyncQueue } from "../../actions/syncQueue";
 
 type DexProps = {
   dex: Dex;
@@ -83,12 +85,14 @@ const Dex = (props: DexProps) => {
 
   const [pokemons, setPokemons] = useState(props.dex.pokemons);
 
-  const updateCaught = (dexNumber: number) =>
+  const updateCaught = (pokemon: Pokemon) => {
     setPokemons(
       pokemons.map((p) =>
-        p.number == dexNumber ? { ...p, captured: !p.captured } : p
+        p.number == pokemon.number ? { ...p, captured: !p.captured } : p
       )
     );
+    store.dispatch(addToSyncQueue(pokemon.number, !pokemon.captured));
+  };
 
   const PokemonRow = (firstRow: boolean) => (pokemon: Pokemon, idx: number) => (
     <Row key={idx} className={firstRow ? "" : classes.rowLine}>
@@ -126,7 +130,7 @@ const Dex = (props: DexProps) => {
         md={1}
         className={classNames("center", classes.listItem)}
         key={`${idx}-caught`}
-        onClick={() => updateCaught(pokemon.number)}
+        onClick={() => updateCaught(pokemon)}
       >
         {pokemon.captured ? (
           <span className="pokesprite ball poke" />
