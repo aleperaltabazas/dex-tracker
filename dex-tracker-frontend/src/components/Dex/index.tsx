@@ -8,13 +8,12 @@ import {
   Input,
   InputAdornment,
   makeStyles,
-  OutlinedInput,
   Typography,
 } from "@material-ui/core";
 import React, { useState } from "react";
 import { hot } from "react-hot-loader";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import className from "classnames";
+import classNames from "classnames";
 import { Dex, Pokemon } from "../../types";
 import { Search } from "@material-ui/icons";
 import "./styles.scss";
@@ -33,10 +32,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.typography.pxToRem(24),
   },
   accordionHeading: {
-    fontSize: theme.typography.pxToRem(15),
+    fontSize: theme.typography.pxToRem(18),
   },
   secondaryHeading: {
-    fontSize: theme.typography.pxToRem(15),
+    fontSize: theme.typography.pxToRem(18),
     color: theme.palette.text.secondary,
   },
   details: {
@@ -72,6 +71,7 @@ const useStyles = makeStyles((theme) => ({
 const Dex = (props: DexProps) => {
   const classes = useStyles();
   const [search, setSearch] = useState<string | undefined>(undefined);
+  const [expanded, setExpanded] = useState(false);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSearch(event.currentTarget.value);
@@ -96,7 +96,7 @@ const Dex = (props: DexProps) => {
         item
         xs={3}
         md={1}
-        className={className("center-h", classes.listItem)}
+        className={classNames("center-h", classes.listItem)}
         key={`${idx}-sprite`}
       >
         <span className={`pokesprite pokemon ${pokemon.name}`} />
@@ -105,7 +105,7 @@ const Dex = (props: DexProps) => {
         <Grid
           item
           md={1}
-          className={className("center", classes.listItem)}
+          className={classNames("center", classes.listItem)}
           key={`${idx}-number`}
         >
           {pokemon.number}
@@ -115,7 +115,7 @@ const Dex = (props: DexProps) => {
         item
         xs={6}
         md={8}
-        className={className("center-v", "capitalize", classes.listItem)}
+        className={classNames("center-v", "capitalize", classes.listItem)}
         key={`${idx}-poke`}
       >
         {pokemon.name}
@@ -124,7 +124,7 @@ const Dex = (props: DexProps) => {
         item
         xs={3}
         md={1}
-        className={className("center", classes.listItem)}
+        className={classNames("center", classes.listItem)}
         key={`${idx}-caught`}
         onClick={() => updateCaught(pokemon.number)}
       >
@@ -140,7 +140,7 @@ const Dex = (props: DexProps) => {
   return (
     <div className={classes.root}>
       <div
-        className={className(
+        className={classNames(
           "bold",
           "uppercase",
           "center-v",
@@ -153,13 +153,16 @@ const Dex = (props: DexProps) => {
         />
         <span style={{ paddingBottom: "3px" }}>{props.dex.game.title}</span>
       </div>
-      <Accordion defaultExpanded={false}>
+      <Accordion
+        expanded={expanded}
+        onChange={(_, isExpanded) => setExpanded(isExpanded)}
+      >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Row className="ml-2 mr-2">
+          <Row className={classNames("ml-2", "mr-2", expanded ? "mt-2" : "")}>
             <Column xs={4}>
               <div>
                 <div
-                  className={className(
+                  className={classNames(
                     classes.accordionHeading,
                     "bold",
                     "capitalize"
@@ -171,7 +174,7 @@ const Dex = (props: DexProps) => {
             </Column>
             <Column xs={4}>
               <Typography
-                className={className(classes.secondaryHeading, "capitalize")}
+                className={classNames(classes.secondaryHeading, "capitalize")}
               >
                 {props.dex.type}
               </Typography>
@@ -184,7 +187,7 @@ const Dex = (props: DexProps) => {
           </Row>
         </AccordionSummary>
         <AccordionDetails
-          className={className(classes.details, "ml-1 mr-1 ml-md-2 mr-md-2")}
+          className={classNames(classes.details, "ml-1 mr-1 ml-md-2 mr-md-2")}
         >
           <Row>
             <Hidden smDown>
@@ -193,7 +196,7 @@ const Dex = (props: DexProps) => {
             <Hidden smDown>
               <Column
                 md={1}
-                className={className("center", "bold", classes.listItem)}
+                className={classNames("center", "bold", classes.listItem)}
               >
                 Number
               </Column>
@@ -201,15 +204,15 @@ const Dex = (props: DexProps) => {
             <Column
               xs={9}
               md={8}
-              className={className("center-v", "bold", classes.listItem)}
+              className={classNames("center-v", "bold", classes.listItem)}
             >
               <Input
                 value={search}
                 fullWidth
                 onChange={handleSearchChange}
                 placeholder="Luxray"
-                startAdornment={
-                  <InputAdornment position="start">
+                endAdornment={
+                  <InputAdornment position="end">
                     <Search />
                   </InputAdornment>
                 }
@@ -218,7 +221,7 @@ const Dex = (props: DexProps) => {
             <Column
               xs={3}
               md={1}
-              className={className("center", "bold", classes.listItem)}
+              className={classNames("center", "bold", classes.listItem)}
             >
               <span className="pokesprite ball poke" />
             </Column>
