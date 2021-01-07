@@ -2,6 +2,9 @@ import { compose, createStore } from "redux";
 import rootReducer, { RootState } from "./reducers";
 
 const defaultRootState: RootState = {
+  session: {
+    isLoggedIn: false,
+  },
   syncQueue: {
     timeout: undefined,
     queue: [],
