@@ -64,6 +64,12 @@ body {
     margin-bottom: #{$i * 15}px;
   }
 
+  .m-md-#{$i} {
+    @media screen and (min-width: 960px) {
+      margin: #{$i * 15}px;
+    }
+  }
+
   .ml-md-#{$i} {
     @media screen and (min-width: 960px) {
       margin-left: #{$i * 15}px;
@@ -106,6 +112,12 @@ body {
 
   .pb-#{$i} {
     padding-bottom: #{$i * 15}px;
+  }
+
+  .p-md-#{$i} {
+    @media screen and (min-width: 960px) {
+      padding: #{$i * 15}px;
+    }
   }
 
   .pl-md-#{$i} {
