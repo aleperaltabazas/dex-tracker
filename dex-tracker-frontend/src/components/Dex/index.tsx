@@ -81,6 +81,15 @@ const Dex = (props: DexProps) => {
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.number.toString().includes(search);
 
+  const [pokemons, setPokemons] = useState(props.dex.pokemons);
+
+  const updateCaught = (dexNumber: number) =>
+    setPokemons(
+      pokemons.map((p) =>
+        p.number == dexNumber ? { ...p, captured: !p.captured } : p
+      )
+    );
+
   const PokemonRow = (firstRow: boolean) => (pokemon: Pokemon, idx: number) => (
     <Row key={idx} className={firstRow ? "" : classes.rowLine}>
       <Grid
@@ -117,6 +126,7 @@ const Dex = (props: DexProps) => {
         md={1}
         className={className("center", classes.listItem)}
         key={`${idx}-caught`}
+        onClick={() => updateCaught(pokemon.number)}
       >
         {pokemon.captured ? (
           <span className="pokesprite ball poke" />
@@ -168,8 +178,7 @@ const Dex = (props: DexProps) => {
             </Column>
             <Column xs={4} className="center">
               <Typography className={classes.secondaryHeading}>
-                {props.dex.pokemons.filter((p) => p.captured).length}/
-                {props.dex.pokemons.length}
+                {pokemons.filter((p) => p.captured).length}/{pokemons.length}
               </Typography>
             </Column>
           </Row>
@@ -238,12 +247,8 @@ const Dex = (props: DexProps) => {
           </Row>
           <Divider />
           <Row className={classes.dexContainer}>
-            {shouldRender(props.dex.pokemons[0]) &&
-              PokemonRow(true)(props.dex.pokemons[0], 0)}
-            {props.dex.pokemons
-              .slice(1)
-              .filter(shouldRender)
-              .map(PokemonRow(false))}
+            {shouldRender(pokemons[0]) && PokemonRow(true)(pokemons[0], 0)}
+            {pokemons.slice(1).filter(shouldRender).map(PokemonRow(false))}
           </Row>
         </AccordionDetails>
       </Accordion>
