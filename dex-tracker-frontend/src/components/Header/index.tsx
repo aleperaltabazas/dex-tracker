@@ -18,7 +18,10 @@ const Header = (props: HeaderProps) => {
     <header className={className(styles.header)}>
       <Grid container>
         <Grid item xs={12}>
-          <img src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png" />
+          <img
+            className="p-1"
+            src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
+          />
         </Grid>
       </Grid>
     </header>
