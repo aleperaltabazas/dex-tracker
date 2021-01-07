@@ -29,7 +29,10 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
   },
-  heading: {
+  game: {
+    fontSize: theme.typography.pxToRem(24),
+  },
+  accordionHeading: {
     fontSize: theme.typography.pxToRem(15),
   },
   secondaryHeading: {
@@ -126,19 +129,47 @@ const Dex = (props: DexProps) => {
 
   return (
     <div className={classes.root}>
-      <Accordion defaultExpanded>
+      <div
+        className={className(
+          "bold",
+          "uppercase",
+          "center-v",
+          "pb-1",
+          classes.game
+        )}
+      >
+        <span
+          className={`pokemon pokesprite ${props.dex.game.boxArtPokemon} pt-2`}
+        />
+        <span style={{ paddingBottom: "3px" }}>{props.dex.game.title}</span>
+      </div>
+      <Accordion defaultExpanded={false}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Row>
+          <Row className="ml-2 mr-2">
             <Column xs={4}>
-              <div className="ml-2">
-                <div className={className(classes.heading, "bold")}>
-                  {props.dex.game}
+              <div>
+                <div
+                  className={className(
+                    classes.accordionHeading,
+                    "bold",
+                    "capitalize"
+                  )}
+                >
+                  {props.dex.region}
                 </div>
               </div>
             </Column>
             <Column xs={4}>
+              <Typography
+                className={className(classes.secondaryHeading, "capitalize")}
+              >
+                {props.dex.type}
+              </Typography>
+            </Column>
+            <Column xs={4} className="center">
               <Typography className={classes.secondaryHeading}>
-                Regional
+                {props.dex.pokemons.filter((p) => p.captured).length}/
+                {props.dex.pokemons.length}
               </Typography>
             </Column>
           </Row>
