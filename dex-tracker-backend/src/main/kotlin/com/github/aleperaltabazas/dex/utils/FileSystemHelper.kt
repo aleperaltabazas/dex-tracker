@@ -6,6 +6,8 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 open class FileSystemHelper {
+    open fun getHomeDirectory(): String = System.getProperty("user.home")
+
     open fun createDirectoryIfItDoesNotExist(path: String) {
         val file = File(path)
 
@@ -14,6 +16,10 @@ open class FileSystemHelper {
             !file.exists() -> file.mkdir()
         }
     }
+
+    open fun readFile(path: String): String = File(path).readText()
+
+    open fun doesFileExist(path: String) = File(path).exists()
 
     open fun createFile(content: String, path: String) = createFileFromInputStream(
         filePath = path,

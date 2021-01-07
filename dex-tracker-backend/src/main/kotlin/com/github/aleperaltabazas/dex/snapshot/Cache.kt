@@ -1,7 +1,9 @@
 package com.github.aleperaltabazas.dex.snapshot
 
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.connector.RestConnector
+import com.github.aleperaltabazas.dex.utils.FileSystemHelper
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -18,9 +20,15 @@ abstract class Cache<T>(
     private val endpoint: String,
     private val name: String,
     private val refreshRate: RefreshRate,
+    private val saveToDisk: Boolean,
+    private val fileSystemHelper: FileSystemHelper,
+    private val objectMapper: ObjectMapper,
 ) {
+    private val snapshotFilePath = "${fileSystemHelper.getHomeDirectory()}/dex-cache/$name.json"
     private val ref = object : TypeReference<List<T>>() {}
     private var ts: List<T> = emptyList()
+        @Synchronized get
+        @Synchronized set
 
     fun find(f: (T) -> Boolean): T? = ts.find(f)
 
@@ -33,6 +41,14 @@ abstract class Cache<T>(
     open fun count(f: (T) -> Boolean) = findAll(f).count()
 
     open fun start() {
+        if (fileSystemHelper.doesFileExist(snapshotFilePath)) {
+            val json = fileSystemHelper.readFile(snapshotFilePath)
+            this.ts = objectMapper.convertValue(json, ref)
+        } else {
+            fileSystemHelper.createDirectoryIfItDoesNotExist("${fileSystemHelper.getHomeDirectory()}/dex-cache")
+            refresh()
+        }
+
         GlobalScope.launch {
             refresh()
             delay(refreshRate.unit.toSeconds(refreshRate.value.toLong()))
@@ -52,8 +68,14 @@ abstract class Cache<T>(
             val elements = response.deserializeAs(ref)
 
             this.ts = elements
+            response.body?.takeIf { saveToDisk }?.let { save(it) }
         }
     }
+
+    private fun save(body: String) = fileSystemHelper.createFile(
+        content = body,
+        path = snapshotFilePath
+    )
 
     companion object {
         private val LOGGER = LoggerFactory.getLogger(Cache::class.java)
