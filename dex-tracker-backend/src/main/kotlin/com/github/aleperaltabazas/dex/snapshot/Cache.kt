@@ -22,6 +22,16 @@ abstract class Cache<T>(
     private val ref = object : TypeReference<List<T>>() {}
     private var ts: List<T> = emptyList()
 
+    fun find(f: (T) -> Boolean): T? = ts.find(f)
+
+    open fun findAll(): List<T> = ts
+
+    open fun findAll(f: (T) -> Boolean) = ts.filter(f)
+
+    open fun count(): Int = findAll().count()
+
+    open fun count(f: (T) -> Boolean) = findAll(f).count()
+
     open fun start() {
         GlobalScope.launch {
             refresh()
