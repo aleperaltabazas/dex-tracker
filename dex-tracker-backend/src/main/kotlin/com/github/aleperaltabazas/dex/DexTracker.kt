@@ -1,7 +1,7 @@
 package com.github.aleperaltabazas.dex
 
 import com.github.aleperaltabazas.dex.controller.Controller
-import com.github.aleperaltabazas.dex.snapshot.Cache
+import com.github.aleperaltabazas.dex.cache.Cache
 import com.google.inject.Guice
 import com.google.inject.Injector
 import org.eclipse.jetty.server.Server

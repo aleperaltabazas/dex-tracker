@@ -1,4 +1,4 @@
-package com.github.aleperaltabazas.dex.snapshot
+package com.github.aleperaltabazas.dex.cache
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
