@@ -18,11 +18,11 @@ data class RefreshRate(
 abstract class Cache<T>(
     private val connector: RestConnector,
     private val endpoint: String,
-    private val name: String,
     private val refreshRate: RefreshRate,
     private val saveToDisk: Boolean,
     private val fileSystemHelper: FileSystemHelper,
     private val objectMapper: ObjectMapper,
+    val name: String,
 ) {
     private val snapshotFilePath = "${fileSystemHelper.getHomeDirectory()}/dex-cache/$name.json"
     private val ref = object : TypeReference<List<T>>() {}
@@ -52,6 +52,12 @@ abstract class Cache<T>(
         GlobalScope.launch {
             refresh()
             delay(refreshRate.unit.toSeconds(refreshRate.value.toLong()))
+        }
+    }
+
+    open fun stop() {
+        if (saveToDisk) {
+            save(body = objectMapper.writeValueAsString(ts))
         }
     }
 

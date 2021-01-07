@@ -1,7 +1,9 @@
 package com.github.aleperaltabazas.dex
 
 import com.github.aleperaltabazas.dex.controller.Controller
+import com.github.aleperaltabazas.dex.snapshot.Cache
 import com.google.inject.Guice
+import com.google.inject.Injector
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.FilterHolder
 import org.eclipse.jetty.servlet.ServletContextHandler
@@ -51,16 +53,40 @@ class DexTracker {
     }
 
     class App : SparkApplication {
+        private val controllers: MutableList<Controller> = mutableListOf()
+        private val caches: MutableList<Cache<*>> = mutableListOf()
+
         override fun init() {
             val injector = Guice.createInjector(
             )
 
+            startCaches(injector)
+            registerControllers(injector)
+        }
+
+        override fun destroy() {
+            caches.forEach { it.stop() }
+        }
+
+        private fun registerControllers(injector: Injector) {
             injector.allBindings.keys
                 .filter { Controller::class.java.isAssignableFrom(it.typeLiteral.rawType) }
                 .forEach {
                     val controller = injector.getInstance(it) as Controller
                     controller.register()
                     LOGGER.info("Registered controller ${controller.javaClass.simpleName}")
+                    this.controllers.add(controller)
+                }
+        }
+
+        private fun startCaches(injector: Injector) {
+            injector.allBindings.keys
+                .filter { Cache::class.java.isAssignableFrom(it.typeLiteral.rawType) }
+                .forEach {
+                    val cache = injector.getInstance(it) as Cache<*>
+                    cache.start()
+                    LOGGER.info("Started cache ${cache.name}")
+                    this.caches.add(cache)
                 }
         }
     }
