@@ -188,40 +188,8 @@ const Dex = (props: DexProps) => {
         >
           <Row>
             <Hidden smDown>
-              <Column xs={12} md={12} className="pb-2">
-                <Input
-                  value={search}
-                  fullWidth
-                  onChange={handleSearchChange}
-                  placeholder="Luxray"
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  }
-                />
-              </Column>
+              <Column xs={3} md={1} className="center" />
             </Hidden>
-            <Hidden mdUp>
-              <Column
-                xs={12}
-                md={12}
-                className="pb-2 pl-1 pr-1 pl-md-2 pr-md-2"
-              >
-                <OutlinedInput
-                  value={search}
-                  fullWidth
-                  onChange={handleSearchChange}
-                  placeholder="Luxray"
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  }
-                />
-              </Column>
-            </Hidden>
-            <Column xs={3} md={1} className="center" />
             <Hidden smDown>
               <Column
                 md={1}
@@ -231,11 +199,21 @@ const Dex = (props: DexProps) => {
               </Column>
             </Hidden>
             <Column
-              xs={6}
+              xs={9}
               md={8}
               className={className("center-v", "bold", classes.listItem)}
             >
-              Pokemon
+              <Input
+                value={search}
+                fullWidth
+                onChange={handleSearchChange}
+                placeholder="Luxray"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                }
+              />
             </Column>
             <Column
               xs={3}
