@@ -12,7 +12,7 @@ open class FileSystemHelper {
         val file = File(path)
 
         when {
-            file.exists() && file.isDirectory -> throw IllegalArgumentException("File $path already exists as a file")
+            file.exists() && !file.isDirectory -> throw IllegalArgumentException("File $path already exists as a file")
             !file.exists() -> file.mkdir()
         }
     }
@@ -30,6 +30,7 @@ open class FileSystemHelper {
 
     private fun createFileFromInputStream(filePath: String, input: InputStream): File {
         val pathToFile = Paths.get(filePath)
+        Files.deleteIfExists(pathToFile)
         Files.copy(input, pathToFile)
 
         return pathToFile.toFile()

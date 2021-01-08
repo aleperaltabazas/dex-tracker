@@ -5,10 +5,13 @@ import arrow.core.left
 import arrow.core.right
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.exception.NetworkException
+import com.typesafe.config.Config
+import org.apache.http.Header
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.*
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.StringEntity
+import org.apache.http.impl.client.HttpClientBuilder
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import org.apache.http.HttpResponse as ApacheResponse
@@ -60,4 +63,21 @@ open class RestConnector(
     private fun ApacheResponse.readBody(): String? = this.entity?.content
         ?.let { BufferedReader(InputStreamReader(it)) }
         ?.readLine()
+
+    companion object {
+        fun create(
+            objectMapper: ObjectMapper,
+            moduleConfig: Config,
+            defaultHeaders: List<Header> = emptyList()
+        ): RestConnector {
+            return RestConnector(
+                objectMapper = objectMapper,
+                host = moduleConfig.getString("host"),
+                apacheClient = HttpClientBuilder.create()
+                    .setDefaultHeaders(defaultHeaders)
+                    .build()
+            )
+        }
+    }
+
 }

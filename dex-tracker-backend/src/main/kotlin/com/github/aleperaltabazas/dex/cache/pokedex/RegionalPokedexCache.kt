@@ -15,7 +15,7 @@ class RegionalPokedexCache(
     fileSystemHelper: FileSystemHelper,
     objectMapper: ObjectMapper,
 ) : PokedexCache<RegionalPokedexDTO>(
-    name = "national-dex",
+    name = "${game.name}-cache",
     pokeapiConnector = pokeapiConnector,
     fileSystemHelper = fileSystemHelper,
     objectMapper = objectMapper,

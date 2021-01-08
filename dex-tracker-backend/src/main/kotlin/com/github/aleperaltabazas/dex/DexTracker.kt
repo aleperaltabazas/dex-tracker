@@ -1,7 +1,8 @@
 package com.github.aleperaltabazas.dex
 
-import com.github.aleperaltabazas.dex.controller.Controller
 import com.github.aleperaltabazas.dex.cache.Cache
+import com.github.aleperaltabazas.dex.config.*
+import com.github.aleperaltabazas.dex.controller.Controller
 import com.google.inject.Guice
 import com.google.inject.Injector
 import org.eclipse.jetty.server.Server
@@ -58,6 +59,11 @@ class DexTracker {
 
         override fun init() {
             val injector = Guice.createInjector(
+                CacheModule(),
+                ConfigModule(),
+                ConnectionModule(),
+                JsonModule(),
+                UtilsModule(),
             )
 
             startCaches(injector)
@@ -84,6 +90,7 @@ class DexTracker {
                 .filter { Cache::class.java.isAssignableFrom(it.typeLiteral.rawType) }
                 .forEach {
                     val cache = injector.getInstance(it) as Cache<*>
+                    LOGGER.info("Starting ${cache.name}...")
                     cache.start()
                     LOGGER.info("Started cache ${cache.name}")
                     this.caches.add(cache)
