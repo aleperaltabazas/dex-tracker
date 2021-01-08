@@ -2,8 +2,9 @@ package com.github.aleperaltabazas.dex.dto.pokeapi
 
 data class PokedexDTO(
     val name: String,
-    val region: RegionDTO?,
+    val region: RegionDTO,
     val versionGroup: List<VersionGroupDTO>,
+    val pokemonEntries: List<PokemonEntryDTO>
 )
 
 data class RegionDTO(

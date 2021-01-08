@@ -22,25 +22,17 @@ abstract class Cache<T>(
     val name: String,
 ) {
     private val snapshotFilePath = "${fileSystemHelper.getHomeDirectory()}/dex-cache/$name.json"
-    private val ref = object : TypeReference<List<T>>() {}
-    private var ts: List<T> = emptyList()
+    private val ref = object : TypeReference<T>() {}
+    private var t: T? = null
         @Synchronized get
         @Synchronized set
 
-    fun find(f: (T) -> Boolean): T? = ts.find(f)
-
-    open fun findAll(): List<T> = ts
-
-    open fun findAll(f: (T) -> Boolean) = ts.filter(f)
-
-    open fun count(): Int = findAll().count()
-
-    open fun count(f: (T) -> Boolean) = findAll(f).count()
+    fun get(): T? = t
 
     open fun start() {
         if (fileSystemHelper.doesFileExist(snapshotFilePath)) {
             val json = fileSystemHelper.readFile(snapshotFilePath)
-            this.ts = objectMapper.convertValue(json, ref)
+            this.t = objectMapper.convertValue(json, ref)
         } else {
             fileSystemHelper.createDirectoryIfItDoesNotExist("${fileSystemHelper.getHomeDirectory()}/dex-cache")
             refresh()
@@ -54,22 +46,21 @@ abstract class Cache<T>(
 
     open fun stop() {
         if (saveToDisk) {
-            save(body = objectMapper.writeValueAsString(ts))
+            save(body = objectMapper.writeValueAsString(t))
         }
     }
 
-    protected abstract fun doRefresh(): List<T>?
+    protected abstract fun doRefresh(): T?
 
     private fun refresh() {
-        val newTs = doRefresh()
+        val newT = doRefresh()
 
-        if (newTs == null) {
+        if (newT == null) {
             LOGGER.warn("There was an error refreshing snapshot $name")
         } else {
+            this.t = newT
 
-            this.ts = newTs
-
-            ts.takeIf { saveToDisk }?.let { save(objectMapper.writeValueAsString(it)) }
+            t.takeIf { saveToDisk }?.let { save(objectMapper.writeValueAsString(it)) }
         }
     }
 
