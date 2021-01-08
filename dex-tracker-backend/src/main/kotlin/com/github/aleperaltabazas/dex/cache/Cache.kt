@@ -2,7 +2,6 @@ package com.github.aleperaltabazas.dex.cache
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.aleperaltabazas.dex.connector.RestConnector
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -16,8 +15,6 @@ data class RefreshRate(
 )
 
 abstract class Cache<T>(
-    private val connector: RestConnector,
-    private val endpoint: String,
     private val refreshRate: RefreshRate,
     private val saveToDisk: Boolean,
     private val fileSystemHelper: FileSystemHelper,
@@ -61,20 +58,18 @@ abstract class Cache<T>(
         }
     }
 
+    protected abstract fun doRefresh(): List<T>?
+
     private fun refresh() {
-        val response = connector.get(endpoint)
-            .fold(
-                ifLeft = { throw  it },
-                ifRight = { it }
-            )
+        val newTs = doRefresh()
 
-        if (response.isError()) {
-            LOGGER.warn("Error refreshing snapshot $name: status {}, {}", response.status, response.body)
+        if (newTs == null) {
+            LOGGER.warn("There was an error refreshing snapshot $name")
         } else {
-            val elements = response.deserializeAs(ref)
 
-            this.ts = elements
-            response.body?.takeIf { saveToDisk }?.let { save(it) }
+            this.ts = newTs
+
+            ts.takeIf { saveToDisk }?.let { save(objectMapper.writeValueAsString(it)) }
         }
     }
 
