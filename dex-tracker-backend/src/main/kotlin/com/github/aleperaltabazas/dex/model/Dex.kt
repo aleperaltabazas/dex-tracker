@@ -2,7 +2,7 @@ package com.github.aleperaltabazas.dex.model
 
 abstract class Game(
     val name: String,
-    val dexId: Int,
+    val dexId: String,
     val title: String,
     val fullTitle: String,
     val spritePokemon: String,

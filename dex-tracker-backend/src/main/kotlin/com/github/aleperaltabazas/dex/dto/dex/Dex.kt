@@ -5,15 +5,20 @@ data class PokemonDTO(
     val number: Int,
 )
 
-data class PokedexDTO(
-    val pokemons: List<PokemonDTO>,
-    val region: String,
-    val type: String,
-    val game: GameDTO
-)
-
 data class GameDTO(
     val title: String,
     val fullTitle: String,
     val spritePokemon: String,
+)
+
+data class RegionalPokedexDTO(
+    val pokemons: List<PokemonDTO>,
+    val region: String?,
+    val type: String,
+    val game: GameDTO
+)
+
+data class NationalPokedexDTO(
+    val pokemons: List<PokemonDTO>,
+    val type: String,
 )
