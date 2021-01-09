@@ -16,11 +16,11 @@ data class VersionGroupDTO(
 )
 
 data class PokemonEntryDTO(
+    val pokemonSpecies: SpeciesRefDTO,
     val entryNumber: Int,
-    val pokemonSpecies: PokemonSpeciesDTO,
 )
 
-data class PokemonSpeciesDTO(
+data class SpeciesRefDTO(
     val name: String,
     val url: String,
 )

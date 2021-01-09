@@ -1,4 +1,4 @@
-package com.github.aleperaltabazas.dex.model
+package com.github.aleperaltabazas.dex.domain
 
 data class Game(
     val name: String,
