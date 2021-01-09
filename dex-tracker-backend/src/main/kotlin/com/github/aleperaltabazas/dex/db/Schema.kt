@@ -1,10 +1,9 @@
 package com.github.aleperaltabazas.dex.db
 
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.select
 
-object PokemonsTable : Table("pokemons") {
-    val id = long("id").autoIncrement()
+object PokemonsTable : GenericTable<Pokemon>("pokemons") {
     val name = varchar("name", length = 50)
     val nationalDexNumber = integer("national_dex_number")
     val primaryAbility = varchar("primary_ability", length = 50)
@@ -19,61 +18,51 @@ object PokemonsTable : Table("pokemons") {
     val specialDefense = integer("special_defense")
     val speed = integer("speed")
 
-    override val primaryKey = PrimaryKey(id)
-
-    fun select(): Sequence<Pokemon> = this.selectAll()
-        .asSequence()
-        .map { row ->
-            Pokemon(
-                id = row[id],
-                name = row[name],
-                nationalPokedexNumber = row[nationalDexNumber],
-                primaryAbility = row[primaryAbility],
-                secondaryAbility = row[secondaryAbility],
-                hiddenAbility = row[hiddenAbility],
-                primaryType = Type.valueOf(row[primaryType]),
-                secondaryType = row[secondaryType]?.let { Type.valueOf(it) },
-                baseStats = Stats(
-                    id = null,
-                    hp = row[hp],
-                    attack = row[attack],
-                    defense = row[defense],
-                    specialAttack = row[specialAttack],
-                    specialDefense = row[specialDefense],
-                    speed = row[speed],
-                ),
-                evolutions = EvolutionsTable.select()
-                    .filter { it.name == row[name] }
-                    .toList(),
-                forms = FormsTable.select()
-                    .filter { it.pokemonId == row[id] }
-                    .toList()
-            )
-        }
+    override fun reify(row: ResultRow): Pokemon = Pokemon(
+        id = row[id],
+        name = row[name],
+        nationalPokedexNumber = row[nationalDexNumber],
+        primaryAbility = row[primaryAbility],
+        secondaryAbility = row[secondaryAbility],
+        hiddenAbility = row[hiddenAbility],
+        primaryType = Type.valueOf(row[primaryType]),
+        secondaryType = row[secondaryType]?.let { Type.valueOf(it) },
+        baseStats = Stats(
+            id = null,
+            hp = row[hp],
+            attack = row[attack],
+            defense = row[defense],
+            specialAttack = row[specialAttack],
+            specialDefense = row[specialDefense],
+            speed = row[speed],
+        ),
+        evolutions = EvolutionsTable.reifying {
+            select { EvolutionsTable.pokemonId eq row[id] }
+        }.toList(),
+        forms = FormsTable.reifying {
+            select { FormsTable.pokemonId eq row[id] }
+        }.toList()
+    )
 }
 
-object FormsTable : Table("forms") {
-    val id = long("id").autoIncrement()
+object FormsTable : GenericTable<Form>("forms") {
     val name = varchar("name", length = 30)
     val pokemonId = long("pokemon_id") references PokemonsTable.id
     val statsId = (long("stats_id") references StatsTable.id).nullable()
 
-    override val primaryKey = PrimaryKey(PokemonsTable.id)
-
-    fun select(): Sequence<Form> = this.selectAll()
-        .asSequence()
-        .map { row ->
-            Form(
-                id = row[id],
-                name = row[name],
-                stats = StatsTable.select().find { row[statsId] == it.id },
-                pokemonId = row[pokemonId]
-            )
-        }
+    override fun reify(row: ResultRow): Form = Form(
+        id = row[id],
+        name = row[name],
+        stats = row[statsId]?.let {
+            StatsTable.reifying {
+                select { StatsTable.id eq it }
+            }
+        }?.firstOrNull(),
+        pokemonId = row[pokemonId]
+    )
 }
 
-object StatsTable : Table("stats") {
-    val id = long("id").autoIncrement()
+object StatsTable : GenericTable<Stats>("stats") {
     val hp = integer("hp")
     val attack = integer("attack")
     val defense = integer("defense")
@@ -81,40 +70,26 @@ object StatsTable : Table("stats") {
     val specialDefense = integer("special_defense")
     val speed = integer("speed")
 
-    override val primaryKey = PrimaryKey(id)
-
-    fun select(): Sequence<Stats> = this.selectAll()
-        .asSequence()
-        .map { row ->
-            Stats(
-                id = row[id],
-                hp = row[hp],
-                attack = row[attack],
-                defense = row[defense],
-                specialAttack = row[specialAttack],
-                specialDefense = row[specialDefense],
-                speed = row[speed],
-            )
-        }
-
+    override fun reify(row: ResultRow): Stats = Stats(
+        id = row[id],
+        hp = row[hp],
+        attack = row[attack],
+        defense = row[defense],
+        specialAttack = row[specialAttack],
+        specialDefense = row[specialDefense],
+        speed = row[speed],
+    )
 }
 
-object EvolutionsTable : Table("evolutions") {
-    val id = long("id").autoIncrement()
+object EvolutionsTable : GenericTable<Evolution>("evolutions") {
     val name = varchar("name", length = 50).autoIncrement()
     val pokemonId = (long("pokemon_id") references PokemonsTable.id)
     val method = varchar("method", length = 50)
 
-    override val primaryKey = PrimaryKey(id)
-
-    fun select(): Sequence<Evolution> = this.selectAll()
-        .asSequence()
-        .map { row ->
-            Evolution(
-                id = row[id],
-                name = row[name],
-                method = EvolutionMethod.parse(row[method])
-                    ?: throw IllegalArgumentException("Failed to parse evolution method ${row[method]}")
-            )
-        }
+    override fun reify(row: ResultRow): Evolution = Evolution(
+        id = row[id],
+        name = row[name],
+        method = EvolutionMethod.parse(row[method])
+            ?: throw IllegalArgumentException("Failed to parse evolution method ${row[method]}")
+    )
 }
