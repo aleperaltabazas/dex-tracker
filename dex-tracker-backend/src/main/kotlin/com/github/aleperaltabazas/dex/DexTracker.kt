@@ -3,11 +3,19 @@ package com.github.aleperaltabazas.dex
 import com.github.aleperaltabazas.dex.cache.Cache
 import com.github.aleperaltabazas.dex.config.*
 import com.github.aleperaltabazas.dex.controller.Controller
+import com.github.aleperaltabazas.dex.db.allTables
 import com.google.inject.Guice
 import com.google.inject.Injector
+import com.google.inject.Key
+import com.google.inject.name.Names
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.FilterHolder
 import org.eclipse.jetty.servlet.ServletContextHandler
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
 import spark.servlet.SparkApplication
 import spark.servlet.SparkFilter
@@ -62,16 +70,26 @@ class DexTracker {
                 CacheModule(),
                 ConfigModule(),
                 ConnectionModule(),
+                DatabaseModule(),
                 JsonModule(),
                 UtilsModule(),
             )
 
+            createSchema(injector)
             startCaches(injector)
             registerControllers(injector)
         }
 
         override fun destroy() {
             caches.forEach { it.stop() }
+        }
+
+        private fun createSchema(injector: Injector) {
+            val db = injector.getInstance(Key.get(Database::class.java, Names.named("db")))
+            transaction(db) {
+                addLogger(StdOutSqlLogger) // debugging purposes
+                SchemaUtils.create(*allTables.toTypedArray())
+            }
         }
 
         private fun registerControllers(injector: Injector) {

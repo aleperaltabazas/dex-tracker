@@ -84,7 +84,7 @@ object StatsTable : GenericTable<Stats>("stats") {
 }
 
 object EvolutionsTable : GenericTable<Evolution>("evolutions") {
-    val name = varchar("name", length = 50).autoIncrement()
+    val name = varchar("name", length = 50)
     val pokemonId = (long("pokemon_id") references PokemonsTable.id)
     val method = varchar("method", length = 50)
 

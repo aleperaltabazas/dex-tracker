@@ -146,3 +146,5 @@ buildNumber.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/kotlin,intellij+all,linux,maven
 
+src/main/resources/sensitive.conf
+
