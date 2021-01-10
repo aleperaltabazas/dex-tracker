@@ -55,7 +55,6 @@ data class Form(
     val id: Long?,
     val name: String,
     val stats: Stats?,
-    val pokemonId: Long,
 )
 
 data class Evolution(
@@ -68,6 +67,8 @@ interface EvolutionMethod {
     companion object {
         fun parse(s: String): EvolutionMethod? = TODO()
     }
+
+    fun serialize(): String = TODO()
 }
 
 data class LevelUp(val level: Int) : EvolutionMethod

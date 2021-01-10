@@ -8,7 +8,7 @@ import com.github.aleperaltabazas.dex.extension.fold
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 
-object PokemonsTable : GenericTable<Pokemon>("pokemons") {
+object Pokemons : GenericTable<Pokemon>("pokemons") {
     val name = varchar("name", length = 50)
     val nationalDexNumber = integer("national_dex_number")
     val primaryAbility = varchar("primary_ability", length = 50)
@@ -46,33 +46,32 @@ object PokemonsTable : GenericTable<Pokemon>("pokemons") {
             specialDefense = row[specialDefense],
             speed = row[speed],
         ),
-        evolutions = EvolutionsTable.reifying {
-            select { EvolutionsTable.pokemonId eq row[id] }
+        evolutions = Evolutions.reifying {
+            select { Evolutions.pokemonId eq row[id] }
         }.toList(),
-        forms = FormsTable.reifying {
-            select { FormsTable.pokemonId eq row[id] }
+        forms = Forms.reifying {
+            select { Forms.pokemonId eq row[id] }
         }.toList()
     )
 }
 
-object FormsTable : GenericTable<Form>("forms") {
+object Forms : GenericTable<Form>("forms") {
     val name = varchar("name", length = 30)
-    val pokemonId = long("pokemon_id") references PokemonsTable.id
-    val statsId = (long("stats_id") references StatsTable.id).nullable()
+    val pokemonId = long("pokemon_id") references Pokemons.id
+    val statsId = (long("stats_id") references Statses.id).nullable()
 
     override fun reify(row: ResultRow): Form = Form(
         id = row[id],
         name = row[name],
         stats = row[statsId]?.let {
-            StatsTable.reifying {
-                select { StatsTable.id eq it }
+            Statses.reifying {
+                select { Statses.id eq it }
             }
         }?.firstOrNull(),
-        pokemonId = row[pokemonId]
     )
 }
 
-object StatsTable : GenericTable<Stats>("stats") {
+object Statses : GenericTable<Stats>("stats") {
     val hp = integer("hp")
     val attack = integer("attack")
     val defense = integer("defense")
@@ -91,9 +90,9 @@ object StatsTable : GenericTable<Stats>("stats") {
     )
 }
 
-object EvolutionsTable : GenericTable<Evolution>("evolutions") {
+object Evolutions : GenericTable<Evolution>("evolutions") {
     val name = varchar("name", length = 50)
-    val pokemonId = (long("pokemon_id") references PokemonsTable.id)
+    val pokemonId = (long("pokemon_id") references Pokemons.id)
     val method = varchar("method", length = 50)
 
     override fun reify(row: ResultRow): Evolution = Evolution(
