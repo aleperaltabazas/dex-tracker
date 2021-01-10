@@ -1,6 +1,7 @@
 package com.github.aleperaltabazas.dex.db.schema
 
 import com.github.aleperaltabazas.dex.db.*
+import com.github.aleperaltabazas.dex.db.model.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 

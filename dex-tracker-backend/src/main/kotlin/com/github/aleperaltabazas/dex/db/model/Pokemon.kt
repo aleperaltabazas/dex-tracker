@@ -1,4 +1,4 @@
-package com.github.aleperaltabazas.dex.db
+package com.github.aleperaltabazas.dex.db.model
 
 enum class Type {
     FIRE,
