@@ -5,6 +5,8 @@ import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.google.inject.name.Named
 import com.typesafe.config.Config
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.Database
 
 class DatabaseModule : AbstractModule() {
@@ -12,11 +14,16 @@ class DatabaseModule : AbstractModule() {
     @Singleton
     @Named("db")
     fun db(config: Config): Database {
-        val user = config.getString("db.user")
-        val password = config.getString("db.password")
-        val connectionString = config.getString("db.connection-string")
-        val driver = config.getString("db.driver")
+        val hikariConfig = HikariConfig().apply {
+            this.jdbcUrl = config.getString("db.connection-string")
+            this.driverClassName = config.getString("db.driver")
+            this.username = config.getString("db.user")
+            this.password = config.getString("db.password")
+            this.maximumPoolSize = config.getInt("db.hikari.pool-size")
+        }
 
-        return Database.connect(connectionString, driver = driver, user = user, password = password)
+        val source = HikariDataSource(hikariConfig)
+
+        return Database.connect(source)
     }
 }
