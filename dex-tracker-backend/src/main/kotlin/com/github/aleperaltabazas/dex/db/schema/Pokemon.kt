@@ -9,8 +9,8 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 
 object Pokemons : GenericTable<Pokemon>("pokemons") {
-    val name = varchar("name", length = 50)
-    val nationalDexNumber = integer("national_dex_number")
+    val name = varchar("name", length = 50).uniqueIndex()
+    val nationalDexNumber = integer("national_dex_number").uniqueIndex()
     val primaryAbility = varchar("primary_ability", length = 50)
     val secondaryAbility = varchar("secondary_ability", length = 50).nullable()
     val hiddenAbility = varchar("hidden_ability", length = 50).nullable()
@@ -56,7 +56,7 @@ object Pokemons : GenericTable<Pokemon>("pokemons") {
 }
 
 object Forms : GenericTable<Form>("forms") {
-    val name = varchar("name", length = 30)
+    val name = varchar("name", length = 30).uniqueIndex()
     val pokemonId = long("pokemon_id") references Pokemons.id
     val statsId = (long("stats_id") references Statses.id).nullable()
 
@@ -91,8 +91,8 @@ object Statses : GenericTable<Stats>("stats") {
 }
 
 object Evolutions : GenericTable<Evolution>("evolutions") {
-    val name = varchar("name", length = 50)
-    val pokemonId = (long("pokemon_id") references Pokemons.id)
+    val name = varchar("name", length = 50).uniqueIndex()
+    val pokemonId = long("pokemon_id") references Pokemons.id
     val method = varchar("method", length = 50)
 
     override fun reify(row: ResultRow): Evolution = Evolution(

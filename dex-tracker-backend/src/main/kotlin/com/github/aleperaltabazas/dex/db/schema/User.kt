@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 
 object Users : GenericTable<User>("users") {
-    val username = varchar("username", length = 50)
+    val username = varchar("username", length = 50).uniqueIndex()
 
     override fun reify(row: ResultRow): User = User(
         id = row[id],
