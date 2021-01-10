@@ -1,7 +1,10 @@
 package com.github.aleperaltabazas.dex.db.schema
 
-import com.github.aleperaltabazas.dex.db.*
+import com.github.aleperaltabazas.dex.db.GenericTable
 import com.github.aleperaltabazas.dex.db.model.*
+import com.github.aleperaltabazas.dex.db.reifying
+import com.github.aleperaltabazas.dex.extension.both
+import com.github.aleperaltabazas.dex.extension.fold
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 
@@ -13,6 +16,8 @@ object PokemonsTable : GenericTable<Pokemon>("pokemons") {
     val hiddenAbility = varchar("hidden_ability", length = 50).nullable()
     val primaryType = varchar("primary_type", length = 8)
     val secondaryType = varchar("secondary_type", length = 8).nullable()
+    val maleProbability = double("male_prob").nullable()
+    val femaleProbability = double("female_prob").nullable()
     val hp = integer("hp")
     val attack = integer("attack")
     val defense = integer("defense")
@@ -29,6 +34,9 @@ object PokemonsTable : GenericTable<Pokemon>("pokemons") {
         hiddenAbility = row[hiddenAbility],
         primaryType = Type.valueOf(row[primaryType]),
         secondaryType = row[secondaryType]?.let { Type.valueOf(it) },
+        genderRatio = both({ row[maleProbability] }, { row[femaleProbability] })?.fold { male, female ->
+            GenderRatio(male = male, female = female)
+        },
         baseStats = Stats(
             id = null,
             hp = row[hp],

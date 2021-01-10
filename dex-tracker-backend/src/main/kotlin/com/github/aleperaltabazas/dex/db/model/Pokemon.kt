@@ -30,9 +30,15 @@ data class Pokemon(
     val hiddenAbility: String?,
     val primaryType: Type,
     val secondaryType: Type?,
+    val genderRatio: GenderRatio?,
     val baseStats: Stats,
     val evolutions: List<Evolution>,
     val forms: List<Form>,
+)
+
+data class GenderRatio(
+    val male: Double,
+    val female: Double,
 )
 
 data class Stats(

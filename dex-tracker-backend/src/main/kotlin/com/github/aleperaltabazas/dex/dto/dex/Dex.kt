@@ -24,8 +24,7 @@ data class PokemonDTO(
     val primaryAbility: String,
     val secondaryAbility: String?,
     val hiddenAbility: String?,
-    val genderRation: Pair<Double, Double>?,
-    val locations: Map<String, List<String>>,
+    val genderRatio: Pair<Double, Double>?,
 )
 
 data class FormDTO(
