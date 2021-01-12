@@ -17,17 +17,3 @@ data class RegionalPokedexDTO(
     val type: String,
     val game: GameDTO,
 )
-
-data class PokemonDTO(
-    val number: Int,
-    val name: String,
-    val primaryAbility: String,
-    val secondaryAbility: String?,
-    val hiddenAbility: String?,
-    val genderRatio: Pair<Double, Double>?,
-)
-
-data class FormDTO(
-    val pokemon: String,
-    val name: String,
-)

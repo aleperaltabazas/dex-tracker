@@ -1,12 +1,8 @@
 package com.github.aleperaltabazas.dex.db.schema
 
-import com.github.aleperaltabazas.dex.db.GenericTable
-import com.github.aleperaltabazas.dex.db.model.Evolution
-import com.github.aleperaltabazas.dex.db.model.Form
-import com.github.aleperaltabazas.dex.db.model.Pokemon
-import com.github.aleperaltabazas.dex.db.model.Stats
+import org.jetbrains.exposed.dao.id.LongIdTable
 
-object Pokemons : GenericTable<Pokemon>("pokemons") {
+object PokemonTable : LongIdTable("pokemon") {
     val name = varchar("name", length = 50).uniqueIndex()
     val nationalDexNumber = integer("national_dex_number").uniqueIndex()
     val primaryAbility = varchar("primary_ability", length = 50)
@@ -24,13 +20,15 @@ object Pokemons : GenericTable<Pokemon>("pokemons") {
     val speed = integer("speed")
 }
 
-object Forms : GenericTable<Form>("forms") {
+object FormsTable : LongIdTable("forms") {
     val name = varchar("name", length = 30)
-    val pokemonId = long("pokemon_id") references Pokemons.id
-    val statsId = (long("stats_id") references Statses.id).nullable()
+    val pokemonId = long("pokemon_id").references(PokemonTable.id)
+    val statsId = long("stats_id").references(StatsTable.id).nullable()
+    val primaryType = varchar("primary_type", length = 20)
+    val secondaryType = varchar("secondary_type", length = 20).nullable()
 }
 
-object Statses : GenericTable<Stats>("stats") {
+object StatsTable : LongIdTable("stats") {
     val hp = integer("hp")
     val attack = integer("attack")
     val defense = integer("defense")
@@ -39,8 +37,8 @@ object Statses : GenericTable<Stats>("stats") {
     val speed = integer("speed")
 }
 
-object Evolutions : GenericTable<Evolution>("evolutions") {
+object EvolutionsTable : LongIdTable("evolutions") {
     val name = varchar("name", length = 50)
-    val pokemonId = long("pokemon_id") references Pokemons.id
-    val method = varchar("method", length = 200)
+    val pokemonId = long("pokemon_id").references(PokemonTable.id)
+    val method = text("method")
 }
