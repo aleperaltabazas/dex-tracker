@@ -21,20 +21,16 @@ object PokemonTable : LongIdTable("pokemon") {
 }
 
 object FormsTable : LongIdTable("forms") {
-    val name = varchar("name", length = 30)
     val pokemonId = long("pokemon_id").references(PokemonTable.id)
-    val statsId = long("stats_id").references(StatsTable.id).nullable()
-    val primaryType = varchar("primary_type", length = 20)
-    val secondaryType = varchar("secondary_type", length = 20).nullable()
-}
-
-object StatsTable : LongIdTable("stats") {
+    val name = varchar("name", length = 30)
     val hp = integer("hp")
     val attack = integer("attack")
     val defense = integer("defense")
     val specialAttack = integer("special_attack")
     val specialDefense = integer("special_defense")
     val speed = integer("speed")
+    val primaryType = varchar("primary_type", length = 20)
+    val secondaryType = varchar("secondary_type", length = 20).nullable()
 }
 
 object EvolutionsTable : LongIdTable("evolutions") {

@@ -7,14 +7,17 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class Storage<A : LongEntity>(
+abstract class Storage<E : LongEntity, M>(
     protected val db: Database,
-    protected val table: DAO<A>,
+    protected val table: DAO<E>,
 ) {
-    fun findAll(where: Where) = transaction(db) {
-        table.new {  }
-        table.find(where).toList()
+    fun findAll(where: Where): List<M> = transaction(db) {
+        table.find(where).map { toModel(it) }
     }
 
-    fun findAll(): List<A> = findAll { Op.TRUE }
+    fun findAll(): List<M> = findAll { Op.TRUE }
+
+    abstract fun save(m: M): E
+
+    protected abstract fun toModel(dao: E): M
 }
