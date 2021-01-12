@@ -11,8 +11,6 @@ class PokemonStorage(
     private val formStorage: FormStorage,
     db: Database,
 ) : Storage<PokemonDAO, Pokemon>(db, PokemonDAO) {
-    fun generationNationalDex(gen: Int) = findAll { PokemonTable.gen eq gen }
-
     override fun save(e: Pokemon): PokemonDAO {
         return transaction(db) {
             val dao = PokemonDAO.new {

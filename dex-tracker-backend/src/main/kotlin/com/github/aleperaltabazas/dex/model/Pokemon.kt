@@ -37,7 +37,7 @@ data class Pokemon(
     val baseStats: Stats,
     val evolutions: List<Evolution>,
     val forms: List<Form>,
-    val gen: Int,
+    val gen: Int?,
 ) {
     constructor(dao: PokemonDAO) : this(
         name = dao.name,

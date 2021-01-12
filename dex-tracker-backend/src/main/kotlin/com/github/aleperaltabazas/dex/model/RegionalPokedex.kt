@@ -12,6 +12,7 @@ data class Game(
     val region: String,
     val pokeapiId: String,
     val nationalCutoff: Int,
+    val gen: Int,
 )
 
 data class GamePokedex(
