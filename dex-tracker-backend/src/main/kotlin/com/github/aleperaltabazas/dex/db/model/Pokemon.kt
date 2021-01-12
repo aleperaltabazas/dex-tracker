@@ -56,21 +56,3 @@ data class Form(
     val name: String,
     val stats: Stats?,
 )
-
-data class Evolution(
-    val id: Long?,
-    val name: String,
-    val method: EvolutionMethod,
-)
-
-interface EvolutionMethod {
-    companion object {
-        fun parse(s: String): EvolutionMethod? = TODO()
-    }
-
-    fun serialize(): String = TODO()
-}
-
-data class LevelUp(val level: Int) : EvolutionMethod
-data class Item(val item: String) : EvolutionMethod
-data class Trade(val item: String?) : EvolutionMethod
