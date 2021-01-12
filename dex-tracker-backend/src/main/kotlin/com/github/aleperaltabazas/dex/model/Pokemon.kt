@@ -37,6 +37,7 @@ data class Pokemon(
     val baseStats: Stats,
     val evolutions: List<Evolution>,
     val forms: List<Form>,
+    val gen: Int,
 ) {
     constructor(dao: PokemonDAO) : this(
         name = dao.name,
@@ -61,6 +62,7 @@ data class Pokemon(
         ),
         evolutions = dao.evolutions.map { Evolution(it) },
         forms = dao.forms.map { Form(it) },
+        gen = dao.gen,
     )
 }
 

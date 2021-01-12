@@ -1,6 +1,7 @@
 package com.github.aleperaltabazas.dex.storage
 
 import com.github.aleperaltabazas.dex.db.dao.PokemonDAO
+import com.github.aleperaltabazas.dex.db.schema.PokemonTable
 import com.github.aleperaltabazas.dex.model.Pokemon
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -10,6 +11,8 @@ class PokemonStorage(
     private val formStorage: FormStorage,
     db: Database,
 ) : Storage<PokemonDAO, Pokemon>(db, PokemonDAO) {
+    fun generationNationalDex(gen: Int) = findAll { PokemonTable.gen eq gen }
+
     override fun save(e: Pokemon): PokemonDAO {
         return transaction(db) {
             val dao = PokemonDAO.new {
@@ -28,6 +31,7 @@ class PokemonStorage(
                 this.specialAttack = e.baseStats.specialAttack
                 this.specialDefense = e.baseStats.specialDefense
                 this.speed = e.baseStats.speed
+                this.gen = e.gen
             }
 
             e.evolutions.forEach { evolutionStorage.save(it) }

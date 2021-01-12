@@ -18,6 +18,7 @@ object PokemonTable : LongIdTable("pokemon") {
     val specialAttack = integer("special_attack")
     val specialDefense = integer("special_defense")
     val speed = integer("speed")
+    val gen = integer("gen")
 }
 
 object FormsTable : LongIdTable("forms") {

@@ -28,6 +28,7 @@ class PokemonDAO(id: EntityID<Long>) : LongEntity(id) {
     var specialAttack by PokemonTable.specialAttack
     var specialDefense by PokemonTable.specialDefense
     var speed by PokemonTable.speed
+    var gen by PokemonTable.gen
     val evolutions by EvolutionDAO referrersOn EvolutionsTable.pokemonId
     val forms by FormDAO referrersOn FormsTable.pokemonId
 }
