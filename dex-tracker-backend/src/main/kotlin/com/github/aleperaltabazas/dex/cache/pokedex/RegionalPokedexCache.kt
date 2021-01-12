@@ -6,11 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.cache.Cache
 import com.github.aleperaltabazas.dex.cache.RefreshRate
 import com.github.aleperaltabazas.dex.connector.RestConnector
-import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
-import com.github.aleperaltabazas.dex.dto.dex.GameDTO
-import com.github.aleperaltabazas.dex.dto.dex.RegionalPokedexDTO
 import com.github.aleperaltabazas.dex.dto.pokeapi.PokedexDTO
-import com.github.aleperaltabazas.dex.domain.Game
+import com.github.aleperaltabazas.dex.model.Game
+import com.github.aleperaltabazas.dex.model.GamePokedex
+import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
 import java.util.concurrent.TimeUnit
 
@@ -19,8 +18,8 @@ class RegionalPokedexCache(
     private val pokeapiConnector: RestConnector,
     fileSystemHelper: FileSystemHelper,
     objectMapper: ObjectMapper,
-) : Cache<RegionalPokedexDTO>(
-    name = "${game.name}-cache",
+) : Cache<GamePokedex>(
+    name = "${game.title}-cache",
     saveToDisk = true,
     fileSystemHelper = fileSystemHelper,
     objectMapper = objectMapper,
@@ -29,25 +28,13 @@ class RegionalPokedexCache(
         unit = TimeUnit.DAYS,
     )
 ) {
-    private fun dexId(): String = game.dexId
-
-    private fun build(dex: PokedexDTO): RegionalPokedexDTO = RegionalPokedexDTO(
-        pokemons = dex.pokemonEntries.map {
-            DexEntryDTO(
-                name = it.pokemonSpecies.name,
-                number = it.entryNumber,
-            )
-        },
-        region = game.region,
-        type = game.type,
-        game = GameDTO(
-            title = game.title,
-            fullTitle = game.fullTitle,
-            spritePokemon = game.spritePokemon,
-        )
+    private fun build(dex: PokedexDTO): GamePokedex = GamePokedex(
+        pokemon = dex.pokemonEntries.map { it.pokemonSpecies.name },
+        type = PokedexType.REGIONAL,
+        game = game,
     )
 
-    override fun doRefresh(): RegionalPokedexDTO? = pokeapiConnector.get("/api/v2/pokedex/${this.dexId()}")
+    override fun doRefresh(): GamePokedex? = pokeapiConnector.get("/api/v2/pokedex/${this.game.pokeapiId}")
         .orNull()
         ?.deserializeAs(POKEAPI_DEX_REF)
         ?.let(this::build)
