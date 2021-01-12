@@ -9,16 +9,16 @@ import kotlinx.coroutines.runBlocking
 
 fun <R> Either.Companion.catchBlocking(f: suspend () -> R): Either<Throwable, R> = runBlocking { Either.catch(f) }
 
-fun <A> Sequence<Either<Throwable, A>>.sequence(): Either<Throwable, Sequence<A>> {
+fun <A> List<Either<Throwable, A>>.sequence(): Either<Throwable, List<A>> {
     if (this.isEmpty()) {
-        return emptySequence<A>().right()
+        return emptyList<A>().right()
     }
 
     return Either.fx {
         val a = this@sequence.first().bind()
         val `as` = this@sequence.drop(1).sequence().bind()
 
-        return@fx sequenceOf(a) + `as`
+        return@fx listOf(a) + `as`
     }
 }
 
