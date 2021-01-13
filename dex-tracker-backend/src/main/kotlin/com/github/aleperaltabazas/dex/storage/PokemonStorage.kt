@@ -19,16 +19,6 @@ class PokemonStorage(
                 this.primaryAbility = e.primaryAbility
                 this.secondaryAbility = e.secondaryAbility
                 this.hiddenAbility = e.hiddenAbility
-                this.primaryType = e.typing.primaryType.name
-                this.secondaryType = e.typing.secondaryType?.name
-                this.maleProbability = e.genderRatio?.male
-                this.femaleProbability = e.genderRatio?.female
-                this.hp = e.baseStats.hp
-                this.attack = e.baseStats.attack
-                this.defense = e.baseStats.defense
-                this.specialAttack = e.baseStats.specialAttack
-                this.specialDefense = e.baseStats.specialDefense
-                this.speed = e.baseStats.speed
                 this.gen = e.gen
             }
 

@@ -11,11 +11,13 @@ abstract class Storage<E : LongEntity, M>(
     protected val db: Database,
     protected val table: DAO<E>,
 ) {
-    fun findAll(where: Where): List<M> = transaction(db) {
-        table.find(where).map { toModel(it) }
+    fun findAll(where: Where): Sequence<M> = transaction(db) {
+        table.find(where)
+            .asSequence()
+            .map { toModel(it) }
     }
 
-    fun findAll(): List<M> = findAll { Op.TRUE }
+    fun findAll(): Sequence<M> = findAll { Op.TRUE }
 
     abstract fun save(m: M): E
 

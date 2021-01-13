@@ -30,7 +30,9 @@ class RegionalPokedexCache(
     )
 ) {
     private fun build(dex: PokedexDTO, game: Game): GamePokedex = GamePokedex(
-        pokemon = dex.pokemonEntries.map { it.pokemonSpecies.name },
+        pokemon = dex.pokemonEntries
+            .sortedBy { it.entryNumber }
+            .map { it.pokemonSpecies.name },
         type = PokedexType.REGIONAL,
         game = game,
     )
