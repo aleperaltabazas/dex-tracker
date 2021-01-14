@@ -70,8 +70,11 @@ class DexTracker {
                 CacheModule(),
                 ConfigModule(),
                 ConnectionModule(),
+                ControllerModule(),
                 DatabaseModule(),
                 JsonModule(),
+                ServiceModule(),
+                StorageModule(),
                 UtilsModule(),
             )
 

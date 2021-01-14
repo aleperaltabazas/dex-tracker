@@ -1,7 +1,6 @@
 package com.github.aleperaltabazas.dex.model
 
 import com.github.aleperaltabazas.dex.db.dao.FormDAO
-import com.github.aleperaltabazas.dex.db.dao.PokemonDAO
 
 enum class Type {
     BUG,
@@ -33,18 +32,7 @@ data class Pokemon(
     val evolutions: List<Evolution>,
     val forms: List<Form>,
     val gen: Int,
-) {
-    constructor(dao: PokemonDAO) : this(
-        name = dao.name,
-        nationalPokedexNumber = dao.nationalPokedexNumber,
-        primaryAbility = dao.primaryAbility,
-        secondaryAbility = dao.secondaryAbility,
-        hiddenAbility = dao.hiddenAbility,
-        evolutions = dao.evolutions.map { Evolution(it) },
-        forms = dao.forms.map { Form(it) },
-        gen = dao.gen,
-    )
-}
+)
 
 data class Typing(
     val primaryType: Type,
@@ -67,8 +55,4 @@ data class Stats(
 
 data class Form(
     val name: String,
-) {
-    constructor(dao: FormDAO) : this(
-        name = dao.name,
-    )
-}
+)

@@ -30,14 +30,10 @@ class FormDAO(id: EntityID<Long>) : LongEntity(id) {
 }
 
 class EvolutionDAO(
-    private val objectMapper: ObjectMapper,
     id: EntityID<Long>,
 ) : LongEntity(id) {
     companion object : LongEntityClass<EvolutionDAO>(EvolutionsTable)
 
     var name by EvolutionsTable.name
-    var method: EvolutionMethod by EvolutionsTable.method.transform(
-        toColumn = { objectMapper.writeValueAsString(it) },
-        toReal = { objectMapper.readValue(it) }
-    )
+    var method by EvolutionsTable.method
 }

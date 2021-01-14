@@ -7,12 +7,7 @@ import com.github.aleperaltabazas.dex.db.dao.EvolutionDAO
 data class Evolution(
     val name: String,
     val method: EvolutionMethod,
-) {
-    constructor(dao: EvolutionDAO) : this(
-        name = dao.name,
-        method = dao.method,
-    )
-}
+)
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,

@@ -14,5 +14,7 @@ class FormStorage(
         }
     }
 
-    override fun toModel(dao: FormDAO): Form = Form(dao)
+    override fun toModel(dao: FormDAO): Form = Form(
+        name = dao.name,
+    )
 }

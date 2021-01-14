@@ -1,7 +1,6 @@
 package com.github.aleperaltabazas.dex.storage
 
 import com.github.aleperaltabazas.dex.db.dao.PokemonDAO
-import com.github.aleperaltabazas.dex.db.schema.PokemonTable
 import com.github.aleperaltabazas.dex.model.Pokemon
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -29,5 +28,14 @@ class PokemonStorage(
         }
     }
 
-    override fun toModel(dao: PokemonDAO): Pokemon = Pokemon(dao)
+    override fun toModel(dao: PokemonDAO): Pokemon = Pokemon(
+        name = dao.name,
+        nationalPokedexNumber = dao.nationalPokedexNumber,
+        primaryAbility = dao.primaryAbility,
+        secondaryAbility = dao.secondaryAbility,
+        hiddenAbility = dao.hiddenAbility,
+        evolutions = dao.evolutions.map { evolutionStorage.toModel(it) },
+        forms = dao.forms.map { formStorage.toModel(it) },
+        gen = dao.gen,
+    )
 }
