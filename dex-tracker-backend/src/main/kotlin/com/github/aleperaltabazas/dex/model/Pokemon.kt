@@ -1,7 +1,5 @@
 package com.github.aleperaltabazas.dex.model
 
-import com.github.aleperaltabazas.dex.db.dao.FormDAO
-
 enum class Type {
     BUG,
     DARK,

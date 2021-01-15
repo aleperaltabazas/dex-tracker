@@ -3,6 +3,7 @@ package com.github.aleperaltabazas.dex.service
 import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.db.schema.PokemonTable
 import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
+import com.github.aleperaltabazas.dex.dto.dex.FormDTO
 import com.github.aleperaltabazas.dex.dto.dex.GameDTO
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.NotFoundException
@@ -19,7 +20,13 @@ class PokemonService(
     fun gameNationalPokedex(gameKey: String): GamePokedexDTO {
         val (game, _) = gameFromKey(gameKey)
         val pokemon = pokemonStorage.findAll { PokemonTable.gen eq game.gen }
-            .map { DexEntryDTO(name = it.name, number = it.nationalPokedexNumber) }
+            .map {
+                DexEntryDTO(
+                    name = it.name,
+                    number = it.nationalPokedexNumber,
+                    forms = it.forms.map { f -> FormDTO(f) }
+                )
+            }
 
         return GamePokedexDTO(
             pokemon = pokemon.toList(),
@@ -34,7 +41,13 @@ class PokemonService(
 
         val pokemon = pokemonStorage
             .findAll { (PokemonTable.gen eq game.gen) and (PokemonTable.name inList pokedex.pokemon) }
-            .map { DexEntryDTO(number = pokedex.pokemon.indexOf(it.name), name = it.name) }
+            .map {
+                DexEntryDTO(
+                    number = pokedex.pokemon.indexOf(it.name),
+                    name = it.name,
+                    forms = it.forms.map { f -> FormDTO(f) }
+                )
+            }
 
         return GamePokedexDTO(
             pokemon = pokemon.toList(),

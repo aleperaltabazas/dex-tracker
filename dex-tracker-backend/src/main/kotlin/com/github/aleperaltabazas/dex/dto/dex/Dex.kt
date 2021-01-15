@@ -1,10 +1,18 @@
 package com.github.aleperaltabazas.dex.dto.dex
 
+import com.github.aleperaltabazas.dex.model.Form
 import com.github.aleperaltabazas.dex.model.Game
+
+data class FormDTO(
+    val name: String,
+) {
+    constructor(form: Form) : this(name = form.name)
+}
 
 data class DexEntryDTO(
     val name: String,
     val number: Int,
+    val forms: List<FormDTO>
 )
 
 data class GameDTO(

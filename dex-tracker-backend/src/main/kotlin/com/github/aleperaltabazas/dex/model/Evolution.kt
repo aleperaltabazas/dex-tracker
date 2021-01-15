@@ -2,7 +2,6 @@ package com.github.aleperaltabazas.dex.model
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.github.aleperaltabazas.dex.db.dao.EvolutionDAO
 
 data class Evolution(
     val name: String,
