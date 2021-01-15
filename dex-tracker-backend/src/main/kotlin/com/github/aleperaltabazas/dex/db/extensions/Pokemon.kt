@@ -5,30 +5,7 @@ import com.github.aleperaltabazas.dex.db.schema.EvolutionsTable
 import com.github.aleperaltabazas.dex.db.schema.FormsTable
 import com.github.aleperaltabazas.dex.db.schema.PokemonTable
 import com.github.aleperaltabazas.dex.model.Pokemon
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.statements.InsertStatement
-
-fun PokemonTable.insert(
-    pokemon: Pokemon
-): InsertStatement<Number> {
-    val insert = insert {
-        it[name] = pokemon.name
-        it[nationalDexNumber] = pokemon.nationalPokedexNumber
-        it[gen] = pokemon.gen
-        it[primaryAbility] = pokemon.primaryAbility
-        it[secondaryAbility] = pokemon.secondaryAbility
-        it[hiddenAbility] = pokemon.hiddenAbility
-    }
-
-    val id = insert[id]
-
-    pokemon.evolutions.forEach { e -> EvolutionsTable.insert(e, id.value) }
-    pokemon.forms.forEach { f -> FormsTable.insert(f, id.value) }
-
-    return insert
-}
 
 fun PokemonTable.selectWhere(where: Where) = this
     .leftJoin(EvolutionsTable)
