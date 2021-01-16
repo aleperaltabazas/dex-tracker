@@ -1,20 +1,19 @@
 package com.github.aleperaltabazas.dex.service
 
-import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
+import com.github.aleperaltabazas.dex.cache.pokedex.GamePokedexCache
 import com.github.aleperaltabazas.dex.db.schema.PokemonTable
 import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
 import com.github.aleperaltabazas.dex.dto.dex.FormDTO
 import com.github.aleperaltabazas.dex.dto.dex.GameDTO
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.NotFoundException
-import com.github.aleperaltabazas.dex.model.Game
 import com.github.aleperaltabazas.dex.model.GamePokedex
 import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.storage.PokemonStorage
 import org.jetbrains.exposed.sql.and
 
 class PokemonService(
-    private val regionalPokedexCache: RegionalPokedexCache,
+    private val gamePokedexCache: GamePokedexCache,
     private val pokemonStorage: PokemonStorage,
 ) {
     fun gameNationalPokedex(gameKey: String): GamePokedexDTO {
@@ -30,7 +29,7 @@ class PokemonService(
 
         return GamePokedexDTO(
             pokemon = pokemon.toList(),
-            type = PokedexType.NATIONAL.name,
+            type = PokedexType.NATIONAL,
             region = pokedex.game.region,
             game = GameDTO(pokedex.game)
         )
@@ -52,17 +51,15 @@ class PokemonService(
 
         return GamePokedexDTO(
             pokemon = pokemon.toList(),
-            type = PokedexType.REGIONAL.name,
+            type = PokedexType.REGIONAL,
             region = pokedex.game.region,
             game = GameDTO(pokedex.game)
         )
     }
 
-    private fun gameFromKey(gameKey: String): GamePokedex {
-        return (regionalPokedexCache.get()
-            .toList()
-            .find { (g, _) -> g == gameKey }
-            ?.second
-            ?: throw NotFoundException("No game found for key $gameKey"))
-    }
+    private fun gameFromKey(gameKey: String): GamePokedex = gamePokedexCache.get()
+        .toList()
+        .find { (g, _) -> g == gameKey }
+        ?.second
+        ?: throw NotFoundException("No game found for key $gameKey")
 }

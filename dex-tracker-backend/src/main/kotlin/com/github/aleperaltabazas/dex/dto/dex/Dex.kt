@@ -2,6 +2,7 @@ package com.github.aleperaltabazas.dex.dto.dex
 
 import com.github.aleperaltabazas.dex.model.Form
 import com.github.aleperaltabazas.dex.model.Game
+import com.github.aleperaltabazas.dex.model.PokedexType
 
 data class FormDTO(
     val name: String,
@@ -30,6 +31,6 @@ data class GameDTO(
 data class GamePokedexDTO(
     val pokemon: List<DexEntryDTO>,
     val region: String,
-    val type: String,
+    val type: PokedexType,
     val game: GameDTO,
 )

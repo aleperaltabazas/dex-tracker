@@ -6,10 +6,10 @@ import com.github.aleperaltabazas.dex.db.schema.PokemonTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class PokemonStorage(
+open class PokemonStorage(
     private val db: Database,
 ) {
-    fun findAll(where: Where) = transaction(db) {
+    open fun findAll(where: Where) = transaction(db) {
         PokemonTable.selectWhere(where)
     }
 }

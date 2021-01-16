@@ -14,7 +14,7 @@ import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
 import java.util.concurrent.TimeUnit
 
-class RegionalPokedexCache(
+open class GamePokedexCache(
     private val games: List<Game>,
     private val pokeapiConnector: RestConnector,
     fileSystemHelper: FileSystemHelper,

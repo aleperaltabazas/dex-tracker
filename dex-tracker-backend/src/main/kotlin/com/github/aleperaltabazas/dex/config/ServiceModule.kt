@@ -1,6 +1,6 @@
 package com.github.aleperaltabazas.dex.config
 
-import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
+import com.github.aleperaltabazas.dex.cache.pokedex.GamePokedexCache
 import com.github.aleperaltabazas.dex.service.PokemonService
 import com.github.aleperaltabazas.dex.storage.PokemonStorage
 import com.google.inject.AbstractModule
@@ -13,10 +13,10 @@ class ServiceModule : AbstractModule() {
     @Singleton
     @Named("pokemonService")
     fun pokemonService(
-        @Named("regionalPokedexCache") regionalPokedexCache: RegionalPokedexCache,
+        @Named("regionalPokedexCache") gamePokedexCache: GamePokedexCache,
         @Named("pokemonStorage") pokemonStorage: PokemonStorage
     ) = PokemonService(
-        regionalPokedexCache = regionalPokedexCache,
+        gamePokedexCache = gamePokedexCache,
         pokemonStorage = pokemonStorage
     )
 }
