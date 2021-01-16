@@ -48,6 +48,7 @@ class PokemonService(
                     forms = it.forms.map { f -> FormDTO(f) }
                 )
             }
+            .toList()
 
         return GamePokedexDTO(
             pokemon = pokemon.toList(),

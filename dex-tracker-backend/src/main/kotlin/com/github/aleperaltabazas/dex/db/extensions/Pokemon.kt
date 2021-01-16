@@ -24,6 +24,7 @@ fun PokemonTable.selectWhere(where: Where) = this
             evolutions = emptyList(),
         )
     }
+    .asSequence()
     .map { (pokemon, formsAndEvos) ->
         pokemon.copy(
             evolutions = formsAndEvos.filter { row -> row.getOrNull(EvolutionsTable.id) != null }
