@@ -3,8 +3,8 @@ package com.github.aleperaltabazas.dex.db.schema
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 object PokemonTable : LongIdTable("pokemon") {
-    val name = varchar("name", length = 50).uniqueIndex()
-    val nationalDexNumber = integer("national_dex_number").uniqueIndex()
+    val name = varchar("name", length = 50)
+    val nationalDexNumber = integer("national_dex_number")
     val primaryAbility = varchar("primary_ability", length = 50)
     val secondaryAbility = varchar("secondary_ability", length = 50).nullable()
     val hiddenAbility = varchar("hidden_ability", length = 50).nullable()
