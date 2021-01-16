@@ -18,8 +18,8 @@ class PokemonService(
     private val pokemonStorage: PokemonStorage,
 ) {
     fun gameNationalPokedex(gameKey: String): GamePokedexDTO {
-        val (game, _) = gameFromKey(gameKey)
-        val pokemon = pokemonStorage.findAll { PokemonTable.gen eq game.gen }
+        val pokedex = gameFromKey(gameKey)
+        val pokemon = pokemonStorage.findAll { PokemonTable.gen eq pokedex.game.gen }
             .map {
                 DexEntryDTO(
                     name = it.name,
@@ -31,16 +31,16 @@ class PokemonService(
         return GamePokedexDTO(
             pokemon = pokemon.toList(),
             type = PokedexType.NATIONAL.name,
-            region = game.region,
-            game = GameDTO(game)
+            region = pokedex.game.region,
+            game = GameDTO(pokedex.game)
         )
     }
 
     fun gameRegionalPokedex(gameKey: String): GamePokedexDTO {
-        val (game, pokedex) = gameFromKey(gameKey)
+        val pokedex = gameFromKey(gameKey)
 
         val pokemon = pokemonStorage
-            .findAll { (PokemonTable.gen eq game.gen) and (PokemonTable.name inList pokedex.pokemon) }
+            .findAll { (PokemonTable.gen eq pokedex.game.gen) and (PokemonTable.name inList pokedex.pokemon) }
             .map {
                 DexEntryDTO(
                     number = pokedex.pokemon.indexOf(it.name),
@@ -53,15 +53,16 @@ class PokemonService(
         return GamePokedexDTO(
             pokemon = pokemon.toList(),
             type = PokedexType.REGIONAL.name,
-            region = game.region,
-            game = GameDTO(game)
+            region = pokedex.game.region,
+            game = GameDTO(pokedex.game)
         )
     }
 
-    private fun gameFromKey(gameKey: String): Pair<Game, GamePokedex> {
+    private fun gameFromKey(gameKey: String): GamePokedex {
         return (regionalPokedexCache.get()
             .toList()
-            .find { (g, _) -> g.title == gameKey }
+            .find { (g, _) -> g == gameKey }
+            ?.second
             ?: throw NotFoundException("No game found for key $gameKey"))
     }
 }

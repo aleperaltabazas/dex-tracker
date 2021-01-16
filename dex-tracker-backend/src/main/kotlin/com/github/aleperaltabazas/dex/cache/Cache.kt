@@ -19,10 +19,10 @@ abstract class Cache<T>(
     private val saveToDisk: Boolean,
     private val fileSystemHelper: FileSystemHelper,
     private val objectMapper: ObjectMapper,
+    private val ref: TypeReference<T>,
     val name: String,
 ) {
     private val snapshotFilePath = "${fileSystemHelper.getHomeDirectory()}/dex-cache/$name.json"
-    private val ref = object : TypeReference<T>() {}
     private var t: T? = null
         @Synchronized get
         @Synchronized set
@@ -32,19 +32,20 @@ abstract class Cache<T>(
     open fun start() {
         if (fileSystemHelper.doesFileExist(snapshotFilePath)) {
             val json = fileSystemHelper.readFile(snapshotFilePath)
-            this.t = objectMapper.convertValue(json, ref)
+            this.t = objectMapper.readValue(json, ref)
         } else {
             fileSystemHelper.createDirectoryIfItDoesNotExist("${fileSystemHelper.getHomeDirectory()}/dex-cache")
             refresh()
         }
 
         GlobalScope.launch {
-            refresh()
             delay(refreshRate.unit.toSeconds(refreshRate.value.toLong()))
+            refresh()
         }
     }
 
     open fun stop() {
+        LOGGER.info("Stopping cache $name")
         if (saveToDisk) {
             save(body = objectMapper.writeValueAsString(t))
         }
@@ -53,6 +54,7 @@ abstract class Cache<T>(
     protected abstract fun doRefresh(): T?
 
     private fun refresh() {
+        LOGGER.debug("Refreshing $name")
         val newT = doRefresh()
 
         if (newT == null) {
@@ -61,6 +63,7 @@ abstract class Cache<T>(
             this.t = newT
 
             t.takeIf { saveToDisk }?.let { save(objectMapper.writeValueAsString(it)) }
+            LOGGER.debug("Finished refreshing $name")
         }
     }
 

@@ -19,7 +19,7 @@ class RegionalPokedexCache(
     private val pokeapiConnector: RestConnector,
     fileSystemHelper: FileSystemHelper,
     objectMapper: ObjectMapper,
-) : Cache<Map<Game, GamePokedex>>(
+) : Cache<Map<String, GamePokedex>>(
     name = "regional-dex-cache",
     saveToDisk = true,
     fileSystemHelper = fileSystemHelper,
@@ -27,7 +27,8 @@ class RegionalPokedexCache(
     refreshRate = RefreshRate(
         value = 30,
         unit = TimeUnit.DAYS,
-    )
+    ),
+    ref = object : TypeReference<Map<String, GamePokedex>>() {}
 ) {
     private fun build(dex: PokedexDTO, game: Game): GamePokedex = GamePokedex(
         pokemon = dex.pokemonEntries
@@ -37,11 +38,11 @@ class RegionalPokedexCache(
         game = game,
     )
 
-    override fun doRefresh(): Map<Game, GamePokedex>? = games.map { g ->
+    override fun doRefresh(): Map<String, GamePokedex>? = games.map { g ->
         pokeapiConnector.get("/api/v2/pokedex/${g.pokeapiId}")
             .map { it.deserializeAs(POKEAPI_DEX_REF) }
             .map { this.build(dex = it, game = g) }
-            .map { g to it }
+            .map { g.title to it }
     }
         .sequence()
         .map { it.toMap() }
