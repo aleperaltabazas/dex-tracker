@@ -90,7 +90,6 @@ class DexTracker {
         private fun createSchema(injector: Injector) {
             val db = injector.getInstance(Key.get(Database::class.java, Names.named("db")))
             transaction(db) {
-                addLogger(StdOutSqlLogger) // debugging purposes
                 SchemaUtils.create(*allTables.toTypedArray())
             }
         }

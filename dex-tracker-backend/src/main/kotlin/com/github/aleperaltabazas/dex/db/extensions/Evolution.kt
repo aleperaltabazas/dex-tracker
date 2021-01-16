@@ -11,7 +11,7 @@ import com.github.aleperaltabazas.dex.db.schema.EvolutionsTable
 import com.github.aleperaltabazas.dex.model.Evolution
 import org.jetbrains.exposed.sql.ResultRow
 
-private val objectMapperSnakeCase: ObjectMapper = jacksonObjectMapper()
+val evolutionMethodObjectMapper: ObjectMapper = jacksonObjectMapper()
     .registerModule(KotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .setSerializationInclusion(JsonInclude.Include.NON_NULL)
@@ -19,5 +19,5 @@ private val objectMapperSnakeCase: ObjectMapper = jacksonObjectMapper()
 
 fun ResultRow.toEvolution(): Evolution = Evolution(
     name = this[EvolutionsTable.name],
-    method = objectMapperSnakeCase.readValue(this[EvolutionsTable.method])
+    method = evolutionMethodObjectMapper.readValue(this[EvolutionsTable.method])
 )

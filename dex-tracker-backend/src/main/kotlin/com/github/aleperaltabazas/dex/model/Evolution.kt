@@ -21,24 +21,24 @@ data class Evolution(
 sealed class EvolutionMethod(val type: String)
 
 data class LevelUp(
-    val level: Int?,
-    val friendship: Int?,
-    val move: String?,
-    val location: String?,
-    val time: String?,
-    val item: String?,
-    val gender: String?,
-    val upsideDown: Boolean?,
-    val region: String?,
+    val level: Int? = null,
+    val friendship: Int? = null,
+    val move: String? = null,
+    val location: String? = null,
+    val time: String? = null,
+    val item: String? = null,
+    val gender: String? = null,
+    val upsideDown: Boolean? = null,
+    val region: String? = null,
 ) : EvolutionMethod(type = "LEVEL_UP")
 
 data class UseItem(
     val item: String,
-    val gender: String?,
-    val region: String?,
+    val gender: String? = null,
+    val region: String? = null,
 ) : EvolutionMethod(type = "USE_ITEM")
 
 data class Trade(
-    val item: String?,
-    val pokemon: String?,
+    val item: String? = null,
+    val pokemon: String? = null,
 ) : EvolutionMethod(type = "TRADE")
