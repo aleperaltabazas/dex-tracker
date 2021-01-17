@@ -1,14 +1,14 @@
 package com.github.aleperaltabazas.dex.config
 
-import com.github.aleperaltabazas.dex.utils.FileSystemHelper
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.google.inject.name.Named
+import org.jetbrains.exposed.sql.Database
 
-open class UtilsModule : AbstractModule() {
+open class DatabaseMockModule : AbstractModule() {
     @Provides
     @Singleton
-    @Named("fileSystemHelper")
-    open fun fileSystemHelper() = FileSystemHelper()
+    @Named("db")
+    open fun db() = Database.connect("jdbc:h2:mem:regular", "org.h2.Driver")
 }

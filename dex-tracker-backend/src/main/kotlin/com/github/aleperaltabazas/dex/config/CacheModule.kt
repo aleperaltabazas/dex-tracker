@@ -14,8 +14,8 @@ import com.typesafe.config.Config
 open class CacheModule : AbstractModule() {
     @Provides
     @Singleton
-    @Named("regionalPokedexCache")
-    fun regionalPokedexCache(
+    @Named("gamePokedexCache")
+    fun gamePokedexCache(
         @Named("pokeapiConnector") pokeapiConnector: RestConnector,
         @Named("fileSystemHelper") fileSystemHelper: FileSystemHelper,
         @Named("objectMapperSnakeCase") objectMapper: ObjectMapper,

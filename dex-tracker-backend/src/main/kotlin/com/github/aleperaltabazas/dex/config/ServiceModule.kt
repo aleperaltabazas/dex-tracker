@@ -13,7 +13,7 @@ class ServiceModule : AbstractModule() {
     @Singleton
     @Named("pokemonService")
     fun pokemonService(
-        @Named("regionalPokedexCache") gamePokedexCache: GamePokedexCache,
+        @Named("gamePokedexCache") gamePokedexCache: GamePokedexCache,
         @Named("pokemonStorage") pokemonStorage: PokemonStorage
     ) = PokemonService(
         gamePokedexCache = gamePokedexCache,

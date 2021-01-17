@@ -27,7 +27,7 @@ abstract class Cache<T>(
         @Synchronized get
         @Synchronized set
 
-    open fun get(): T = t ?: throw IllegalStateException("$name has null value for its value}")
+    open fun get(): T = t ?: throw IllegalStateException("$name has null value for its value")
 
     open fun start() {
         if (fileSystemHelper.doesFileExist(snapshotFilePath)) {

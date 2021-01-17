@@ -12,11 +12,11 @@ import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.storage.PokemonStorage
 import org.jetbrains.exposed.sql.and
 
-class PokemonService(
+open class PokemonService(
     private val gamePokedexCache: GamePokedexCache,
     private val pokemonStorage: PokemonStorage,
 ) {
-    fun gameNationalPokedex(gameKey: String): GamePokedexDTO {
+    open fun gameNationalPokedex(gameKey: String): GamePokedexDTO {
         val pokedex = gameFromKey(gameKey)
         val pokemon = pokemonStorage.findAll { PokemonTable.gen eq pokedex.game.gen }
             .map {
@@ -35,7 +35,7 @@ class PokemonService(
         )
     }
 
-    fun gameRegionalPokedex(gameKey: String): GamePokedexDTO {
+    open fun gameRegionalPokedex(gameKey: String): GamePokedexDTO {
         val pokedex = gameFromKey(gameKey)
 
         val pokemon = pokemonStorage

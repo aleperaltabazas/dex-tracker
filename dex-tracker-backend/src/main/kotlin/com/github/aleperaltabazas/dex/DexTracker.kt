@@ -70,10 +70,10 @@ class DexTracker {
                 ConnectionModule(),
                 ControllerModule(),
                 DatabaseModule(),
+                FileSystemModule(),
                 JsonModule(),
                 ServiceModule(),
                 StorageModule(),
-                UtilsModule(),
             )
 
             createSchema(injector)
