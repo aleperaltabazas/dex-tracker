@@ -2,7 +2,6 @@ package com.github.aleperaltabazas.dex.extension
 
 import arrow.core.Either
 import arrow.core.extensions.fx
-import arrow.core.extensions.sequence.foldable.isEmpty
 import arrow.core.left
 import arrow.core.right
 import kotlinx.coroutines.runBlocking

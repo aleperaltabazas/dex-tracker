@@ -1,11 +1,12 @@
 package com.github.aleperaltabazas.dex.db.schema
 
-import com.github.aleperaltabazas.dex.db.*
+import com.github.aleperaltabazas.dex.db.allTables
 import com.github.aleperaltabazas.dex.db.extensions.evolutionMethodObjectMapper
 import com.github.aleperaltabazas.dex.db.extensions.insert
 import com.github.aleperaltabazas.dex.db.extensions.selectWhere
 import com.github.aleperaltabazas.dex.db.fixture.*
-import com.github.aleperaltabazas.dex.model.*
+import com.github.aleperaltabazas.dex.model.LevelUp
+import com.github.aleperaltabazas.dex.model.UseItem
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.WordSpec
 import org.jetbrains.exposed.sql.*
@@ -99,7 +100,7 @@ class PokemonSchemaTest : WordSpec() {
                         row[gen] = 1
                     } get PokemonTable.id
 
-                    EvolutionsTable.insert {  row ->
+                    EvolutionsTable.insert { row ->
                         row[name] = "vaporeon"
                         row[method] = evolutionMethodObjectMapper.writeValueAsString(UseItem(item = "water-stone"))
                         row[pokemonId] = id.value
@@ -107,7 +108,7 @@ class PokemonSchemaTest : WordSpec() {
 
                     EvolutionsTable.insert { row ->
                         row[name] = "jolteon"
-                        row[method] = evolutionMethodObjectMapper.writeValueAsString(UseItem( item = "thunder-stone"))
+                        row[method] = evolutionMethodObjectMapper.writeValueAsString(UseItem(item = "thunder-stone"))
                         row[pokemonId] = id.value
                     }
 

@@ -1,7 +1,5 @@
 package com.github.aleperaltabazas.dex.exception
 
-import java.lang.RuntimeException
-
 open class ApiException(val status: Int, override val message: String) : RuntimeException(message)
 
 class BadRequestException(message: String) : ApiException(400, message)
