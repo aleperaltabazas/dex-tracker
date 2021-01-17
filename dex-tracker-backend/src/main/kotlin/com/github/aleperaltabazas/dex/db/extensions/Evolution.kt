@@ -10,6 +10,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.aleperaltabazas.dex.db.schema.EvolutionsTable
 import com.github.aleperaltabazas.dex.model.Evolution
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.batchInsert
 
 val evolutionMethodObjectMapper: ObjectMapper = jacksonObjectMapper()
     .registerModule(KotlinModule())
@@ -21,3 +22,9 @@ fun ResultRow.toEvolution(): Evolution = Evolution(
     name = this[EvolutionsTable.name],
     method = evolutionMethodObjectMapper.readValue(this[EvolutionsTable.method])
 )
+
+fun EvolutionsTable.insert(evolutions: List<Evolution>, pokemonId: Long) = batchInsert(evolutions) { e ->
+    this[name] = e.name
+    this[method] = evolutionMethodObjectMapper.writeValueAsString(e.method)
+    this[EvolutionsTable.pokemonId] = pokemonId
+}

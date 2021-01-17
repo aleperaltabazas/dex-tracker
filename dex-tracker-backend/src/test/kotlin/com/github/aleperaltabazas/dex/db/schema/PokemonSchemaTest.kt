@@ -1,8 +1,10 @@
 package com.github.aleperaltabazas.dex.db.schema
 
-import com.github.aleperaltabazas.dex.db.allTables
+import com.github.aleperaltabazas.dex.db.*
 import com.github.aleperaltabazas.dex.db.extensions.evolutionMethodObjectMapper
+import com.github.aleperaltabazas.dex.db.extensions.insert
 import com.github.aleperaltabazas.dex.db.extensions.selectWhere
+import com.github.aleperaltabazas.dex.db.fixture.*
 import com.github.aleperaltabazas.dex.model.*
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.WordSpec
@@ -12,6 +14,26 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class PokemonSchemaTest : WordSpec() {
     init {
         val db = Database.connect("jdbc:h2:mem:regular", "org.h2.Driver")
+
+        "insert" should {
+            "insert its evolutions and forms as well" {
+                transaction(db) {
+                    addLogger(StdOutSqlLogger)
+                    SchemaUtils.create(*allTables.toTypedArray())
+
+                    PokemonTable.selectAll().count() shouldBe 0L
+                    EvolutionsTable.selectAll().count() shouldBe 0L
+                    FormsTable.selectAll().count() shouldBe 0L
+
+                    val id = PokemonTable.insert(pichu)[PokemonTable.id].value
+
+                    PokemonTable.select { PokemonTable.id eq id }.count() shouldBe 1L
+                    EvolutionsTable.select { EvolutionsTable.pokemonId eq id }.count() shouldBe 1L
+                    FormsTable.select { FormsTable.pokemonId eq id }.count() shouldBe 1L
+                }
+
+            }
+        }
 
         "selectWhere" should {
             "on a pokemon with no evolutions nor forms" {
@@ -27,18 +49,7 @@ class PokemonSchemaTest : WordSpec() {
                         row[gen] = 1
                     }
 
-                    val expected = listOf(
-                        Pokemon(
-                            name = "venusaur",
-                            nationalPokedexNumber = 3,
-                            primaryAbility = "overgrow",
-                            secondaryAbility = null,
-                            hiddenAbility = "chlorophyll",
-                            gen = 1,
-                            forms = emptyList(),
-                            evolutions = emptyList(),
-                        )
-                    )
+                    val expected = listOf(venusaur)
 
                     val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 3 }
 
@@ -66,25 +77,7 @@ class PokemonSchemaTest : WordSpec() {
                         row[pokemonId] = id.value
                     }
 
-                    val expected = listOf(
-                        Pokemon(
-                            name = "ivysaur",
-                            nationalPokedexNumber = 2,
-                            primaryAbility = "overgrow",
-                            secondaryAbility = null,
-                            hiddenAbility = "chlorophyll",
-                            gen = 1,
-                            forms = emptyList(),
-                            evolutions = listOf(
-                                Evolution(
-                                    name = "venusaur",
-                                    method = LevelUp(
-                                        level = 32
-                                    )
-                                )
-                            ),
-                        )
-                    )
+                    val expected = listOf(ivysaur)
 
                     val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 2 }
 
@@ -106,12 +99,6 @@ class PokemonSchemaTest : WordSpec() {
                         row[gen] = 1
                     } get PokemonTable.id
 
-                    EvolutionsTable.insert { row ->
-                        row[name] = "flareon"
-                        row[method] = evolutionMethodObjectMapper.writeValueAsString(UseItem(item = "fire-stone"))
-                        row[pokemonId] = id.value
-                    }
-
                     EvolutionsTable.insert {  row ->
                         row[name] = "vaporeon"
                         row[method] = evolutionMethodObjectMapper.writeValueAsString(UseItem(item = "water-stone"))
@@ -124,31 +111,13 @@ class PokemonSchemaTest : WordSpec() {
                         row[pokemonId] = id.value
                     }
 
-                    val expected = listOf(
-                        Pokemon(
-                            name = "eevee",
-                            nationalPokedexNumber = 133,
-                            primaryAbility = "run-away",
-                            secondaryAbility = "adaptability",
-                            hiddenAbility = "anticipation",
-                            gen = 1,
-                            forms = emptyList(),
-                            evolutions = listOf(
-                                Evolution(
-                                    name = "flareon",
-                                    method = UseItem("fire-stone")
-                                ),
-                                Evolution(
-                                    name = "vaporeon",
-                                    method = UseItem("water-stone"),
-                                ),
-                                Evolution(
-                                    name = "jolteon",
-                                    method = UseItem("thunder-stone")
-                                )
-                            ),
-                        )
-                    )
+                    EvolutionsTable.insert { row ->
+                        row[name] = "flareon"
+                        row[method] = evolutionMethodObjectMapper.writeValueAsString(UseItem(item = "fire-stone"))
+                        row[pokemonId] = id.value
+                    }
+
+                    val expected = listOf(eevee)
 
                     val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 133 }
 
@@ -175,22 +144,7 @@ class PokemonSchemaTest : WordSpec() {
                         row[pokemonId] = id.value
                     }
 
-                    val expected = listOf(
-                        Pokemon(
-                            name = "giratina",
-                            nationalPokedexNumber = 487,
-                            primaryAbility = "pressure",
-                            secondaryAbility = null,
-                            hiddenAbility = null,
-                            gen = 4,
-                            forms = listOf(
-                                Form(
-                                    name = "giratina-origin"
-                                ),
-                            ),
-                            evolutions = emptyList(),
-                        )
-                    )
+                    val expected = listOf(giratina)
 
                     val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 487 }
 
@@ -222,25 +176,7 @@ class PokemonSchemaTest : WordSpec() {
                         row[pokemonId] = id.value
                     }
 
-                    val expected = listOf(
-                        Pokemon(
-                            name = "unown",
-                            nationalPokedexNumber = 201,
-                            primaryAbility = "levitate",
-                            secondaryAbility = null,
-                            hiddenAbility = null,
-                            gen = 2,
-                            forms = listOf(
-                                Form(
-                                    name = "unown-a"
-                                ),
-                                Form(
-                                    name = "unown-b"
-                                )
-                            ),
-                            evolutions = emptyList(),
-                        )
-                    )
+                    val expected = listOf(unown)
 
                     val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 201 }
 
@@ -273,27 +209,7 @@ class PokemonSchemaTest : WordSpec() {
                         row[pokemonId] = id.value
                     }
 
-                    val expected = listOf(
-                        Pokemon(
-                            name = "pichu",
-                            nationalPokedexNumber = 172,
-                            primaryAbility = "static",
-                            secondaryAbility = null,
-                            hiddenAbility = "lightning-rod",
-                            gen = 4,
-                            forms = listOf(
-                                Form(
-                                    name = "spiky-eared-pichu"
-                                ),
-                            ),
-                            evolutions = listOf(
-                                Evolution(
-                                    name = "pikachu",
-                                    method = UseItem(item = "thunder-stone")
-                                )
-                            ),
-                        )
-                    )
+                    val expected = listOf(pichu)
 
                     val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 172 }
 
