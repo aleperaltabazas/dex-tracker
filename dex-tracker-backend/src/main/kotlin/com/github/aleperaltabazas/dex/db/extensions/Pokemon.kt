@@ -23,10 +23,12 @@ fun PokemonTable.insert(pokemon: Pokemon) = insert { row ->
 
 fun PokemonTable.selectWhere(
     where: Where,
+    limit: Int? = null
 ) = this
     .leftJoin(EvolutionsTable)
     .leftJoin(FormsTable)
     .select(where)
+    .let { limit?.let { l -> it.limit(l) } ?: it }
     .orderBy(nationalDexNumber)
     .groupBy { row ->
         Pokemon(

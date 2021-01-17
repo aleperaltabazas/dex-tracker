@@ -14,16 +14,18 @@ import React, { useState } from "react";
 import { hot } from "react-hot-loader";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import classNames from "classnames";
-import { Dex, Pokemon } from "../../types";
 import { Search } from "@material-ui/icons";
 import "./styles.scss";
 import Column from "../Column";
 import Row from "../Row";
 import store from "../../store";
 import { addToSyncQueue } from "../../actions/syncQueue";
+import { UserDex } from "../../types/user";
+import { DexEntry, GamePokedex } from "../../types/pokedex";
 
 type DexProps = {
-  dex: Dex;
+  dex: UserDex;
+  gamePokedex: GamePokedex;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -78,68 +80,21 @@ const Dex = (props: DexProps) => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSearch(event.currentTarget.value);
 
-  const shouldRender = (p: Pokemon) =>
+  const shouldRender = (p: DexEntry) =>
     search == undefined ||
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.number.toString().includes(search);
 
-  const [pokemons, setPokemons] = useState(props.dex.pokemons);
+  const [pokemons, setPokemons] = useState(props.dex.caughtPokemon);
 
-  const updateCaught = (pokemon: Pokemon) => {
-    setPokemons(
-      pokemons.map((p) =>
-        p.number == pokemon.number ? { ...p, captured: !p.captured } : p
-      )
-    );
-    store.dispatch(addToSyncQueue(pokemon.number, !pokemon.captured));
-  };
-
-  const PokemonRow = (firstRow: boolean) => (pokemon: Pokemon, idx: number) => (
-    <Row key={idx} className={firstRow ? "" : classes.rowLine}>
-      <Grid
-        item
-        xs={3}
-        md={1}
-        className={classNames("center-h", classes.listItem)}
-        key={`${idx}-sprite`}
-      >
-        <span className={`pokesprite pokemon ${pokemon.name}`} />
-      </Grid>
-      <Hidden smDown>
-        <Grid
-          item
-          md={1}
-          className={classNames("center", classes.listItem)}
-          key={`${idx}-number`}
-        >
-          {pokemon.number}
-        </Grid>
-      </Hidden>
-      <Grid
-        item
-        xs={6}
-        md={8}
-        className={classNames("center-v", "capitalize", classes.listItem)}
-        key={`${idx}-poke`}
-      >
-        {pokemon.name}
-      </Grid>
-      <Column
-        item
-        xs={3}
-        md={1}
-        className={classNames("center", classes.listItem)}
-        key={`${idx}-caught`}
-        onClick={() => updateCaught(pokemon)}
-      >
-        {pokemon.captured ? (
-          <span className="pokesprite ball poke" />
-        ) : (
-          <span className="pokesprite ball poke gray-scale" />
-        )}
-      </Column>
-    </Row>
-  );
+  // const updateCaught = (pokemon: Pokemon) => {
+  //   setPokemons(
+  //     pokemons.map((p) =>
+  //       p.number == pokemon.number ? { ...p, captured: !p.captured } : p
+  //     )
+  //   );
+  //   store.dispatch(addToSyncQueue(pokemon.number, !pokemon.captured));
+  // };
 
   return (
     <div className={classes.root}>
@@ -232,8 +187,9 @@ const Dex = (props: DexProps) => {
           </Row>
           <Divider />
           <Row className={classes.dexContainer}>
-            {shouldRender(pokemons[0]) && PokemonRow(true)(pokemons[0], 0)}
-            {pokemons.slice(1).filter(shouldRender).map(PokemonRow(false))}
+            {shouldRender(pokemons[0])}
+            {/* {shouldRender(pokemons[0]) && PokemonRow(true)(pokemons[0], 0)}
+            {pokemons.slice(1).filter(shouldRender).map(PokemonRow(false))} */}
           </Row>
         </AccordionDetails>
       </Accordion>

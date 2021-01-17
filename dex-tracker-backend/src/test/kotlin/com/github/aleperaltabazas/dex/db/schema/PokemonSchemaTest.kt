@@ -52,7 +52,7 @@ class PokemonSchemaTest : WordSpec() {
 
                     val expected = listOf(venusaur)
 
-                    val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 3 }
+                    val actual = PokemonTable.selectWhere({ PokemonTable.nationalDexNumber eq 3 })
 
                     actual.toList().size shouldBe 1
                     actual.toList() shouldBe expected
@@ -80,7 +80,7 @@ class PokemonSchemaTest : WordSpec() {
 
                     val expected = listOf(ivysaur)
 
-                    val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 2 }
+                    val actual = PokemonTable.selectWhere({ PokemonTable.nationalDexNumber eq 2 })
 
                     actual.toList().size shouldBe 1
                     actual.toList() shouldBe expected
@@ -120,7 +120,7 @@ class PokemonSchemaTest : WordSpec() {
 
                     val expected = listOf(eevee)
 
-                    val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 133 }
+                    val actual = PokemonTable.selectWhere({ PokemonTable.nationalDexNumber eq 133 })
 
                     actual.toList().size shouldBe 1
                     actual.toList() shouldBe expected
@@ -147,7 +147,7 @@ class PokemonSchemaTest : WordSpec() {
 
                     val expected = listOf(giratina)
 
-                    val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 487 }
+                    val actual = PokemonTable.selectWhere({ PokemonTable.nationalDexNumber eq 487 })
 
                     actual.toList().size shouldBe 1
                     actual.toList() shouldBe expected
@@ -179,7 +179,7 @@ class PokemonSchemaTest : WordSpec() {
 
                     val expected = listOf(unown)
 
-                    val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 201 }
+                    val actual = PokemonTable.selectWhere({ PokemonTable.nationalDexNumber eq 201 })
 
                     actual.toList().size shouldBe 1
                     actual.toList() shouldBe expected
@@ -212,7 +212,7 @@ class PokemonSchemaTest : WordSpec() {
 
                     val expected = listOf(pichu)
 
-                    val actual = PokemonTable.selectWhere { PokemonTable.nationalDexNumber eq 172 }
+                    val actual = PokemonTable.selectWhere({ PokemonTable.nationalDexNumber eq 172 })
 
                     actual.toList().size shouldBe 1
                     actual.toList() shouldBe expected

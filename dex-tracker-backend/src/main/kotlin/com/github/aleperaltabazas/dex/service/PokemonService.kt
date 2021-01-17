@@ -1,5 +1,6 @@
 package com.github.aleperaltabazas.dex.service
 
+import arrow.core.Either
 import com.github.aleperaltabazas.dex.cache.pokedex.GamePokedexCache
 import com.github.aleperaltabazas.dex.db.schema.PokemonTable
 import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
@@ -16,6 +17,19 @@ open class PokemonService(
     private val gamePokedexCache: GamePokedexCache,
     private val pokemonStorage: PokemonStorage,
 ) {
+    open fun pokemon(gameKey: String, numberOrName: Either<Int, String>) = gameFromKey(gameKey)
+        .let {
+            val gen = it.game.gen
+            numberOrName.fold(
+                ifLeft = { n ->
+                    pokemonStorage.findOne { (PokemonTable.gen eq gen) and (PokemonTable.nationalDexNumber eq n) }
+                },
+                ifRight = { s ->
+                    pokemonStorage.findOne { (PokemonTable.gen eq gen) and (PokemonTable.name eq s) }
+                },
+            )
+        } ?: throw NotFoundException("No pokemon found with ${numberOrName.fold({ "number $it" }, { "name $it" })}")
+
     open fun gameNationalPokedex(gameKey: String): GamePokedexDTO {
         val pokedex = gameFromKey(gameKey)
         val pokemon = pokemonStorage.findAll { PokemonTable.gen eq pokedex.game.gen }
