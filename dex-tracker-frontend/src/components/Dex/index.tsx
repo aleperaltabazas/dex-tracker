@@ -20,8 +20,9 @@ import Column from "../Column";
 import Row from "../Row";
 import store from "../../store";
 import { addToSyncQueue } from "../../actions/syncQueue";
-import { UserDex } from "../../types/user";
+import { Pokemon, UserDex } from "../../types/user";
 import { DexEntry, GamePokedex } from "../../types/pokedex";
+import PokemonRow from "./PokemonRow";
 
 type DexProps = {
   dex: UserDex;
@@ -80,21 +81,21 @@ const Dex = (props: DexProps) => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSearch(event.currentTarget.value);
 
-  const shouldRender = (p: DexEntry) =>
+  const shouldRender = (p: Pokemon) =>
     search == undefined ||
     p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.number.toString().includes(search);
+    p.dexNumber.toString().includes(search);
 
-  const [pokemons, setPokemons] = useState(props.dex.caughtPokemon);
+  const [pokemons, setPokemons] = useState(props.dex.pokemon);
 
-  // const updateCaught = (pokemon: Pokemon) => {
-  //   setPokemons(
-  //     pokemons.map((p) =>
-  //       p.number == pokemon.number ? { ...p, captured: !p.captured } : p
-  //     )
-  //   );
-  //   store.dispatch(addToSyncQueue(pokemon.number, !pokemon.captured));
-  // };
+  const updateCaught = (pokemon: Pokemon) => {
+    setPokemons(
+      pokemons.map((p) =>
+        p.dexNumber == pokemon.dexNumber ? { ...p, caught: !p.caught } : p
+      )
+    );
+    store.dispatch(addToSyncQueue(pokemon.dexNumber, !pokemon.caught));
+  };
 
   return (
     <div className={classes.root}>
@@ -108,9 +109,11 @@ const Dex = (props: DexProps) => {
         )}
       >
         <span
-          className={`pokemon pokesprite ${props.dex.game.boxArtPokemon} pt-2`}
+          className={`pokemon pokesprite ${props.gamePokedex.game.spritePokemon} pt-2`}
         />
-        <span style={{ paddingBottom: "3px" }}>{props.dex.game.title}</span>
+        <span style={{ paddingBottom: "3px" }}>
+          {props.gamePokedex.game.title}
+        </span>
       </div>
       <Accordion
         expanded={expanded}
@@ -140,7 +143,8 @@ const Dex = (props: DexProps) => {
             </Column>
             <Column xs={4} className="center">
               <Typography className={classes.secondaryHeading}>
-                {pokemons.filter((p) => p.captured).length}/{pokemons.length}
+                {props.dex.pokemon.filter((p) => p.caught).length}/
+                {pokemons.length}
               </Typography>
             </Column>
           </Row>
@@ -187,7 +191,25 @@ const Dex = (props: DexProps) => {
           </Row>
           <Divider />
           <Row className={classes.dexContainer}>
-            {shouldRender(pokemons[0])}
+            {shouldRender(pokemons[0]) && (
+              <PokemonRow
+                idx={0}
+                firstRow
+                pokemon={pokemons[0]}
+                updateCaught={updateCaught}
+              />
+            )}
+            {pokemons
+              .slice(1)
+              .filter(shouldRender)
+              .map((p, idx) => (
+                <PokemonRow
+                  idx={idx + 1}
+                  firstRow={false}
+                  pokemon={p}
+                  updateCaught={updateCaught}
+                />
+              ))}
             {/* {shouldRender(pokemons[0]) && PokemonRow(true)(pokemons[0], 0)}
             {pokemons.slice(1).filter(shouldRender).map(PokemonRow(false))} */}
           </Row>

@@ -1,4 +1,19 @@
+import { GameTitle } from "./pokedex";
+
 export type UserDex = {
-  gameTitle: string;
-  caughtPokemon: number[];
+  game: GameTitle;
+  type: "NATIONAL" | "REGIONAL";
+  region: string;
+  pokemon: Pokemon[];
+};
+
+export type Pokemon = {
+  name: string;
+  dexNumber: number;
+  caught: boolean;
+};
+
+export type User = {
+  username?: string;
+  pokedex: UserDex[];
 };
