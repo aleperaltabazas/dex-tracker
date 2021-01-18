@@ -3,11 +3,9 @@ import {
   AccordionDetails,
   AccordionSummary,
   Divider,
-  Grid,
   Hidden,
   Input,
   InputAdornment,
-  makeStyles,
   Typography,
 } from "@material-ui/core";
 import React, { useState } from "react";
@@ -43,15 +41,15 @@ const Dex = (props: DexProps) => {
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.dexNumber.toString().includes(search);
 
-  const [pokemons, setPokemons] = useState(props.dex.pokemon);
+  const [pokemon, setPokemons] = useState(props.dex.pokemon);
 
-  const updateCaught = (pokemon: Pokemon) => {
+  const updateCaught = (poke: Pokemon) => {
     setPokemons(
-      pokemons.map((p) =>
-        p.dexNumber == pokemon.dexNumber ? { ...p, caught: !p.caught } : p
+      pokemon.map((p) =>
+        p.dexNumber == poke.dexNumber ? { ...p, caught: !p.caught } : p
       )
     );
-    store.dispatch(addToSyncQueue(pokemon.dexNumber, !pokemon.caught));
+    store.dispatch(addToSyncQueue(poke.dexNumber, !poke.caught));
   };
 
   return (
@@ -78,7 +76,7 @@ const Dex = (props: DexProps) => {
       >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Row className={classNames("ml-2", "mr-2", expanded ? "mt-2" : "")}>
-            <Column xs={4}>
+            <Column xs={8}>
               <div>
                 <div
                   className={classNames(
@@ -87,21 +85,13 @@ const Dex = (props: DexProps) => {
                     "capitalize"
                   )}
                 >
-                  {props.dex.region}
+                  {props.dex.type.toLowerCase()}
                 </div>
               </div>
             </Column>
-            <Column xs={4}>
-              <Typography
-                className={classNames(classes.secondaryHeading, "capitalize")}
-              >
-                {props.dex.type}
-              </Typography>
-            </Column>
             <Column xs={4} className="center">
               <Typography className={classes.secondaryHeading}>
-                {props.dex.pokemon.filter((p) => p.caught).length}/
-                {pokemons.length}
+                {pokemon.filter((p) => p.caught).length}/{pokemon.length}
               </Typography>
             </Column>
           </Row>
@@ -130,7 +120,7 @@ const Dex = (props: DexProps) => {
                 value={search}
                 fullWidth
                 onChange={handleSearchChange}
-                placeholder="Luxray"
+                placeholder="Bulbasaur"
                 endAdornment={
                   <InputAdornment position="end">
                     <Search />
@@ -148,15 +138,15 @@ const Dex = (props: DexProps) => {
           </Row>
           <Divider />
           <Row className={classes.dexContainer}>
-            {shouldRender(pokemons[0]) && (
+            {shouldRender(pokemon[0]) && (
               <PokemonRow
                 idx={0}
                 firstRow
-                pokemon={pokemons[0]}
+                pokemon={pokemon[0]}
                 updateCaught={updateCaught}
               />
             )}
-            {pokemons
+            {pokemon
               .slice(1)
               .filter(shouldRender)
               .map((p, idx) => (
@@ -167,8 +157,6 @@ const Dex = (props: DexProps) => {
                   updateCaught={updateCaught}
                 />
               ))}
-            {/* {shouldRender(pokemons[0]) && PokemonRow(true)(pokemons[0], 0)}
-            {pokemons.slice(1).filter(shouldRender).map(PokemonRow(false))} */}
           </Row>
         </AccordionDetails>
       </Accordion>

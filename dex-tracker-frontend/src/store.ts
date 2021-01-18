@@ -9,6 +9,9 @@ const defaultRootState: RootState = {
     timeout: undefined,
     queue: [],
   },
+  pokedex: {
+    loaded: false,
+  },
 };
 
 const store = createStore(
