@@ -7,6 +7,7 @@ import com.github.aleperaltabazas.dex.db.schema.UsersTable
 import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.model.UserDex
+import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 
@@ -21,7 +22,15 @@ fun UsersTable.selectWhere(where: Where) = this
     .leftJoin(PokedexTable)
     .leftJoin(DexPokemonTable)
     .select(where)
-    .groupBy { row -> User(username = row[username], pokedex = emptyList()) }
+
+fun Query.toUsers() = this
+    .groupBy { row ->
+        User(
+            userId = row[UsersTable.id].value,
+            username = row[UsersTable.username],
+            pokedex = emptyList()
+        )
+    }
     .mapValues {
         it.value.groupBy { row ->
             UserDex(

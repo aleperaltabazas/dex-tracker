@@ -19,3 +19,8 @@ object DexPokemonTable : LongIdTable("user_dex_pokemon") {
     val caught = bool("caught")
     val pokedexId = long("pokedex_id").references(PokedexTable.id)
 }
+
+object SessionsTable : LongIdTable("sessions") {
+    val token = varchar("token", length = 64)
+    val userId = long("user_id").references(UsersTable.id)
+}

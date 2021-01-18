@@ -1,6 +1,7 @@
 package com.github.aleperaltabazas.dex.model
 
 data class User(
+    val userId: Long,
     val username: String? = null,
     val pokedex: List<UserDex>
 )
