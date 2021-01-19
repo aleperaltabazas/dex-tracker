@@ -11,3 +11,13 @@ export function login(token: string) {
 
   return axios.request<User>(config);
 }
+
+export function createUser() {
+  let config: AxiosRequestConfig = {
+    url: `${host}/api/v1/users`,
+    method: "POST",
+    withCredentials: true,
+  };
+
+  return axios.request(config);
+}

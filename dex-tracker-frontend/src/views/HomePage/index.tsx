@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { hot } from "react-hot-loader";
 import Dex from "../../components/Dex";
 import { RootState } from "../../reducers";
@@ -6,10 +6,9 @@ import { PokedexState } from "../../store/pokedex";
 import { SessionState } from "../../store/session";
 import Cookies from "js-cookie";
 import { connect } from "react-redux";
-import { createUser } from "../../functions/my-dex";
 import store from "../../store";
 import { updateSessionState } from "../../actions/session";
-import { login } from "../../functions/login";
+import { createUser, login } from "../../functions/login";
 import { fetchGamesPokedex } from "../../functions/poedex";
 
 type HomePageProps = {

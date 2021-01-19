@@ -5,6 +5,7 @@ import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
 import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
 import com.github.aleperaltabazas.dex.dto.dex.UserDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
+import com.github.aleperaltabazas.dex.extension.prettyHeaders
 import com.github.aleperaltabazas.dex.service.UsersService
 import org.slf4j.LoggerFactory
 import spark.Request
@@ -19,11 +20,9 @@ class UsersController(
         path("/api/v1/users") {
             get("", APPLICATION_JSON, this::findUser, objectMapper::writeValueAsString)
             post("", APPLICATION_JSON, this::createUser, objectMapper::writeValueAsString)
-            before("") { req, res ->
-                val headers = req.headers()
-                    .joinToString(",") { "\"$it:${req.headers(it)}}\"" }
 
-                LOGGER.info("[${req.requestMethod()}]  Request headers: $headers")
+            before("") { req, res ->
+                LOGGER.info("[${req.requestMethod()}] ${req.contextPath()} Request headers: ${req.prettyHeaders()}")
             }
             after("") { _, res ->
                 LOGGER.info("Response: ${res.status()}")
