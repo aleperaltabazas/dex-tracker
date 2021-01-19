@@ -1,8 +1,6 @@
 package com.github.aleperaltabazas.dex.dto.dex
 
-import com.github.aleperaltabazas.dex.model.Form
-import com.github.aleperaltabazas.dex.model.Game
-import com.github.aleperaltabazas.dex.model.PokedexType
+import com.github.aleperaltabazas.dex.model.*
 
 data class FormDTO(
     val name: String,
@@ -34,3 +32,10 @@ data class GamePokedexDTO(
     val type: PokedexType,
     val game: GameDTO,
 )
+
+data class UserDTO(
+    val username: String?,
+    val pokedex: List<UserDex>
+) {
+    constructor(user: User) : this(username = user.username, pokedex = user.pokedex)
+}

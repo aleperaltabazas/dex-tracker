@@ -17,6 +17,15 @@ open class PokemonService(
     private val gamePokedexCache: GamePokedexCache,
     private val pokemonStorage: PokemonStorage,
 ) {
+    open fun allPokedex(): List<GamePokedexDTO> {
+        val nationals = gamePokedexCache.get().filter { it.value.type == PokedexType.NATIONAL }
+            .map { gameNationalPokedex(it.key) }
+        val regionals = gamePokedexCache.get().filter { it.value.type == PokedexType.REGIONAL }
+            .map { gameRegionalPokedex(it.key) }
+
+        return regionals + nationals
+    }
+
     open fun pokemon(gameKey: String, numberOrName: Either<Int, String>) = gameFromKey(gameKey)
         .let {
             val gen = it.game.gen

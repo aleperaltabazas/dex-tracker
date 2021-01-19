@@ -24,9 +24,11 @@ class UsersStorage(
                 row[this.username] = null
             }
 
-        SessionsTable.insert { row ->
+        val token = SessionsTable.insert { row ->
             row[this.userId] = userId.value
             row[this.token] = hash.sha256(userId.toString())
         } get SessionsTable.token
+
+        User(username = null, pokedex = emptyList()) to token
     }
 }

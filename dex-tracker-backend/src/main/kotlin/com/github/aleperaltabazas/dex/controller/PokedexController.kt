@@ -19,10 +19,13 @@ class PokedexController(
 ) : Controller {
     override fun register() {
         path("/api/v1/pokedex") {
+            get("", APPLICATION_JSON, this::allPokedex, objectMapper::writeValueAsString)
             get("/:game/:type", APPLICATION_JSON, this::gamePokedex, objectMapper::writeValueAsString)
             get("/:game/pokemon/:id", APPLICATION_JSON, this::pokemon, objectMapper::writeValueAsString)
         }
     }
+
+    private fun allPokedex(req: Request, res: Response) = pokemonService.allPokedex()
 
     private fun gamePokedex(req: Request, res: Response): GamePokedexDTO {
         val game = requireNotNull(req.params(":game")) {

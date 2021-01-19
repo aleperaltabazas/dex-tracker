@@ -29,12 +29,14 @@ class UsersController(
         return usersService.findUser(dexToken)
     }
 
-    private fun createUser(req: Request, res: Response) {
+    private fun createUser(req: Request, res: Response): User {
         require(req.cookie(DEX_TOKEN) == null) {
             throw BadRequestException("User already has a token stored")
         }
 
-        val dexToken = usersService.createUser()
-        res.cookie(DEX_TOKEN, dexToken)
+        val (user, dexToken) = usersService.createUser()
+        res.cookie("/", DEX_TOKEN, dexToken, 36000000, false)
+
+        return user
     }
 }

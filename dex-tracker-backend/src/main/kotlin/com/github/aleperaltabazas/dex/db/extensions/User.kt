@@ -7,43 +7,65 @@ import com.github.aleperaltabazas.dex.db.schema.UsersTable
 import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.model.UserDex
+import com.github.aleperaltabazas.dex.model.UserDexPokemon
 import org.jetbrains.exposed.sql.Query
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 
-fun UsersTable.insert(user: User) = insert { row ->
-    row[username] = user.username
-}
-    .also {
-        PokedexTable.insert(it[id].value, user.pokedex)
+fun UsersTable.insert(vararg users: User) = users.map { user ->
+    insert { row ->
+        row[username] = user.username
     }
+        .also {
+            PokedexTable.insert(it[id].value, user.pokedex)
+        }
+}
 
 fun UsersTable.selectWhere(where: Where) = this
     .leftJoin(PokedexTable)
     .leftJoin(DexPokemonTable)
     .select(where)
 
-fun Query.toUsers() = this
+private fun ResultRow.hasUserDexValue() = getOrNull(PokedexTable.game) != null &&
+    getOrNull(PokedexTable.region) != null &&
+    getOrNull(PokedexTable.type) != null
+
+private fun ResultRow.hasUserDexPokemonValue() = getOrNull(DexPokemonTable.name) != null &&
+    getOrNull(DexPokemonTable.dexNumber) != null &&
+    getOrNull(DexPokemonTable.caught) != null
+
+fun Query.toUsers(): List<User> = this
     .groupBy { row ->
         User(
-            userId = row[UsersTable.id].value,
+            id = row[UsersTable.id].value,
             username = row[UsersTable.username],
             pokedex = emptyList()
         )
     }
-    .mapValues {
-        it.value.groupBy { row ->
-            UserDex(
-                game = row[PokedexTable.game],
-                type = PokedexType.valueOf(row[PokedexTable.type]),
-                region = row[PokedexTable.region],
-                pokemon = emptyList(),
-            )
-        }
-            .map { (dex, rows) ->
-                dex.copy(
-                    pokemon = rows.map { it.toUserDexPokemon() }
+    .map { (user, rows) ->
+        val pokedex = rows
+            .filter { row -> row.hasUserDexValue() }
+            .groupBy { row ->
+                UserDex(
+                    game = row[PokedexTable.game],
+                    region = row[PokedexTable.region],
+                    type = row[PokedexTable.type].let { PokedexType.valueOf(it) },
+                    pokemon = emptyList()
                 )
             }
+            .mapValues { (_, rows) ->
+                rows
+                    .filter { it.hasUserDexPokemonValue() }
+                    .map {
+                        UserDexPokemon(
+                            name = it[DexPokemonTable.name],
+                            dexNumber = it[DexPokemonTable.dexNumber],
+                            caught = it[DexPokemonTable.caught]
+                        )
+                    }
+            }
+            .map { (userDex, pokemon) -> userDex.copy(pokemon = pokemon) }
+
+        user.copy(pokedex = pokedex)
     }
-    .map { (user, pokedex) -> user.copy(pokedex = pokedex) }

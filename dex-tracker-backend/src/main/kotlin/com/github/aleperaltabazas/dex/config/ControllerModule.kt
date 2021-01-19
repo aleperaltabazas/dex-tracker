@@ -8,7 +8,7 @@ import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.google.inject.name.Named
-import spark.template.freemarker.FreeMarkerEngine
+import spark.template.velocity.VelocityTemplateEngine
 
 class ControllerModule : AbstractModule() {
     @Provides
@@ -40,7 +40,7 @@ class ControllerModule : AbstractModule() {
         @Named("usersService") usersService: UsersService
     ) = FrontendController(
         usersService = usersService,
-        templateEngine = FreeMarkerEngine(),
+        templateEngine = VelocityTemplateEngine(),
     )
 
     @Provides
