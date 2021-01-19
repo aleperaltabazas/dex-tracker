@@ -71,6 +71,7 @@ class DexTracker {
                 ConnectionModule(),
                 ControllerModule(),
                 DatabaseModule(),
+                EnvironmentModule(),
                 FileSystemModule(),
                 HashModule(),
                 JsonModule(),
