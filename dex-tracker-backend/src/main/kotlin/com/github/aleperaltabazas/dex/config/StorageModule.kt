@@ -1,6 +1,8 @@
 package com.github.aleperaltabazas.dex.config
 
 import com.github.aleperaltabazas.dex.storage.PokemonStorage
+import com.github.aleperaltabazas.dex.storage.UsersStorage
+import com.github.aleperaltabazas.dex.utils.HashHelper
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
@@ -16,4 +18,12 @@ class StorageModule : AbstractModule() {
     ) = PokemonStorage(
         db
     )
+
+    @Provides
+    @Singleton
+    @Named("usersStorage")
+    fun usersStorage(
+        @Named("db") db: Database,
+        @Named("hash") hash: HashHelper
+    ) = UsersStorage(db, hash)
 }

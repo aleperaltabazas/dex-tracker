@@ -13,4 +13,5 @@ val allTables = listOf(
     UsersTable,
     PokedexTable,
     DexPokemonTable,
+    SessionsTable,
 )

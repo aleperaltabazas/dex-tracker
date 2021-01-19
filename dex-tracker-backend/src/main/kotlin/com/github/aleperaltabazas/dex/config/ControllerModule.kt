@@ -1,14 +1,14 @@
 package com.github.aleperaltabazas.dex.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.aleperaltabazas.dex.controller.ExceptionController
-import com.github.aleperaltabazas.dex.controller.MiscController
-import com.github.aleperaltabazas.dex.controller.PokedexController
+import com.github.aleperaltabazas.dex.controller.*
 import com.github.aleperaltabazas.dex.service.PokemonService
+import com.github.aleperaltabazas.dex.service.UsersService
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.google.inject.name.Named
+import spark.template.freemarker.FreeMarkerEngine
 
 class ControllerModule : AbstractModule() {
     @Provides
@@ -19,7 +19,28 @@ class ControllerModule : AbstractModule() {
         @Named("pokemonService") pokemonService: PokemonService,
     ) = PokedexController(
         objectMapper = objectMapper,
-        pokemonService = pokemonService
+        pokemonService = pokemonService,
+    )
+
+    @Provides
+    @Singleton
+    @Named("usersController")
+    fun usersController(
+        @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
+        @Named("usersService") usersService: UsersService,
+    ) = UsersController(
+        objectMapper = objectMapper,
+        usersService = usersService,
+    )
+
+    @Provides
+    @Singleton
+    @Named("frontendController")
+    fun frontendController(
+        @Named("usersService") usersService: UsersService
+    ) = FrontendController(
+        usersService = usersService,
+        templateEngine = FreeMarkerEngine(),
     )
 
     @Provides

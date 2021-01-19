@@ -1,0 +1,37 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]
+then
+  echo "Usage: ./build"
+  exit -1
+fi
+
+set -e
+
+ENVIRONMENT=$1
+FRONTEND="dex-tracker-frontend"
+BACKEND="dex-tracker-backend"
+BACKEND_RESOURCES=$BACKEND/src/main/resources
+BACKEND_ENVIRONMENTS=$BACKEND/environments
+ARTIFACT="dex-tracker"
+FINAL_ARTIFACT_NAME="dex-tracker"
+
+npm install --prefix $FRONTEND
+npm run "build" --prefix $FRONTEND
+
+rm -rf $BACKEND_RESOURCES/templates
+rm -rf $BACKEND_RESOURCES/static
+
+mkdir $BACKEND_RESOURCES/templates
+mkdir $BACKEND_RESOURCES/static
+
+cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/templates/index.ftl
+cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/templates/error.ftl
+cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/static/
+
+find $BACKEND_RESOURCES -type f -print0 | xargs -0 sed -i -e 's/\/static//g'
+sed -i -e 's/ftl/<title>${title}<\/title><#if no_index?? \&\& !no_index><meta name="robots" content="no-index,nofollow"><#else><meta name="robots" content="index, follow"><\/#if>/g' $BACKEND_RESOURCES/templates/index.ftl
+sed -i -e 's/metaog/<#if meta??><meta property="og:url" content="https:\/\/proyectate.tk\/${meta.url}" \/><meta property="og:type" content="${meta.type}" \/><meta property="og:title" content="${meta.title}" \/><meta property="og:description" content="${meta.description}" \/><meta property="og:image" content="${meta.image}" \/><#else><meta property="og:url" content="https:\/\/proyectate.tk\/"\/><meta property="og:type" content="article"\/><meta property="og:title" content="Proyectate"\/><meta property="og:description" content="Proyectate"\/><meta property="og:image" content="https:\/\/res.cloudinary.com\/proyectate\/image\/upload\/v1596726920\/icon_colored_rnxs2w.png"\/><\/#if>/g' $BACKEND_RESOURCES/templates/index.ftl
+
+mvn -f $BACKEND/pom.xml -Dmaven.test.skip=true clean package
+

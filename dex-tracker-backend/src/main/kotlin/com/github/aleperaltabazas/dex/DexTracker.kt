@@ -15,6 +15,9 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
+import spark.Spark
+import spark.Spark.staticFiles
+import spark.debug.DebugScreen.enableDebugScreen
 import spark.servlet.SparkApplication
 import spark.servlet.SparkFilter
 import kotlin.system.exitProcess
@@ -31,6 +34,8 @@ class DexTracker {
     }
 
     fun run(args: Array<String>) {
+        staticFiles.location("/public")
+        enableDebugScreen()
         LOGGER.info("Args passed: ${args.joinToString(", ")}")
         val port = 9290
         LOGGER.info("Using port $port.")
@@ -71,6 +76,7 @@ class DexTracker {
                 ControllerModule(),
                 DatabaseModule(),
                 FileSystemModule(),
+                HashModule(),
                 JsonModule(),
                 ServiceModule(),
                 StorageModule(),

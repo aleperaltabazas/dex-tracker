@@ -1,6 +1,8 @@
 package com.github.aleperaltabazas.dex.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
+import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
 import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.service.UsersService
@@ -14,13 +16,13 @@ class UsersController(
 ) : Controller {
     override fun register() {
         path("/api/v1/users") {
-            get("", "application/json", this::findUser, objectMapper::writeValueAsString)
-            post("", "application/json", this::createUser, objectMapper::writeValueAsString)
+            get("", APPLICATION_JSON, this::findUser, objectMapper::writeValueAsString)
+            post("", APPLICATION_JSON, this::createUser, objectMapper::writeValueAsString)
         }
     }
 
     private fun findUser(req: Request, res: Response): User {
-        val dexToken = requireNotNull(req.cookie("dex-token")) {
+        val dexToken = requireNotNull(req.cookie(DEX_TOKEN)) {
             throw BadRequestException("User has no dex-token stored")
         }
 
@@ -28,11 +30,11 @@ class UsersController(
     }
 
     private fun createUser(req: Request, res: Response) {
-        require(req.cookie("dex-token") == null) {
+        require(req.cookie(DEX_TOKEN) == null) {
             throw BadRequestException("User already has a token stored")
         }
 
         val dexToken = usersService.createUser()
-        res.cookie("dex-token", dexToken)
+        res.cookie(DEX_TOKEN, dexToken)
     }
 }

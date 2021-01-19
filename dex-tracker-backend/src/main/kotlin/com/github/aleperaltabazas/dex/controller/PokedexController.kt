@@ -3,6 +3,7 @@ package com.github.aleperaltabazas.dex.controller
 import arrow.core.left
 import arrow.core.right
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.model.Pokemon
@@ -17,16 +18,9 @@ class PokedexController(
     private val pokemonService: PokemonService,
 ) : Controller {
     override fun register() {
-        path("/api/v1") {
-            before("/pokedex/:game/:type") { req, _ ->
-                LOGGER.info("[REQUEST] ${req.requestMethod()} ${req.contextPath()}")
-                LOGGER.info("Game: ${req.params(":game")} - Type ${req.params(":type")}")
-            }
-            after("/pokedex/:game/:type") { _, res ->
-                LOGGER.info("[RESPONSE] ${res.status()}")
-            }
-            get("/pokedex/:game/:type", "application/json", this::gamePokedex, objectMapper::writeValueAsString)
-            get("/pokedex/:game/pokemon/:id", this::pokemon, objectMapper::writeValueAsString)
+        path("/api/v1/pokedex") {
+            get("/:game/:type", APPLICATION_JSON, this::gamePokedex, objectMapper::writeValueAsString)
+            get("/:game/pokemon/:id", APPLICATION_JSON, this::pokemon, objectMapper::writeValueAsString)
         }
     }
 
