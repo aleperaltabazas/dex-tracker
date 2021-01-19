@@ -1,25 +1,13 @@
 package com.github.aleperaltabazas.dex.controller
 
-import spark.Spark.*
+import spark.Spark.after
 
 class MiscController : Controller {
     override fun register() {
-        options("/*"
-        ) { request, response ->
-            val accessControlRequestHeaders = request
-                .headers("Access-Control-Request-Headers")
-            if (accessControlRequestHeaders != null) {
-                response.header("Access-Control-Allow-Headers", accessControlRequestHeaders)
-            }
-            val accessControlRequestMethod = request
-                .headers("Access-Control-Request-Method")
-            if (accessControlRequestMethod != null) {
-                response.header("Access-Control-Allow-Methods", accessControlRequestMethod)
-            }
-            "OK"
+        after("/api/v1/*") { _, res ->
+            res.header("Access-Control-Allow-Origin", "http://localhost:8080")
+            res.header("Access-Control-Allow-Credentials", "true")
+            res.header("content-type", "application/json")
         }
-
-        before({ _, response -> response.header("Access-Control-Allow-Origin", "*") })
-        after("/api/v1/*") { _, res -> res.header("content-type", "application/json") }
     }
 }

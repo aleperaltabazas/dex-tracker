@@ -38,7 +38,6 @@ export default function withFetch<T>(
       let config: AxiosRequestConfig = {
         url: path || initialPath,
         method: "GET",
-        withCredentials: true,
       };
 
       axios

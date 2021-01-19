@@ -25,10 +25,14 @@ const HomePage = (props: HomePageProps) => {
     if (dexToken) {
       login(dexToken)
         .then((res) => {
+          console.log(res);
+          return res;
+        })
+        .then((res) => {
           console.error("Logged in user");
           store.dispatch(updateSessionState(dexToken, res.data));
         })
-        .catch(() => console.log("Error logging in"));
+        .catch((err) => console.error("Error logging in", err));
     } else {
       createUser()
         .then((res) => {
@@ -37,7 +41,7 @@ const HomePage = (props: HomePageProps) => {
             updateSessionState(Cookies.get("dex-token")!, res.data)
           );
         })
-        .catch(() => console.error("Error creating the user"));
+        .catch((err) => console.error("Error creating the user", err));
     }
 
     fetchGamesPokedex();

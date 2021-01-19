@@ -14,5 +14,6 @@ export function fetchGamesPokedex() {
     .request<GamePokedex[]>(config)
     .then((res) => res.data)
     .then(loadPokedex)
-    .then(store.dispatch);
+    .then(store.dispatch)
+    .catch((err) => console.error("Error getting pokedex", err));
 }
