@@ -75,7 +75,10 @@ class UserSchemaTest : WordSpec() {
                     UsersTable.insert(daniel)
 
                     UsersTable.selectWhere { Op.TRUE }.toUsers() shouldBe listOf(
-                        daniel.copy(id = 1)
+                        daniel.copy(
+                            id = 1,
+                            pokedex = daniel.pokedex.mapIndexed { idx, userDex -> userDex.copy(id = idx.toLong() + 1) }
+                        )
                     )
                 }
             }
@@ -88,8 +91,16 @@ class UserSchemaTest : WordSpec() {
                     UsersTable.insert(daniel, emily)
 
                     UsersTable.selectWhere { Op.TRUE }.toUsers() shouldBe listOf(
-                        daniel.copy(id = 1),
-                        emily.copy(id = 2)
+                        daniel.copy(
+                            id = 1,
+                            pokedex = daniel.pokedex.mapIndexed { idx, userDex -> userDex.copy(id = idx.toLong() + 1) }
+                        ),
+                        emily.copy(
+                            id = 2,
+                            pokedex = emily.pokedex.mapIndexed { idx, userDex ->
+                                userDex.copy(id = idx.toLong() + 1 + daniel.pokedex.size.toLong())
+                            }
+                        )
                     )
                 }
             }

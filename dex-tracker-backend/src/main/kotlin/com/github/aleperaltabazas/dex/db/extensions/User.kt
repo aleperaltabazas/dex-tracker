@@ -48,6 +48,7 @@ fun Query.toUsers(): List<User> = this
             .filter { row -> row.hasUserDexValue() }
             .groupBy { row ->
                 UserDex(
+                    id = row[PokedexTable.id].value,
                     game = row[PokedexTable.game],
                     region = row[PokedexTable.region],
                     type = row[PokedexTable.type].let { PokedexType.valueOf(it) },

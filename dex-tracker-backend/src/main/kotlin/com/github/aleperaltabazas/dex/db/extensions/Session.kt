@@ -20,3 +20,8 @@ fun SessionsTable.findUser(token: String) = SessionsTable
             it.first()
         }
     }
+
+fun SessionsTable.userRows(token: String) = SessionsTable
+    .leftJoin(UsersTable)
+    .leftJoin(PokedexTable)
+    .leftJoin(DexPokemonTable)

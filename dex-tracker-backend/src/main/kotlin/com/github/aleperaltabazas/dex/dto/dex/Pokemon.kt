@@ -39,3 +39,9 @@ data class UserDTO(
 ) {
     constructor(user: User) : this(username = user.username, pokedex = user.pokedex)
 }
+
+data class CaughtStatusDTO(
+    val pokedexId: Long,
+    val dexNumber: Int,
+    val caught: Boolean
+)

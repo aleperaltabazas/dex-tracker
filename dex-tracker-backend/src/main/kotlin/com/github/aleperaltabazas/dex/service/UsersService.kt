@@ -1,5 +1,6 @@
 package com.github.aleperaltabazas.dex.service
 
+import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
 import com.github.aleperaltabazas.dex.storage.UsersStorage
 
 class UsersService(
@@ -8,4 +9,8 @@ class UsersService(
     fun findUser(token: String) = usersStorage.findByToken(token)
 
     fun createUser() = usersStorage.createUser()
+
+    fun updateCaughtStatus(token: String, status: List<CaughtStatusDTO>) {
+        usersStorage.updateUserCaughtStatus(token, status)
+    }
 }

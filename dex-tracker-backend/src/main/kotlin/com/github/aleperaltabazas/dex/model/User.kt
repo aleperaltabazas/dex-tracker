@@ -7,6 +7,7 @@ data class User(
 )
 
 data class UserDex(
+    val id: Long? = null,
     val game: String,
     val type: PokedexType,
     val region: String,

@@ -5,6 +5,7 @@ import com.typesafe.config.ConfigFactory
 enum class Env {
     DEV,
     PROD,
+    TEST,
 }
 
 lateinit var environment: Env
