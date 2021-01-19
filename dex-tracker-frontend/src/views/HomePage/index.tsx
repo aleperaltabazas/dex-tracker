@@ -1,12 +1,64 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
 import Dex from "../../components/Dex";
+import { RootState } from "../../reducers";
+import { PokedexState } from "../../store/pokedex";
+import { SessionState } from "../../store/session";
+import Cookies from "js-cookie";
+import { connect } from "react-redux";
+import { createUser } from "../../functions/my-dex";
+import store from "../../store";
+import { updateSessionState } from "../../actions/session";
+import { login } from "../../functions/login";
+import { fetchGamesPokedex } from "../../functions/poedex";
 
-type HomePageProps = {};
+type HomePageProps = {
+  pokedex: PokedexState;
+  session: SessionState;
+};
 
 const HomePage = (props: HomePageProps) => {
+  useEffect(() => {
+    const dexToken = Cookies.get("dex-token");
+    console.log("checking for dex-token", dexToken);
+
+    if (dexToken) {
+      login(dexToken)
+        .then((res) => {
+          console.error("Logged in user");
+          store.dispatch(updateSessionState(dexToken, res.data));
+        })
+        .catch(() => console.log("Error logging in"));
+    } else {
+      createUser()
+        .then((res) => {
+          console.log("Created user", Cookies.get("dex-token"));
+          store.dispatch(
+            updateSessionState(Cookies.get("dex-token")!, res.data)
+          );
+        })
+        .catch(() => console.error("Error creating the user"));
+    }
+
+    fetchGamesPokedex();
+  }, []);
+
+  if (!props.session.isLoggedIn) {
+    return <div>Cargando perrote</div>;
+  }
+
+  if (!props.pokedex.loaded) {
+    return <div>Cargando perrote</div>;
+  }
+
+  const gamesPokedex = props.pokedex.pokedex;
+
   return (
     <div className="mt-5">
+      {props.session.user.pokedex.map((p, idx) => {
+        const dex = gamesPokedex.find((d) => d.game.title == p.game)!;
+        return <Dex dex={p} gamePokedex={dex} key={idx} />;
+      })}
       <Dex
         dex={{
           type: "NATIONAL",
@@ -45,4 +97,9 @@ const HomePage = (props: HomePageProps) => {
   );
 };
 
-export default hot(module)(HomePage);
+const mapStateToProps = (root: RootState) => ({
+  session: root.session,
+  pokedex: root.pokedex,
+});
+
+export default hot(module)(connect(mapStateToProps)(HomePage));

@@ -1,3 +1,5 @@
+import { User } from "../../types/user";
+
 export const INVALIDATE_SESSION = "INVALIDATE_SESSION";
 export const LOG_IN_ACTION = "LOG_IN_ACTION";
 
@@ -14,6 +16,7 @@ export type SessionAction = InvalidateSessionAction | LogInAction;
 
 export interface LoggedInState {
   token: string;
+  user: User;
   isLoggedIn: true;
 }
 

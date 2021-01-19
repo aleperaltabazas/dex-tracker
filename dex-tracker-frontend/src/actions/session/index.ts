@@ -3,6 +3,7 @@ import {
   SessionAction,
   LOG_IN_ACTION,
 } from "../../store/session";
+import { User } from "../../types/user";
 
 export function invalidateSession(): SessionAction {
   return {
@@ -10,11 +11,12 @@ export function invalidateSession(): SessionAction {
   };
 }
 
-export function updateSessionState(token: string): SessionAction {
+export function updateSessionState(token: string, user: User): SessionAction {
   return {
     type: LOG_IN_ACTION,
     payload: {
       token,
+      user,
       isLoggedIn: true,
     },
   };

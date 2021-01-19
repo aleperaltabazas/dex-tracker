@@ -151,6 +151,7 @@ const Dex = (props: DexProps) => {
               .filter(shouldRender)
               .map((p, idx) => (
                 <PokemonRow
+                  key={idx}
                   idx={idx + 1}
                   firstRow={false}
                   pokemon={p}
