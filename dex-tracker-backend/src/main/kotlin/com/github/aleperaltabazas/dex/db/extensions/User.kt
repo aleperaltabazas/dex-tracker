@@ -70,15 +70,23 @@ fun Query.toUsers(): List<User> = this
         user.copy(pokedex = pokedex)
     }
 
-fun UsersTable.updateUserCaughtStatus(
+fun DexPokemonTable.updateUserCaughtStatus(
     token: String,
     status: List<CaughtStatusDTO>,
 ) = status.map {
     this
-        .leftJoin(SessionsTable)
         .leftJoin(PokedexTable)
-        .leftJoin(DexPokemonTable)
-        .update({ (SessionsTable.token eq token) and (PokedexTable.id eq it.pokedexId) and (DexPokemonTable.dexNumber eq it.dexNumber) }) { row ->
-            row[DexPokemonTable.caught] = it.caught
+        .leftJoin(UsersTable)
+        .leftJoin(SessionsTable)
+        .update({ (SessionsTable.token eq token) and (PokedexTable.id eq it.pokedexId) and (dexNumber eq it.dexNumber) }) { row ->
+            row[caught] = it.caught
         }
+}
+
+fun DexPokemonTable.updateCaught(
+    caught: Boolean,
+    pokedexId: Long,
+    dexNumber: Int
+) = this.update({ (DexPokemonTable.pokedexId eq pokedexId) and (DexPokemonTable.dexNumber eq dexNumber) }) { row ->
+    row[this.caught] = caught
 }

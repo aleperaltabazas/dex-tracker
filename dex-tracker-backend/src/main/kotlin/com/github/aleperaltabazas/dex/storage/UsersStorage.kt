@@ -1,10 +1,12 @@
 package com.github.aleperaltabazas.dex.storage
 
+import com.github.aleperaltabazas.dex.db.Where
 import com.github.aleperaltabazas.dex.db.extensions.findUser
-import com.github.aleperaltabazas.dex.db.extensions.updateUserCaughtStatus
+import com.github.aleperaltabazas.dex.db.extensions.selectWhere
+import com.github.aleperaltabazas.dex.db.extensions.updateCaught
+import com.github.aleperaltabazas.dex.db.schema.DexPokemonTable
 import com.github.aleperaltabazas.dex.db.schema.SessionsTable
 import com.github.aleperaltabazas.dex.db.schema.UsersTable
-import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
 import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.utils.HashHelper
 import org.jetbrains.exposed.sql.Database
@@ -16,11 +18,16 @@ class UsersStorage(
     private val db: Database,
     private val hash: HashHelper,
 ) {
-    fun updateUserCaughtStatus(
-        token: String,
-        status: List<CaughtStatusDTO>,
+    fun updateCaughtStatus(
+        pokedexId: Long,
+        dexNumber: Int,
+        caught: Boolean
     ) = transaction(db) {
-        UsersTable.updateUserCaughtStatus(token, status).sum()
+        DexPokemonTable.updateCaught(
+            caught = caught,
+            pokedexId = pokedexId,
+            dexNumber = dexNumber
+        )
     }
 
     fun findByToken(token: String): User = transaction(db) {
@@ -39,5 +46,9 @@ class UsersStorage(
         } get SessionsTable.token
 
         User(username = null, pokedex = emptyList()) to token
+    }
+
+    fun exists(where: Where) = transaction(db) {
+        UsersTable.selectWhere(where).count() > 0
     }
 }

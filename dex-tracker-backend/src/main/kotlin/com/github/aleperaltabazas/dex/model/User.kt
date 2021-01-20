@@ -4,7 +4,9 @@ data class User(
     val id: Long? = null,
     val username: String? = null,
     val pokedex: List<UserDex>
-)
+) {
+    fun owns(pokedexId: Long) = pokedex.any { it.id == pokedexId }
+}
 
 data class UserDex(
     val id: Long? = null,

@@ -19,7 +19,7 @@ class FrontendController(
     private fun home(req: Request, res: Response): ModelAndView {
         val dexToken = req.cookie(DEX_TOKEN)
         if (dexToken == null) {
-            val (_, token) = usersService.createUser()
+            val (_, token) = usersService.createUser(null)
             res.cookie("/", DEX_TOKEN, token, 36000000, false)
         }
 

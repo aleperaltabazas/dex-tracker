@@ -60,7 +60,7 @@ class UsersController(
             throw BadRequestException("User already has a token stored")
         }
 
-        val (user, dexToken) = usersService.createUser()
+        val (user, dexToken) = usersService.createUser(null)
         res.cookie("/", DEX_TOKEN, dexToken, 36000000, false)
 
         return UserDTO(user)

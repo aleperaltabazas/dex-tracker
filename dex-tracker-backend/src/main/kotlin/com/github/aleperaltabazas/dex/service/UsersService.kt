@@ -1,6 +1,10 @@
 package com.github.aleperaltabazas.dex.service
 
+import com.github.aleperaltabazas.dex.db.schema.UsersTable
 import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
+import com.github.aleperaltabazas.dex.exception.BadRequestException
+import com.github.aleperaltabazas.dex.exception.ForbiddenException
+import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.storage.UsersStorage
 
 class UsersService(
@@ -8,9 +12,29 @@ class UsersService(
 ) {
     fun findUser(token: String) = usersStorage.findByToken(token)
 
-    fun createUser() = usersStorage.createUser()
+    fun createUser(username: String?): Pair<User, String> {
+        if (username != null && usersStorage.exists { UsersTable.username eq username }) {
+            throw BadRequestException("Username $username is already in use")
+        }
+
+        return usersStorage.createUser()
+    }
 
     fun updateCaughtStatus(token: String, status: List<CaughtStatusDTO>) {
-        usersStorage.updateUserCaughtStatus(token, status)
+        val user = usersStorage.findByToken(token)
+
+        for (s in status) {
+            if (!user.owns(s.pokedexId)) {
+                throw ForbiddenException("User is not allowed to edit pokedex by ${s.pokedexId}")
+            }
+        }
+
+        status.forEach { s ->
+            usersStorage.updateCaughtStatus(
+                pokedexId = s.pokedexId,
+                dexNumber = s.dexNumber,
+                caught = s.caught,
+            )
+        }
     }
 }
