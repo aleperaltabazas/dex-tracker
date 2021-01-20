@@ -1,15 +1,15 @@
 package com.github.aleperaltabazas.dex.storage
 
 import com.github.aleperaltabazas.dex.db.extensions.findUser
-import com.github.aleperaltabazas.dex.db.extensions.userRows
-import com.github.aleperaltabazas.dex.db.schema.DexPokemonTable
-import com.github.aleperaltabazas.dex.db.schema.PokedexTable
+import com.github.aleperaltabazas.dex.db.extensions.updateUserCaughtStatus
 import com.github.aleperaltabazas.dex.db.schema.SessionsTable
 import com.github.aleperaltabazas.dex.db.schema.UsersTable
 import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
 import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.utils.HashHelper
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UsersStorage(
@@ -20,12 +20,7 @@ class UsersStorage(
         token: String,
         status: List<CaughtStatusDTO>,
     ) = transaction(db) {
-        status.forEach {
-            SessionsTable.userRows(token)
-                .update({ (PokedexTable.id eq it.pokedexId) and (DexPokemonTable.dexNumber eq it.dexNumber) }) { row ->
-                    row[DexPokemonTable.caught] = it.caught
-                }
-        }
+        UsersTable.updateUserCaughtStatus(token, status).sum()
     }
 
     fun findByToken(token: String): User = transaction(db) {

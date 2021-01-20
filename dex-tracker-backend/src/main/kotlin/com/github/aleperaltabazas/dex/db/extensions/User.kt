@@ -3,15 +3,14 @@ package com.github.aleperaltabazas.dex.db.extensions
 import com.github.aleperaltabazas.dex.db.Where
 import com.github.aleperaltabazas.dex.db.schema.DexPokemonTable
 import com.github.aleperaltabazas.dex.db.schema.PokedexTable
+import com.github.aleperaltabazas.dex.db.schema.SessionsTable
 import com.github.aleperaltabazas.dex.db.schema.UsersTable
+import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
 import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.model.UserDex
 import com.github.aleperaltabazas.dex.model.UserDexPokemon
-import org.jetbrains.exposed.sql.Query
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 
 fun UsersTable.insert(vararg users: User) = users.map { user ->
     insert { row ->
@@ -70,3 +69,16 @@ fun Query.toUsers(): List<User> = this
 
         user.copy(pokedex = pokedex)
     }
+
+fun UsersTable.updateUserCaughtStatus(
+    token: String,
+    status: List<CaughtStatusDTO>,
+) = status.map {
+    this
+        .leftJoin(SessionsTable)
+        .leftJoin(PokedexTable)
+        .leftJoin(DexPokemonTable)
+        .update({ (SessionsTable.token eq token) and (PokedexTable.id eq it.pokedexId) and (DexPokemonTable.dexNumber eq it.dexNumber) }) { row ->
+            row[DexPokemonTable.caught] = it.caught
+        }
+}

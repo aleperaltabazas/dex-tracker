@@ -50,6 +50,58 @@ val emily = User(
     )
 )
 
+val frank = User(
+    username = "frank",
+    pokedex = listOf(
+        UserDex(
+            game = "hgss",
+            type = PokedexType.NATIONAL,
+            region = "johto",
+            pokemon = listOf(
+                UserDexPokemon(
+                    name = "bulbasaur",
+                    dexNumber = 1,
+                    caught = true
+                ),
+                UserDexPokemon(
+                    name = "ivysaur",
+                    dexNumber = 2,
+                    caught = false
+                ),
+                UserDexPokemon(
+                    name = "venusaur",
+                    dexNumber = 1,
+                    caught = true
+                ),
+            )
+        ),
+        UserDex(
+            game = "hgss",
+            type = PokedexType.NATIONAL,
+            region = "johto",
+            pokemon = listOf(
+                UserDexPokemon(
+                    name = "charmeleon",
+                    dexNumber = 5,
+                    caught = true
+                ),
+            )
+        ),
+        UserDex(
+            game = "hgss",
+            type = PokedexType.NATIONAL,
+            region = "johto",
+            pokemon = listOf(
+                UserDexPokemon(
+                    name = "charizard",
+                    dexNumber = 6,
+                    caught = false
+                ),
+            )
+        )
+    )
+)
+
 val richard = User(
     username = "richard",
     pokedex = emptyList(),
