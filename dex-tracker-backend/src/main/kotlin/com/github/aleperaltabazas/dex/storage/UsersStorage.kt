@@ -2,12 +2,15 @@ package com.github.aleperaltabazas.dex.storage
 
 import com.github.aleperaltabazas.dex.db.Where
 import com.github.aleperaltabazas.dex.db.extensions.findUser
+import com.github.aleperaltabazas.dex.db.extensions.insert
 import com.github.aleperaltabazas.dex.db.extensions.selectWhere
 import com.github.aleperaltabazas.dex.db.extensions.updateCaught
 import com.github.aleperaltabazas.dex.db.schema.DexPokemonTable
+import com.github.aleperaltabazas.dex.db.schema.PokedexTable
 import com.github.aleperaltabazas.dex.db.schema.SessionsTable
 import com.github.aleperaltabazas.dex.db.schema.UsersTable
 import com.github.aleperaltabazas.dex.model.User
+import com.github.aleperaltabazas.dex.model.UserDex
 import com.github.aleperaltabazas.dex.utils.HashHelper
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.insert
@@ -18,6 +21,18 @@ class UsersStorage(
     private val db: Database,
     private val hash: HashHelper,
 ) {
+    fun createUserDex(
+        userId: Long,
+        userDex: UserDex
+    ): UserDex = transaction(db) {
+        val id = PokedexTable.insert(
+            userId = userId,
+            pokedex = userDex
+        ) get PokedexTable.id
+
+        userDex.copy(id = id.value)
+    }
+
     fun updateCaughtStatus(
         pokedexId: Long,
         dexNumber: Int,

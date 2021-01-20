@@ -7,6 +7,7 @@ import com.github.aleperaltabazas.dex.cache.Cache
 import com.github.aleperaltabazas.dex.cache.RefreshRate
 import com.github.aleperaltabazas.dex.connector.RestConnector
 import com.github.aleperaltabazas.dex.dto.pokeapi.PokedexDTO
+import com.github.aleperaltabazas.dex.exception.NotFoundException
 import com.github.aleperaltabazas.dex.extension.sequence
 import com.github.aleperaltabazas.dex.model.Game
 import com.github.aleperaltabazas.dex.model.GamePokedex
@@ -30,6 +31,12 @@ open class GamePokedexCache(
     ),
     ref = object : TypeReference<Map<String, GamePokedex>>() {}
 ) {
+    fun gameFromKey(gameKey: String): GamePokedex = this.get()
+        .toList()
+        .find { (g, _) -> g == gameKey }
+        ?.second
+        ?: throw NotFoundException("No game found for key $gameKey")
+
     private fun build(dex: PokedexDTO, game: Game): GamePokedex = GamePokedex(
         pokemon = dex.pokemonEntries
             .sortedBy { it.entryNumber }

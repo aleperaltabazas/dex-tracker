@@ -8,7 +8,6 @@ import com.github.aleperaltabazas.dex.dto.dex.FormDTO
 import com.github.aleperaltabazas.dex.dto.dex.GameDTO
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.NotFoundException
-import com.github.aleperaltabazas.dex.model.GamePokedex
 import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.storage.PokemonStorage
 import org.jetbrains.exposed.sql.and
@@ -26,7 +25,7 @@ open class PokemonService(
         return regionals + nationals
     }
 
-    open fun pokemon(gameKey: String, numberOrName: Either<Int, String>) = gameFromKey(gameKey)
+    open fun pokemon(gameKey: String, numberOrName: Either<Int, String>) = gamePokedexCache.gameFromKey(gameKey)
         .let {
             val gen = it.game.gen
             numberOrName.fold(
@@ -40,7 +39,7 @@ open class PokemonService(
         } ?: throw NotFoundException("No pokemon found with ${numberOrName.fold({ "number $it" }, { "name $it" })}")
 
     open fun gameNationalPokedex(gameKey: String): GamePokedexDTO {
-        val pokedex = gameFromKey(gameKey)
+        val pokedex = gamePokedexCache.gameFromKey(gameKey)
         val pokemon = pokemonStorage.findAll { PokemonTable.gen eq pokedex.game.gen }
             .map {
                 DexEntryDTO(
@@ -59,7 +58,7 @@ open class PokemonService(
     }
 
     open fun gameRegionalPokedex(gameKey: String): GamePokedexDTO {
-        val pokedex = gameFromKey(gameKey)
+        val pokedex = gamePokedexCache.gameFromKey(gameKey)
 
         val pokemon = pokemonStorage
             .findAll { (PokemonTable.gen eq pokedex.game.gen) and (PokemonTable.name inList pokedex.pokemon) }
@@ -79,10 +78,4 @@ open class PokemonService(
             game = GameDTO(pokedex.game)
         )
     }
-
-    private fun gameFromKey(gameKey: String): GamePokedex = gamePokedexCache.get()
-        .toList()
-        .find { (g, _) -> g == gameKey }
-        ?.second
-        ?: throw NotFoundException("No game found for key $gameKey")
 }
