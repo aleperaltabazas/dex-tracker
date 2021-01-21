@@ -14,10 +14,12 @@ export type Game = {
   spritePokemon: string;
 };
 
+export type PokedexType = "NATIONAL" | "REGIONAL";
+
 export type GamePokedex = {
   pokemon: DexEntry[];
   region: string;
-  type: "NATIONAL" | "REGIONAL";
+  type: PokedexType;
   game: Game;
 };
 

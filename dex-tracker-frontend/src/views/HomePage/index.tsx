@@ -7,13 +7,27 @@ import { SessionState } from "../../store/session";
 import { connect } from "react-redux";
 import { openLocallyStoredSession } from "../../functions/login";
 import { fetchGamesPokedex } from "../../functions/poedex";
+import classNames from "classnames";
+import { makeStyles } from "@material-ui/core";
+import CreatePokedexForm from "./Sections/CreatePokedexForm";
 
 type HomePageProps = {
   pokedex: PokedexState;
   session: SessionState;
 };
 
+const useStyles = makeStyles({
+  noPokedexHeading: {
+    fontSize: "24px",
+    fontWeight: "bolder",
+  },
+  noPokedexSubtitle: {
+    fontSize: "20px",
+  },
+});
+
 const HomePage = (props: HomePageProps) => {
+  const classes = useStyles();
   useEffect(() => {
     openLocallyStoredSession();
     fetchGamesPokedex();
@@ -35,45 +49,22 @@ const HomePage = (props: HomePageProps) => {
 
   return (
     <div className="mt-5">
-      {props.session.user.pokedex.map((p, idx) => {
-        const dex = gamesPokedex.find((d) => d.game.title == p.game)!;
-        return <Dex dex={p} gamePokedex={dex} key={idx} />;
-      })}
-      <Dex
-        dex={{
-          userDexId: "1",
-          type: "NATIONAL",
-          region: "johto",
-          game: "hgss",
-          pokemon: [
-            { dexNumber: 1, name: "bulbasaur", caught: true },
-            { dexNumber: 2, name: "ivysaur", caught: false },
-            { dexNumber: 3, name: "venusaur", caught: false },
-            { dexNumber: 4, name: "charmander", caught: true },
-            { dexNumber: 5, name: "charmeleon", caught: false },
-            { dexNumber: 6, name: "charizard", caught: false },
-            { dexNumber: 7, name: "squirtle", caught: true },
-            { dexNumber: 8, name: "wartortle", caught: false },
-            { dexNumber: 9, name: "blastoise", caught: true },
-            { dexNumber: 10, name: "caterpie", caught: true },
-            { dexNumber: 11, name: "metapod", caught: true },
-            { dexNumber: 12, name: "butterfree", caught: false },
-            { dexNumber: 13, name: "weedle", caught: false },
-            { dexNumber: 14, name: "kakuna", caught: false },
-            { dexNumber: 15, name: "beedrill", caught: false },
-          ],
-        }}
-        gamePokedex={{
-          type: "NATIONAL",
-          region: "johto",
-          pokemon: [],
-          game: {
-            title: "hgss",
-            fullTitle: "HeartGold and SoulSilver",
-            spritePokemon: "ho-oh",
-          },
-        }}
-      />
+      {props.session.user.pokedex.length > 0 &&
+        props.session.user.pokedex.map((p, idx) => {
+          const dex = gamesPokedex.find((d) => d.game.title == p.game)!;
+          return <Dex dex={p} gamePokedex={dex} key={idx} />;
+        })}
+      {props.session.user.pokedex.length == 0 && (
+        <div>
+          <div className={classNames("center-h", classes.noPokedexHeading)}>
+            It seems like you don't have a Pokedex yet
+          </div>
+          <div className={classNames("center-h", classes.noPokedexSubtitle)}>
+            Click on the pokedex below to create one!
+          </div>
+        </div>
+      )}
+      <CreatePokedexForm games={gamesPokedex} />
     </div>
   );
 };

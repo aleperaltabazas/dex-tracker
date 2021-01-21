@@ -9,13 +9,13 @@ interface UpdatePokedexAction {
 
 export type PokedexAction = UpdatePokedexAction;
 
-type NotLoaded = {
+export type PokedexNotLoaded = {
   loaded: false;
 };
 
-type Loaded = {
+export type PokedexLoaded = {
   loaded: true;
   pokedex: GamePokedex[];
 };
 
-export type PokedexState = Loaded | NotLoaded;
+export type PokedexState = PokedexLoaded | PokedexNotLoaded;
