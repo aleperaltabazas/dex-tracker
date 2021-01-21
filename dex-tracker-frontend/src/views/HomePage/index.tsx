@@ -4,13 +4,9 @@ import Dex from "../../components/Dex";
 import { RootState } from "../../reducers";
 import { PokedexState } from "../../store/pokedex";
 import { SessionState } from "../../store/session";
-import Cookies from "js-cookie";
 import { connect } from "react-redux";
-import store from "../../store";
-import { loginError, updateSessionState } from "../../actions/session";
-import { createUser, login } from "../../functions/login";
+import { openLocallyStoredSession } from "../../functions/login";
 import { fetchGamesPokedex } from "../../functions/poedex";
-import { AxiosError } from "axios";
 
 type HomePageProps = {
   pokedex: PokedexState;
@@ -19,44 +15,7 @@ type HomePageProps = {
 
 const HomePage = (props: HomePageProps) => {
   useEffect(() => {
-    const dexToken = Cookies.get("dex-token");
-    console.log("checking for dex-token", dexToken);
-
-    function createUserAndDispatchToStore() {
-      createUser()
-        .then((res) => {
-          console.log("Created user", Cookies.get("dex-token"));
-          store.dispatch(
-            updateSessionState(Cookies.get("dex-token")!, res.data)
-          );
-        })
-        .catch((err) => console.error("Error creating the user", err));
-    }
-
-    if (dexToken) {
-      login()
-        .then((res) => {
-          console.log(res);
-          return res;
-        })
-        .then((res) => {
-          console.error("Logged in user");
-          store.dispatch(updateSessionState(dexToken, res.data));
-        })
-        .catch((err: AxiosError) => {
-          console.error("Error logging in", err);
-
-          if (err.response?.status == 404) {
-            Cookies.remove("dex-token");
-            createUserAndDispatchToStore();
-          } else {
-            store.dispatch(loginError());
-          }
-        });
-    } else {
-      createUserAndDispatchToStore();
-    }
-
+    openLocallyStoredSession();
     fetchGamesPokedex();
   }, []);
 
