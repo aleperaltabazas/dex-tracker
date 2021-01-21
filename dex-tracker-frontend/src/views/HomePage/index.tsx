@@ -7,7 +7,7 @@ import { SessionState } from "../../store/session";
 import Cookies from "js-cookie";
 import { connect } from "react-redux";
 import store from "../../store";
-import { updateSessionState } from "../../actions/session";
+import { loginError, updateSessionState } from "../../actions/session";
 import { createUser, login } from "../../functions/login";
 import { fetchGamesPokedex } from "../../functions/poedex";
 import { AxiosError } from "axios";
@@ -48,8 +48,10 @@ const HomePage = (props: HomePageProps) => {
 
           if (err.response?.status == 404) {
             Cookies.remove("dex-token");
+            createUserAndDispatchToStore();
+          } else {
+            store.dispatch(loginError());
           }
-          createUserAndDispatchToStore();
         });
     } else {
       createUserAndDispatchToStore();
@@ -57,6 +59,10 @@ const HomePage = (props: HomePageProps) => {
 
     fetchGamesPokedex();
   }, []);
+
+  if (props.session.isError) {
+    return <div>se rompió algo perrito :(</div>;
+  }
 
   if (!props.session.isLoggedIn) {
     return <div>Cargando perrote</div>;

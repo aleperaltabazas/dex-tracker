@@ -2,6 +2,7 @@ import {
   INVALIDATE_SESSION,
   SessionAction,
   LOG_IN_ACTION,
+  LOG_IN_ERROR,
 } from "../../store/session";
 import { User } from "../../types/user";
 
@@ -18,6 +19,13 @@ export function updateSessionState(token: string, user: User): SessionAction {
       token,
       user,
       isLoggedIn: true,
+      isError: false,
     },
+  };
+}
+
+export function loginError(): SessionAction {
+  return {
+    type: LOG_IN_ERROR,
   };
 }
