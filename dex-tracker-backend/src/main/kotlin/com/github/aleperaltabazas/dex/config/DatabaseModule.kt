@@ -24,10 +24,7 @@ class DatabaseModule : AbstractModule() {
         val srv = config.hasPath("db.srv") && config.getBoolean("db.srv")
         val string = "mongodb${if (srv) "+srv" else ""}://"
 
-
-        val connectionString = ConnectionString(
-            "$string$user:$password@$host/$database"
-        )
+        val connectionString = ConnectionString("$string$user:$password@$host/$database")
 
         val credential = MongoCredential.createCredential(user, database, password.toCharArray())
 

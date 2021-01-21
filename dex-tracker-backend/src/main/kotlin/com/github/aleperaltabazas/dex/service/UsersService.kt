@@ -49,7 +49,6 @@ class UsersService(
             value = user.copy()
         )
 
-        // TODO: add the new pokedex with its ID; maybe generate a string as ID
         return userDex
     }
 
