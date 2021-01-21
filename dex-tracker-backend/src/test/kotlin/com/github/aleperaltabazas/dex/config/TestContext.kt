@@ -11,7 +11,6 @@ object TestContext {
         ConfigModule(),
         ConnectionMockModule(),
         ControllerModule(),
-        DatabaseMockModule(),
         EnvMockModule(),
         FileSystemMockModule(),
         HashMockModule(),

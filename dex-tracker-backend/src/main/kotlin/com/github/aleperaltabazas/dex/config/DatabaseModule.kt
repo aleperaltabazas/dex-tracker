@@ -4,26 +4,45 @@ import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.google.inject.name.Named
+import com.mongodb.ConnectionString
+import com.mongodb.MongoClientSettings
+import com.mongodb.MongoCredential
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoDatabase
 import com.typesafe.config.Config
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
-import org.jetbrains.exposed.sql.Database
 
 class DatabaseModule : AbstractModule() {
     @Provides
     @Singleton
-    @Named("db")
-    fun db(config: Config): Database {
-        val hikariConfig = HikariConfig().apply {
-            this.jdbcUrl = config.getString("db.connection-string")
-            this.driverClassName = config.getString("db.driver")
-            this.username = config.getString("db.user")
-            this.password = config.getString("db.password")
-            this.maximumPoolSize = config.getInt("db.hikari.pool-size")
-        }
+    @Named("mongoClient")
+    fun mongoClient(config: Config): MongoClient {
+        val user = config.getString("db.user")
+        val password = config.getString("db.password")
+        val host = config.getString("db.host")
+        val database = config.getString("db.name")
+        val srv = config.hasPath("db.srv") && config.getBoolean("db.srv")
+        val string = "mongodb${if (srv) "+srv" else ""}://"
 
-        val source = HikariDataSource(hikariConfig)
 
-        return Database.connect(source)
+        val connectionString = ConnectionString(
+            "$string$user:$password@$host/$database"
+        )
+
+        val credential = MongoCredential.createCredential(user, database, password.toCharArray())
+
+        val mongoClientSettings = MongoClientSettings.builder()
+            .credential(credential)
+            .applyConnectionString(connectionString)
+            .build()
+        return MongoClients.create(mongoClientSettings)
     }
+
+    @Provides
+    @Singleton
+    @Named("db")
+    fun db(
+        @Named("mongoClient") mongoClient: MongoClient,
+        config: Config,
+    ): MongoDatabase = mongoClient.getDatabase(config.getString("db.name"))
 }

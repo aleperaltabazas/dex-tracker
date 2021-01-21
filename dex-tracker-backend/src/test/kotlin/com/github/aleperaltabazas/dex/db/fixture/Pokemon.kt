@@ -1,7 +1,5 @@
 package com.github.aleperaltabazas.dex.db.fixture
 
-import com.github.aleperaltabazas.dex.db.extensions.insert
-import com.github.aleperaltabazas.dex.db.schema.PokemonTable
 import com.github.aleperaltabazas.dex.model.*
 
 val ivysaur = Pokemon(
@@ -107,13 +105,3 @@ val pichu = Pokemon(
         )
     ),
 )
-
-fun loadFixture() = listOf(
-    ivysaur,
-    venusaur,
-    eevee,
-    unown,
-    giratina,
-    pichu,
-)
-    .forEach { PokemonTable.insert(it) }

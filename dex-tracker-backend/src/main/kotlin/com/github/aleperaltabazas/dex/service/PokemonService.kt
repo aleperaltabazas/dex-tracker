@@ -1,20 +1,22 @@
 package com.github.aleperaltabazas.dex.service
 
 import arrow.core.Either
+import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.cache.pokedex.GamePokedexCache
-import com.github.aleperaltabazas.dex.db.schema.PokemonTable
 import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
 import com.github.aleperaltabazas.dex.dto.dex.FormDTO
 import com.github.aleperaltabazas.dex.dto.dex.GameDTO
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.NotFoundException
 import com.github.aleperaltabazas.dex.model.PokedexType
-import com.github.aleperaltabazas.dex.storage.PokemonStorage
-import org.jetbrains.exposed.sql.and
+import com.github.aleperaltabazas.dex.model.Pokemon
+import com.github.aleperaltabazas.dex.storage.Collection
+import com.github.aleperaltabazas.dex.storage.Storage
+import org.bson.Document
 
 open class PokemonService(
     private val gamePokedexCache: GamePokedexCache,
-    private val pokemonStorage: PokemonStorage,
+    private val storage: Storage,
 ) {
     open fun allPokedex(): List<GamePokedexDTO> {
         val nationals = gamePokedexCache.get().filter { it.value.type == PokedexType.NATIONAL }
@@ -29,18 +31,28 @@ open class PokemonService(
         .let {
             val gen = it.game.gen
             numberOrName.fold(
-                ifLeft = { n ->
-                    pokemonStorage.findOne { (PokemonTable.gen eq gen) and (PokemonTable.nationalDexNumber eq n) }
+                ifLeft = {
+                    storage.query(Collection.POKEMON)
+                        .where(Document("gen", gen).append("national_pokedex_number", it))
+                        .limit(1)
+                        .findAll(POKEMON_REF)
+                        .firstOrNull()
                 },
-                ifRight = { s ->
-                    pokemonStorage.findOne { (PokemonTable.gen eq gen) and (PokemonTable.name eq s) }
+                ifRight = {
+                    storage.query(Collection.POKEMON)
+                        .where(Document("gen", gen).append("name", it))
+                        .limit(1)
+                        .findAll(POKEMON_REF)
+                        .firstOrNull()
                 },
             )
         } ?: throw NotFoundException("No pokemon found with ${numberOrName.fold({ "number $it" }, { "name $it" })}")
 
     open fun gameNationalPokedex(gameKey: String): GamePokedexDTO {
         val pokedex = gamePokedexCache.gameFromKey(gameKey)
-        val pokemon = pokemonStorage.findAll { PokemonTable.gen eq pokedex.game.gen }
+        val pokemon = storage.query(Collection.POKEMON)
+            .where(Document("gen", pokedex.game.gen))
+            .findAll(POKEMON_REF)
             .map {
                 DexEntryDTO(
                     name = it.name,
@@ -60,8 +72,11 @@ open class PokemonService(
     open fun gameRegionalPokedex(gameKey: String): GamePokedexDTO {
         val pokedex = gamePokedexCache.gameFromKey(gameKey)
 
-        val pokemon = pokemonStorage
-            .findAll { (PokemonTable.gen eq pokedex.game.gen) and (PokemonTable.name inList pokedex.pokemon) }
+        val pokemon = storage
+            .query(Collection.POKEMON)
+            .where(Document("gen", pokedex.game.gen))
+            .findAll(POKEMON_REF)
+            .filter { it.name in pokedex.pokemon }
             .map {
                 DexEntryDTO(
                     number = pokedex.pokemon.indexOf(it.name),
@@ -77,5 +92,9 @@ open class PokemonService(
             region = pokedex.game.region,
             game = GameDTO(pokedex.game)
         )
+    }
+
+    companion object {
+        private val POKEMON_REF = object : TypeReference<Pokemon>() {}
     }
 }

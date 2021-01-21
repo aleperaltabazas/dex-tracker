@@ -5,7 +5,7 @@ import com.github.aleperaltabazas.dex.service.UsersService
 import spark.ModelAndView
 import spark.Request
 import spark.Response
-import spark.Spark.*
+import spark.Spark.get
 import spark.TemplateEngine
 
 class FrontendController(

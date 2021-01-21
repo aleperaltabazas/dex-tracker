@@ -1,29 +1,22 @@
 package com.github.aleperaltabazas.dex.config
 
-import com.github.aleperaltabazas.dex.storage.PokemonStorage
-import com.github.aleperaltabazas.dex.storage.UsersStorage
-import com.github.aleperaltabazas.dex.utils.HashHelper
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.aleperaltabazas.dex.storage.Storage
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.google.inject.name.Named
-import org.jetbrains.exposed.sql.Database
+import com.mongodb.client.MongoDatabase
 
 class StorageModule : AbstractModule() {
     @Provides
     @Singleton
-    @Named("pokemonStorage")
-    fun pokemonStorage(
-        @Named("db") db: Database
-    ) = PokemonStorage(
-        db
+    @Named("storage")
+    fun storage(
+        @Named("objectMapperSnakeCase") objectMapper: ObjectMapper,
+        @Named("db") db: MongoDatabase
+    ) = Storage(
+        db = db,
+        objectMapper = objectMapper
     )
-
-    @Provides
-    @Singleton
-    @Named("usersStorage")
-    fun usersStorage(
-        @Named("db") db: Database,
-        @Named("hash") hash: HashHelper
-    ) = UsersStorage(db, hash)
 }

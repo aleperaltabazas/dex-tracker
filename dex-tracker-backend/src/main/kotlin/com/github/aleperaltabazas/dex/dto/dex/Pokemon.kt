@@ -41,7 +41,7 @@ data class UserDTO(
 }
 
 data class CaughtStatusDTO(
-    val pokedexId: Long,
+    val pokedexId: String,
     val dexNumber: Int,
     val caught: Boolean
 )
