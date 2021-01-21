@@ -1,9 +1,10 @@
 package com.github.aleperaltabazas.dex.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.aleperaltabazas.dex.cache.pokedex.GamePokedexCache
+import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.connector.RestConnector
 import com.github.aleperaltabazas.dex.model.Game
+import com.github.aleperaltabazas.dex.service.GameService
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
@@ -19,12 +20,12 @@ open class CacheModule : AbstractModule() {
         @Named("pokeapiConnector") pokeapiConnector: RestConnector,
         @Named("fileSystemHelper") fileSystemHelper: FileSystemHelper,
         @Named("objectMapperSnakeCase") objectMapper: ObjectMapper,
+        @Named("gameService") gameService: GameService,
         config: Config,
-    ) = GamePokedexCache(
+    ) = RegionalPokedexCache(
         fileSystemHelper = fileSystemHelper,
         objectMapper = objectMapper,
         pokeapiConnector = pokeapiConnector,
-        games = config.getConfigList("pokedex.games")
-            .map { Game(it) }
+        gameService = gameService
     )
 }

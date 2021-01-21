@@ -1,6 +1,6 @@
 package com.github.aleperaltabazas.dex.integration
 
-import com.github.aleperaltabazas.dex.cache.pokedex.GamePokedexCache
+import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.config.TestContext
 import com.github.aleperaltabazas.dex.connector.RestConnector
 import com.github.aleperaltabazas.dex.db.fixture.eevee
@@ -20,14 +20,14 @@ class PokemonServiceTest : WordSpec() {
     init {
         val pokeapiMock: RestConnector = TestContext.get("pokeapiConnector")
         val pokemonService: PokemonService = TestContext.get("pokemonService")
-        val gamePokedexCache: GamePokedexCache = TestContext.get("gamePokedexCache")
+        val regionalPokedexCache: RegionalPokedexCache = TestContext.get("gamePokedexCache")
 
         "gameNationalPokedex" should {
             "return ivysaur, venusaur and eevee for game key rby" {
 
 
                 PokeapiConnector.kantoPokedex(pokeapiMock)
-                gamePokedexCache.start()
+                regionalPokedexCache.start()
 
                 val expected = GamePokedexDTO(
                     game = GameDTO(

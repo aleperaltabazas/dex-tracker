@@ -2,7 +2,7 @@ package com.github.aleperaltabazas.dex.service
 
 import arrow.core.Either
 import com.fasterxml.jackson.core.type.TypeReference
-import com.github.aleperaltabazas.dex.cache.pokedex.GamePokedexCache
+import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
 import com.github.aleperaltabazas.dex.dto.dex.FormDTO
 import com.github.aleperaltabazas.dex.dto.dex.GameDTO
@@ -15,19 +15,21 @@ import com.github.aleperaltabazas.dex.storage.Storage
 import org.bson.Document
 
 open class PokemonService(
-    private val gamePokedexCache: GamePokedexCache,
+    private val gameService: GameService,
+    private val regionalPokedexCache: RegionalPokedexCache,
     private val storage: Storage,
 ) {
     open fun allPokedex(): List<GamePokedexDTO> {
-        val nationals = gamePokedexCache.get().filter { it.value.type == PokedexType.NATIONAL }
+        val nationals = regionalPokedexCache.get().filter { it.value.type == PokedexType.NATIONAL }
             .map { gameNationalPokedex(it.key) }
-        val regionals = gamePokedexCache.get().filter { it.value.type == PokedexType.REGIONAL }
+        val regionals = regionalPokedexCache.get().filter { it.value.type == PokedexType.REGIONAL }
             .map { gameRegionalPokedex(it.key) }
 
         return regionals + nationals
     }
 
-    open fun pokemon(gameKey: String, numberOrName: Either<Int, String>) = gamePokedexCache.gameFromKey(gameKey)
+    open fun pokemon(gameKey: String, numberOrName: Either<Int, String>) = gameService.gameFromKey(gameKey)
+        .let { regionalPokedexCache.pokedexOf(it) }
         .let {
             val gen = it.game.gen
             numberOrName.fold(
@@ -49,9 +51,9 @@ open class PokemonService(
         } ?: throw NotFoundException("No pokemon found with ${numberOrName.fold({ "number $it" }, { "name $it" })}")
 
     open fun gameNationalPokedex(gameKey: String): GamePokedexDTO {
-        val pokedex = gamePokedexCache.gameFromKey(gameKey)
+        val game = gameService.gameFromKey(gameKey)
         val pokemon = storage.query(Collection.POKEMON)
-            .where(Document("gen", pokedex.game.gen))
+            .where(Document("gen", game.gen))
             .findAll(POKEMON_REF)
             .map {
                 DexEntryDTO(
@@ -64,24 +66,25 @@ open class PokemonService(
         return GamePokedexDTO(
             pokemon = pokemon.toList(),
             type = PokedexType.NATIONAL,
-            region = pokedex.game.region,
-            game = GameDTO(pokedex.game)
+            region = game.region,
+            game = GameDTO(game)
         )
     }
 
     open fun gameRegionalPokedex(gameKey: String): GamePokedexDTO {
-        val pokedex = gamePokedexCache.gameFromKey(gameKey)
+        val game = gameService.gameFromKey(gameKey)
+        val pokedex = regionalPokedexCache.pokedexOf(game)
 
         val pokemon = storage
             .query(Collection.POKEMON)
-            .where(Document("gen", pokedex.game.gen))
+            .where(Document("gen", game.gen))
             .findAll(POKEMON_REF)
             .filter { it.name in pokedex.pokemon }
-            .map {
+            .mapIndexed { idx, p ->
                 DexEntryDTO(
-                    number = pokedex.pokemon.indexOf(it.name),
-                    name = it.name,
-                    forms = it.forms.map { f -> FormDTO(f) }
+                    number = idx + 1,
+                    name = p.name,
+                    forms = p.forms.map { f -> FormDTO(f) }
                 )
             }
             .toList()

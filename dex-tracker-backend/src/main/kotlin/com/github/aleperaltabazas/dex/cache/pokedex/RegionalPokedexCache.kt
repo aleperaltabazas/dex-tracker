@@ -8,15 +8,17 @@ import com.github.aleperaltabazas.dex.cache.RefreshRate
 import com.github.aleperaltabazas.dex.connector.RestConnector
 import com.github.aleperaltabazas.dex.dto.pokeapi.PokedexDTO
 import com.github.aleperaltabazas.dex.exception.NotFoundException
+import com.github.aleperaltabazas.dex.extension.find
 import com.github.aleperaltabazas.dex.extension.sequence
 import com.github.aleperaltabazas.dex.model.Game
 import com.github.aleperaltabazas.dex.model.GamePokedex
 import com.github.aleperaltabazas.dex.model.PokedexType
+import com.github.aleperaltabazas.dex.service.GameService
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
 import java.util.concurrent.TimeUnit
 
-open class GamePokedexCache(
-    private val games: List<Game>,
+open class RegionalPokedexCache(
+    private val gameService: GameService,
     private val pokeapiConnector: RestConnector,
     fileSystemHelper: FileSystemHelper,
     objectMapper: ObjectMapper,
@@ -31,11 +33,10 @@ open class GamePokedexCache(
     ),
     ref = object : TypeReference<Map<String, GamePokedex>>() {}
 ) {
-    fun gameFromKey(gameKey: String): GamePokedex = this.get()
-        .toList()
-        .find { (g, _) -> g == gameKey }
+    open fun pokedexOf(game: Game): GamePokedex = this.get()
+        .find { key, _ -> key == game.title }
         ?.second
-        ?: throw NotFoundException("No game found for key $gameKey")
+        ?: throw NotFoundException("No regional pokedex found for game ${game.title}")
 
     private fun build(dex: PokedexDTO, game: Game): GamePokedex = GamePokedex(
         pokemon = dex.pokemonEntries
@@ -45,7 +46,7 @@ open class GamePokedexCache(
         game = game,
     )
 
-    override fun doRefresh(): Map<String, GamePokedex>? = games.map { g ->
+    override fun doRefresh(): Map<String, GamePokedex>? = gameService.all().map { g ->
         pokeapiConnector.get("/api/v2/pokedex/${g.pokeapiId}")
             .map { it.deserializeAs(POKEAPI_DEX_REF) }
             .map { this.build(dex = it, game = g) }

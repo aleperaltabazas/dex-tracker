@@ -1,7 +1,7 @@
 package com.github.aleperaltabazas.dex.service
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.github.aleperaltabazas.dex.cache.pokedex.GamePokedexCache
+import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
 import com.github.aleperaltabazas.dex.dto.dex.GameDTO
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
@@ -22,11 +22,13 @@ import org.mockito.ArgumentMatchers.any as anyClass
 
 class PokemonServiceTest : WordSpec() {
     init {
-        val cacheMock: GamePokedexCache = mock {}
+        val cacheMock: RegionalPokedexCache = mock {}
         val storageMock: Storage = mock {}
+        val gameServiceMock: GameService = mock {}
         val pokemonService = PokemonService(
-            gamePokedexCache = cacheMock,
-            storage = storageMock
+            regionalPokedexCache = cacheMock,
+            storage = storageMock,
+            gameService = gameServiceMock
         )
 
         "gameNationalPokedex" should {
