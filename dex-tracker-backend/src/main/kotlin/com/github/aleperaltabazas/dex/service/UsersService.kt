@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.exception.ForbiddenException
+import com.github.aleperaltabazas.dex.exception.NotFoundException
 import com.github.aleperaltabazas.dex.model.*
 import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
@@ -59,7 +60,7 @@ class UsersService(
             storage.query(Collection.USERS)
                 .where(Document("user_id", it.userId))
                 .findOne(USER_REF)
-        } ?: throw RuntimeException()
+        } ?: throw NotFoundException("No user found for session token $token")
 
     fun createUser(username: String?): Pair<User, String> {
         if (username != null && storage.exists(Collection.USERS, Document("username", username))) {

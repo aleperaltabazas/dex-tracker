@@ -5,7 +5,9 @@ import com.typesafe.config.ConfigFactory
 enum class Env {
     DEV,
     PROD,
-    TEST,
+    TEST;
+
+    fun isDev() = this == DEV || this == TEST
 }
 
 lateinit var environment: Env
