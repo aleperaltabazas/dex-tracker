@@ -49,7 +49,9 @@ const Dex = (props: DexProps) => {
         p.dexNumber == poke.dexNumber ? { ...p, caught: !p.caught } : p
       )
     );
-    store.dispatch(addToSyncQueue(poke.dexNumber, !poke.caught));
+    store.dispatch(
+      addToSyncQueue(poke.dexNumber, !poke.caught, props.dex.userDexId)
+    );
   };
 
   return (

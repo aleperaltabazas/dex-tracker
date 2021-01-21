@@ -50,8 +50,10 @@ class ControllerModule : AbstractModule() {
     @Named("exceptionController")
     fun exceptionController(
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
+        @Named("env") env: Env,
     ) = ExceptionController(
         objectMapper = objectMapper,
+        env = env,
     )
 
     @Provides

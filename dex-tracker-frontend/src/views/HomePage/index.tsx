@@ -41,6 +41,7 @@ const HomePage = (props: HomePageProps) => {
       })}
       <Dex
         dex={{
+          userDexId: "1",
           type: "NATIONAL",
           region: "johto",
           game: "hgss",

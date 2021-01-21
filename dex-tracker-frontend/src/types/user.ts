@@ -5,6 +5,7 @@ export type UserDex = {
   type: "NATIONAL" | "REGIONAL";
   region: string;
   pokemon: Pokemon[];
+  userDexId: string;
 };
 
 export type Pokemon = {

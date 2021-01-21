@@ -4,6 +4,7 @@ import rootReducer, { RootState } from "./reducers";
 const defaultRootState: RootState = {
   session: {
     isLoggedIn: false,
+    isError: false,
   },
   syncQueue: {
     timeout: undefined,
