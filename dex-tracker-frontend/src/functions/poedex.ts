@@ -1,4 +1,4 @@
-import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { loadPokedex } from "../actions/pokedex";
 import { host } from "../config";
 import store from "../store";

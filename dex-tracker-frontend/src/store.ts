@@ -13,6 +13,9 @@ const defaultRootState: RootState = {
   pokedex: {
     loaded: false,
   },
+  games: {
+    loaded: false,
+  },
 };
 
 const store = createStore(
