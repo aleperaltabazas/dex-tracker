@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { host } from "../config";
 import { User } from "../types/user";
 
-export function login(token: string) {
+export function login() {
   let config: AxiosRequestConfig = {
     method: "GET",
     url: `${host}/api/v1/users`,

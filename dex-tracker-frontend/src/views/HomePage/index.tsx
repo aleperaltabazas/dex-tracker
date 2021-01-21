@@ -10,6 +10,7 @@ import store from "../../store";
 import { updateSessionState } from "../../actions/session";
 import { createUser, login } from "../../functions/login";
 import { fetchGamesPokedex } from "../../functions/poedex";
+import { AxiosError } from "axios";
 
 type HomePageProps = {
   pokedex: PokedexState;
@@ -21,18 +22,7 @@ const HomePage = (props: HomePageProps) => {
     const dexToken = Cookies.get("dex-token");
     console.log("checking for dex-token", dexToken);
 
-    if (dexToken) {
-      login(dexToken)
-        .then((res) => {
-          console.log(res);
-          return res;
-        })
-        .then((res) => {
-          console.error("Logged in user");
-          store.dispatch(updateSessionState(dexToken, res.data));
-        })
-        .catch((err) => console.error("Error logging in", err));
-    } else {
+    function createUserAndDispatchToStore() {
       createUser()
         .then((res) => {
           console.log("Created user", Cookies.get("dex-token"));
@@ -41,6 +31,28 @@ const HomePage = (props: HomePageProps) => {
           );
         })
         .catch((err) => console.error("Error creating the user", err));
+    }
+
+    if (dexToken) {
+      login()
+        .then((res) => {
+          console.log(res);
+          return res;
+        })
+        .then((res) => {
+          console.error("Logged in user");
+          store.dispatch(updateSessionState(dexToken, res.data));
+        })
+        .catch((err: AxiosError) => {
+          console.error("Error logging in", err);
+
+          if (err.response?.status == 404) {
+            Cookies.remove("dex-token");
+          }
+          createUserAndDispatchToStore();
+        });
+    } else {
+      createUserAndDispatchToStore();
     }
 
     fetchGamesPokedex();
