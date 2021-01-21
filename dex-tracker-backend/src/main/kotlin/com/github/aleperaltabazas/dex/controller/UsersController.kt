@@ -41,6 +41,7 @@ class UsersController(
         val token = requireNotNull(req.cookie(DEX_TOKEN)) {
             throw UnauthorizedException("No dex-token found for")
         }
+
         val body: CreateUserDexDTO = objectMapper.readValue(req.body())
 
         return usersService.createUserDex(
