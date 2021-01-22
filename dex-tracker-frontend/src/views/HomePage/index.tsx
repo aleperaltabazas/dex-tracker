@@ -71,13 +71,15 @@ const HomePage = (props: HomePageProps) => {
           <div className={classNames("center-h", classes.noPokedexSubtitle)}>
             Click on the pokedex below to create one!
           </div>
+          <div className="w-100 center-h">
+            <img
+              className="p-1 cursor-pointer center-h"
+              src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
+              onClick={() => store.dispatch(openCreateDexForm())}
+            />
+          </div>
         </div>
       )}
-      <img
-        className="p-1 cursor-pointer center-h"
-        src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
-        onClick={() => store.dispatch(openCreateDexForm())}
-      />
     </div>
   );
 };
