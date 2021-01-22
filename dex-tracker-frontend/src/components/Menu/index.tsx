@@ -6,17 +6,17 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
 import { hot } from "react-hot-loader";
 import { RootState } from "../../reducers";
 import { connect } from "react-redux";
-import { closeMenu } from "../../actions/global";
+import { closeMenu, openCreateDexForm } from "../../actions/global";
 import store from "../../store";
 import classNames from "classnames";
 import CloseMenu from "./Close";
 import { UserDex } from "../../types/user";
 import { Game } from "../../types/pokedex";
+import { AddCircle } from "@material-ui/icons";
+import CreatePokedexForm from "../CreatePokedexForm";
 
 const useStyles = makeStyles({
   list: {
@@ -24,6 +24,13 @@ const useStyles = makeStyles({
   },
   fullList: {
     width: "auto",
+  },
+  heading: {
+    fontSize: "20px",
+    fontWeight: "bold",
+  },
+  newPokedex: {
+    fontWeight: "bold",
   },
 });
 
@@ -75,19 +82,46 @@ const Menu = (props: MenuProps) => {
             <List>
               <CloseMenu />
               <Divider />
-              {props.userDex.map((dex, idx) => (
-                <ListItem button key={dex.userDexId}>
-                  <ListItemIcon>
-                    <span
-                      className={`pokesprite pokemon ${
-                        props.games.find((g) => g.title == dex.game)
-                          ?.spritePokemon
-                      }`}
-                    />
-                    <span> {dex.game} </span>
-                  </ListItemIcon>
-                </ListItem>
-              ))}
+              <div
+                className={classNames(
+                  classes.heading,
+                  "pl-1 pt-1",
+                  "uppercase"
+                )}
+              >
+                My Pokedex
+              </div>
+              {props.userDex.map((dex) => {
+                const game = props.games.find((g) => g.title == dex.game);
+                return (
+                  <ListItem key={dex.userDexId} disableGutters>
+                    <ListItemIcon>
+                      <span
+                        className={`pokesprite pokemon ${game?.spritePokemon}`}
+                      />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <span>{dex.name || game?.fullTitle}</span>
+                    </ListItemText>
+                  </ListItem>
+                );
+              })}
+              <ListItem
+                button
+                onClick={() => {
+                  store.dispatch(closeMenu());
+                  store.dispatch(openCreateDexForm());
+                }}
+              >
+                <ListItemIcon>
+                  <AddCircle />
+                </ListItemIcon>
+                <ListItemText>
+                  <span className={classNames("uppercase", classes.newPokedex)}>
+                    New Pokedex
+                  </span>
+                </ListItemText>
+              </ListItem>
             </List>
           </div>
         </Drawer>

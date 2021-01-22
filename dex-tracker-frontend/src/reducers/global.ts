@@ -1,7 +1,13 @@
-import { GlobalAction, GlobalState, UPDATE_MENU_OPEN } from "../store/global";
+import {
+  GlobalAction,
+  GlobalState,
+  UPDATE_CREATE_DEX_FORM_OPEN,
+  UPDATE_MENU_OPEN,
+} from "../store/global";
 
 const defaultGlobalState: GlobalState = {
   menuOpen: false,
+  createDexFormOpen: false,
 };
 
 function globalReducer(state = defaultGlobalState, action: GlobalAction) {
@@ -10,6 +16,12 @@ function globalReducer(state = defaultGlobalState, action: GlobalAction) {
       return {
         ...state,
         menuOpen: action.payload,
+      };
+    }
+    case UPDATE_CREATE_DEX_FORM_OPEN: {
+      return {
+        ...state,
+        createDexFormOpen: action.payload,
       };
     }
     default: {

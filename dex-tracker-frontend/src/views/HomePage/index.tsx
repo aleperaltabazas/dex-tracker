@@ -9,9 +9,10 @@ import { openLocallyStoredSession } from "../../functions/login";
 import { fetchGamesPokedex } from "../../functions/pokedex";
 import classNames from "classnames";
 import { makeStyles } from "@material-ui/core";
-import CreatePokedexForm from "./Sections/CreatePokedexForm";
 import { GamesState } from "../../store/games";
 import { fetchGames } from "../../functions/games";
+import store from "../../store";
+import { openCreateDexForm } from "../../actions/global";
 
 type HomePageProps = {
   pokedex: PokedexState;
@@ -72,7 +73,11 @@ const HomePage = (props: HomePageProps) => {
           </div>
         </div>
       )}
-      <CreatePokedexForm pokedex={gamesPokedex} games={props.games.games} />
+      <img
+        className="p-1 cursor-pointer center-h"
+        src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
+        onClick={() => store.dispatch(openCreateDexForm())}
+      />
     </div>
   );
 };

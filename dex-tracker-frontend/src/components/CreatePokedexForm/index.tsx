@@ -14,23 +14,22 @@ import {
 } from "@material-ui/core";
 import React, { useState } from "react";
 import { hot } from "react-hot-loader";
-import Column from "../../../components/Column";
-import Row from "../../../components/Row";
-import {
-  Game,
-  GamePokedex,
-  GameTitle,
-  PokedexType,
-} from "../../../types/pokedex";
+import Column from "../../components/Column";
+import Row from "../../components/Row";
+import { Game, GamePokedex, GameTitle, PokedexType } from "../../types/pokedex";
 import classNames from "classnames";
 import Loader from "react-loader-spinner";
-import { createPokedex } from "../../../functions/my-dex";
-import { addUserDex } from "../../../actions/session";
-import store from "../../../store";
+import { createPokedex } from "../../functions/my-dex";
+import { addUserDex } from "../../actions/session";
+import store from "../../store";
+import { RootState } from "../../reducers";
+import { connect } from "react-redux";
+import { closeCreateDexForm } from "../../actions/global";
 
 type CreatePokedexFormProps = {
   pokedex: GamePokedex[];
   games: Game[];
+  open: boolean;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -75,25 +74,17 @@ const useStyles = makeStyles((theme: Theme) =>
 const CreatePokedexForm = (props: CreatePokedexFormProps) => {
   const classes = useStyles();
 
-  const [open, setOpen] = useState(false);
   const [game, setGame] = useState<GameTitle>("gsc");
   const [type, setType] = useState<PokedexType>("REGIONAL");
   const [loading, setLoading] = useState(false);
 
   return (
     <React.Fragment>
-      <div className="center-h">
-        <img
-          className="p-1 cursor-pointer"
-          src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
-          onClick={() => setOpen(true)}
-        />
-      </div>
       <Dialog
         fullWidth
         maxWidth="md"
-        open={open}
-        onClose={() => setOpen(false)}
+        open={props.open}
+        onClose={() => store.dispatch(closeCreateDexForm())}
         aria-labelledby="max-width-dialog-title"
       >
         <DialogTitle id="max-width-dialog-title">
@@ -171,7 +162,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
         </DialogContent>
         <DialogActions className={classes.buttons}>
           <Button
-            onClick={() => setOpen(false)}
+            onClick={() => store.dispatch(closeCreateDexForm())}
             color="secondary"
             className={classNames(classes.close)}
           >
@@ -185,7 +176,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                 .then(store.dispatch)
                 .then(() => {
                   setLoading(false);
-                  setOpen(false);
+                  store.dispatch(closeCreateDexForm());
                 })
                 .catch(console.log)
                 .then(() => {
@@ -203,4 +194,10 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
   );
 };
 
-export default hot(module)(CreatePokedexForm);
+const mapStateToProps = (root: RootState) => ({
+  games: root.games.loaded ? root.games.games : [],
+  pokedex: root.pokedex.loaded ? root.pokedex.pokedex : [],
+  open: root.global.createDexFormOpen,
+});
+
+export default hot(module)(connect(mapStateToProps)(CreatePokedexForm));

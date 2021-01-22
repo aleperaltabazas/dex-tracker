@@ -18,6 +18,7 @@ const defaultRootState: RootState = {
   },
   global: {
     menuOpen: false,
+    createDexFormOpen: false,
   },
 };
 

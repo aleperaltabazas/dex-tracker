@@ -2,6 +2,7 @@ import { GameTitle } from "./pokedex";
 
 export type UserDex = {
   game: GameTitle;
+  name?: string;
   type: "NATIONAL" | "REGIONAL";
   region: string;
   pokemon: Pokemon[];

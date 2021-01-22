@@ -8,6 +8,7 @@ import "pokesprite-spritesheet/assets/pokesprite-pokemon-gen8.css";
 import { Container } from "@material-ui/core";
 import HomePage from "./views/HomePage";
 import Menu from "./components/Menu";
+import CreatePokedexForm from "./components/CreatePokedexForm";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <HomePage />
       </Container>
       <Footer />
+      <CreatePokedexForm />
     </div>
   );
 };
