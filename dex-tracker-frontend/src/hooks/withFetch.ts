@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useEffect, useState } from "react";
+import { host } from "../config";
 
 export const PENDING = "PENDING";
 export const SUCCESS = "SUCCESS";
@@ -21,14 +22,20 @@ interface FetchPending {
 
 export type FetchStatus<T> = FetchSuccess<T> | FetchError | FetchPending;
 
+export type FetchConfig = {
+  path: string;
+  withCredentials?: boolean;
+};
+
 export default function withFetch<T>(
-  path: string,
+  config: FetchConfig,
   updateListener?: Array<string>
 ): [FetchStatus<T>, (path: string) => void] {
   const [status, setStatus] = useState<FetchStatus<T>>({ type: PENDING });
   const [isFetching, setIsFetching] = useState(false);
 
-  const initialPath = path;
+  const initialPath = config.path;
+  const withCredentials = config.withCredentials || false;
 
   const fetch = (path?: string) => {
     if (!isFetching) {
@@ -36,8 +43,9 @@ export default function withFetch<T>(
 
       setStatus({ type: PENDING });
       let config: AxiosRequestConfig = {
-        url: path || initialPath,
+        url: `${host}/${path || initialPath}`,
         method: "GET",
+        withCredentials: withCredentials,
       };
 
       axios

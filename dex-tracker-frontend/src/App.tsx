@@ -16,16 +16,14 @@ const App = () => {
   return (
     <div>
       <Header />
-      <Container>
-        <Router>
-          <Menu />
-          <Switch>
-            <Route path="/dex/:id" component={DexPage} />
-            <Route path="/" exact component={HomePage} />
-          </Switch>
-          <CreatePokedexForm />
-        </Router>
-      </Container>
+      <Router>
+        <Menu />
+        <Switch>
+          <Route path="/dex/:id" component={DexPage} />
+          <Route path="/" exact component={HomePage} />
+        </Switch>
+        <CreatePokedexForm />
+      </Router>
       <Footer />
     </div>
   );
