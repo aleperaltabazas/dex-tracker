@@ -97,7 +97,10 @@ const Menu = (props: MenuProps) => {
                     key={dex.userDexId}
                     disableGutters
                     className="cursor-pointer"
-                    onClick={() => props.history.push(`/dex/${dex.userDexId}`)}
+                    onClick={() => {
+                      props.history.push(`/dex/${dex.userDexId}`);
+                      store.dispatch(closeMenu());
+                    }}
                   >
                     <ListItemIcon>
                       <span

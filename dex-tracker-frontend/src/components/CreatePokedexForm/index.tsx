@@ -25,12 +25,13 @@ import store from "../../store";
 import { RootState } from "../../reducers";
 import { connect } from "react-redux";
 import { closeCreateDexForm } from "../../actions/global";
+import { RouteComponentProps, withRouter } from "react-router";
 
-type CreatePokedexFormProps = {
+interface CreatePokedexFormProps extends RouteComponentProps {
   pokedex: GamePokedex[];
   games: Game[];
   open: boolean;
-};
+}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -172,6 +173,10 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
             onClick={() => {
               setLoading(true);
               createPokedex(game, type)
+                .then((dex) => {
+                  props.history.push(`/dex/${dex.userDexId}`);
+                  return dex;
+                })
                 .then(toRef)
                 .then(addUserDex)
                 .then(store.dispatch)
@@ -201,4 +206,6 @@ const mapStateToProps = (root: RootState) => ({
   open: root.global.createDexFormOpen,
 });
 
-export default hot(module)(connect(mapStateToProps)(CreatePokedexForm));
+export default hot(module)(
+  connect(mapStateToProps)(withRouter(CreatePokedexForm))
+);
