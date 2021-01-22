@@ -35,7 +35,7 @@ data class GamePokedexDTO(
 
 data class UserDTO(
     val username: String?,
-    val pokedex: List<UserDexDTO>
+    val pokedex: List<UserDexRefDTO>
 )
 
 data class CaughtStatusDTO(
@@ -51,6 +51,15 @@ data class CreateUserDexDTO(
 )
 
 data class UserDexDTO(
+    val userDexId: String,
+    val game: GameDTO,
+    val type: PokedexType,
+    val region: String,
+    val name: String? = null,
+    val pokemon: List<UserDexPokemon>
+)
+
+data class UserDexRefDTO(
     val userDexId: String,
     val game: GameDTO,
     val name: String?,

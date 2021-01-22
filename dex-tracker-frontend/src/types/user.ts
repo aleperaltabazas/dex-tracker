@@ -1,7 +1,7 @@
-import { GameTitle } from "./pokedex";
+import { Game } from "./pokedex";
 
 export type UserDex = {
-  game: GameTitle;
+  game: Game;
   name?: string;
   type: "NATIONAL" | "REGIONAL";
   region: string;
@@ -17,5 +17,11 @@ export type Pokemon = {
 
 export type User = {
   username?: string;
-  pokedex: UserDex[];
+  pokedex: UserDexRef[];
+};
+
+export type UserDexRef = {
+  userDexId: string;
+  game: Game;
+  name?: string;
 };

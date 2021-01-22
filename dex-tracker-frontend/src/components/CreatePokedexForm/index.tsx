@@ -19,7 +19,7 @@ import Row from "../../components/Row";
 import { Game, GamePokedex, GameTitle, PokedexType } from "../../types/pokedex";
 import classNames from "classnames";
 import Loader from "react-loader-spinner";
-import { createPokedex } from "../../functions/my-dex";
+import { createPokedex, toRef } from "../../functions/my-dex";
 import { addUserDex } from "../../actions/session";
 import store from "../../store";
 import { RootState } from "../../reducers";
@@ -172,6 +172,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
             onClick={() => {
               setLoading(true);
               createPokedex(game, type)
+                .then(toRef)
                 .then(addUserDex)
                 .then(store.dispatch)
                 .then(() => {

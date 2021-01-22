@@ -10,21 +10,23 @@ import Menu from "./components/Menu";
 import CreatePokedexForm from "./components/CreatePokedexForm";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import HomePage from "./views/HomePage";
+import DexPage from "./views/DexPage";
 
 const App = () => {
   return (
     <div>
-      <Menu />
       <Header />
       <Container>
         <Router>
+          <Menu />
           <Switch>
+            <Route path="/dex/:id" component={DexPage} />
             <Route path="/" exact component={HomePage} />
           </Switch>
+          <CreatePokedexForm />
         </Router>
       </Container>
       <Footer />
-      <CreatePokedexForm />
     </div>
   );
 };

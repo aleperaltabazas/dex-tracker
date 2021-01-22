@@ -4,7 +4,7 @@ import { host } from "../config";
 import store from "../store";
 import { GameTitle, PokedexType } from "../types/pokedex";
 import { Sync } from "../types/sync";
-import { UserDex } from "../types/user";
+import { UserDex, UserDexRef } from "../types/user";
 
 export async function createPokedex(game: GameTitle, type: PokedexType) {
   let config: AxiosRequestConfig = {
@@ -24,4 +24,12 @@ export async function synchronize(syncQueue: Sync[]) {
   console.log("sincronizado perro:");
   console.log(syncQueue);
   store.dispatch(clearSynchronizeQueue());
+}
+
+export function toRef(dex: UserDex): UserDexRef {
+  return {
+    name: dex.name,
+    game: dex.game,
+    userDexId: dex.userDexId,
+  };
 }

@@ -1,4 +1,4 @@
-import { User, UserDex } from "../../types/user";
+import { User, UserDex, UserDexRef } from "../../types/user";
 
 export const INVALIDATE_SESSION = "INVALIDATE_SESSION";
 export const LOG_IN_ACTION = "LOG_IN_ACTION";
@@ -20,7 +20,7 @@ interface LoginErrorAction {
 
 interface AddUserDexAction {
   type: typeof ADD_USER_DEX;
-  payload: UserDex;
+  payload: UserDexRef;
 }
 
 export type SessionAction =

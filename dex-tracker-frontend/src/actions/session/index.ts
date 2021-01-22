@@ -5,9 +5,9 @@ import {
   LOG_IN_ERROR,
   ADD_USER_DEX,
 } from "../../store/session";
-import { User, UserDex } from "../../types/user";
+import { User, UserDexRef } from "../../types/user";
 
-export function addUserDex(dex: UserDex): SessionAction {
+export function addUserDex(dex: UserDexRef): SessionAction {
   return {
     type: ADD_USER_DEX,
     payload: dex,

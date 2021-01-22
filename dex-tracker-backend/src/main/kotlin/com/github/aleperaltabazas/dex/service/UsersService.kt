@@ -81,6 +81,12 @@ class UsersService(
         return user to createSession(userId)
     }
 
+    fun findUserDex(token: String, dexId: String): UserDex = findUser(token).let { user ->
+        user.pokedex
+            .find { it.userDexId == dexId }
+            ?: throw NotFoundException("User dex with id $dexId not found for user ${user.userId}")
+    }
+
     private fun createSession(userId: String): String {
         val token = hash.sha256(userId)
 

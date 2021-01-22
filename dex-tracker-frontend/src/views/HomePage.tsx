@@ -58,11 +58,11 @@ const HomePage = (props: HomePageProps) => {
 
   return (
     <div className="mt-5">
-      {props.session.user.pokedex.length > 0 &&
+      {/* {props.session.user.pokedex.length > 0 &&
         props.session.user.pokedex.map((p, idx) => {
-          const dex = gamesPokedex.find((d) => d.game.title == p.game)!;
+          const dex = gamesPokedex.find((d) => d.game.title == p.game.title)!;
           return <Dex dex={p} gamePokedex={dex} key={idx} />;
-        })}
+        })} */}
       {props.session.user.pokedex.length == 0 && (
         <div>
           <div className={classNames("center-h", classes.noPokedexHeading)}>

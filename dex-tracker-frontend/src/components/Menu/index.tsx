@@ -13,10 +13,10 @@ import { closeMenu, openCreateDexForm } from "../../actions/global";
 import store from "../../store";
 import classNames from "classnames";
 import CloseMenu from "./Close";
-import { UserDex } from "../../types/user";
+import { UserDexRef } from "../../types/user";
 import { Game } from "../../types/pokedex";
 import { AddCircle } from "@material-ui/icons";
-import CreatePokedexForm from "../CreatePokedexForm";
+import { RouteComponentProps, withRouter } from "react-router";
 
 const useStyles = makeStyles({
   list: {
@@ -36,11 +36,11 @@ const useStyles = makeStyles({
 
 type Anchor = "top" | "left" | "bottom" | "right";
 
-type MenuProps = {
+interface MenuProps extends RouteComponentProps {
   open: boolean;
-  userDex: UserDex[];
+  userDex: UserDexRef[];
   games: Game[];
-};
+}
 
 const Menu = (props: MenuProps) => {
   const classes = useStyles();
@@ -92,16 +92,20 @@ const Menu = (props: MenuProps) => {
                 My Pokedex
               </div>
               {props.userDex.map((dex) => {
-                const game = props.games.find((g) => g.title == dex.game);
                 return (
-                  <ListItem key={dex.userDexId} disableGutters>
+                  <ListItem
+                    key={dex.userDexId}
+                    disableGutters
+                    className="cursor-pointer"
+                    onClick={() => props.history.push(`/dex/${dex.userDexId}`)}
+                  >
                     <ListItemIcon>
                       <span
-                        className={`pokesprite pokemon ${game?.spritePokemon}`}
+                        className={`pokesprite pokemon ${dex.game?.spritePokemon}`}
                       />
                     </ListItemIcon>
                     <ListItemText>
-                      <span>{dex.name || game?.fullTitle}</span>
+                      <span>{dex.name || dex.game?.fullTitle}</span>
                     </ListItemText>
                   </ListItem>
                 );
@@ -138,4 +142,4 @@ const mapStateToProps = (root: RootState) => {
   };
 };
 
-export default hot(module)(connect(mapStateToProps)(Menu));
+export default hot(module)(withRouter(connect(mapStateToProps)(Menu)));
