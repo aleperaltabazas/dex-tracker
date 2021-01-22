@@ -3,8 +3,16 @@ import {
   SessionAction,
   LOG_IN_ACTION,
   LOG_IN_ERROR,
+  ADD_USER_DEX,
 } from "../../store/session";
-import { User } from "../../types/user";
+import { User, UserDex } from "../../types/user";
+
+export function addUserDex(dex: UserDex): SessionAction {
+  return {
+    type: ADD_USER_DEX,
+    payload: dex,
+  };
+}
 
 export function invalidateSession(): SessionAction {
   return {

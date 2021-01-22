@@ -1,5 +1,7 @@
 import {
+  ADD_USER_DEX,
   INVALIDATE_SESSION,
+  LoggedInState,
   LOG_IN_ACTION,
   LOG_IN_ERROR,
   SessionAction,
@@ -30,6 +32,20 @@ function sessionReducer(
         isError: true,
         isLoggedIn: false,
       };
+    }
+    case ADD_USER_DEX: {
+      const loggedIn = state as LoggedInState;
+      const user = loggedIn.user;
+
+      const newState: LoggedInState = {
+        ...loggedIn,
+        user: {
+          ...user,
+          pokedex: user.pokedex.concat(action.payload),
+        },
+      };
+
+      return newState;
     }
     default: {
       return state;

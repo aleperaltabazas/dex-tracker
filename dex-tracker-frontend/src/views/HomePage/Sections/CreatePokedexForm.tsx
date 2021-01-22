@@ -74,6 +74,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
   const [open, setOpen] = useState(false);
   const [game, setGame] = useState("gsc");
   const [type, setType] = useState<PokedexType>("REGIONAL");
+  const [loading, setLoading] = useState(false);
 
   return (
     <React.Fragment>

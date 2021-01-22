@@ -6,7 +6,7 @@ import { PokedexState } from "../../store/pokedex";
 import { SessionState } from "../../store/session";
 import { connect } from "react-redux";
 import { openLocallyStoredSession } from "../../functions/login";
-import { fetchGamesPokedex } from "../../functions/poedex";
+import { fetchGamesPokedex } from "../../functions/pokedex";
 import classNames from "classnames";
 import { makeStyles } from "@material-ui/core";
 import CreatePokedexForm from "./Sections/CreatePokedexForm";

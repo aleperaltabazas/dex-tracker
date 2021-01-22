@@ -1,8 +1,9 @@
-import { User } from "../../types/user";
+import { User, UserDex } from "../../types/user";
 
 export const INVALIDATE_SESSION = "INVALIDATE_SESSION";
 export const LOG_IN_ACTION = "LOG_IN_ACTION";
 export const LOG_IN_ERROR = "LOG_IN_ERROR";
+export const ADD_USER_DEX = "ADD_USER_DEX";
 
 interface InvalidateSessionAction {
   type: typeof INVALIDATE_SESSION;
@@ -17,10 +18,16 @@ interface LoginErrorAction {
   type: typeof LOG_IN_ERROR;
 }
 
+interface AddUserDexAction {
+  type: typeof ADD_USER_DEX;
+  payload: UserDex;
+}
+
 export type SessionAction =
   | InvalidateSessionAction
   | LogInAction
-  | LoginErrorAction;
+  | LoginErrorAction
+  | AddUserDexAction;
 
 export interface LoggedInState {
   token: string;
