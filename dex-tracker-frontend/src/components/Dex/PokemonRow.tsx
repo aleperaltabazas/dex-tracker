@@ -1,21 +1,43 @@
 import { Hidden } from "@material-ui/core";
-import React from "react";
+import React, { useState } from "react";
 import { hot } from "react-hot-loader";
 import Column from "../Column";
 import Row from "../Row";
 import classNames from "classnames";
 import { Pokemon } from "../../types/user";
 import useStyles from "./styles";
+import pokedexReducer from "../../reducers/pokedex";
+import store from "../../store";
+import { addToSyncQueue } from "../../actions/syncQueue";
 
 type PokemonRowProps = {
   idx: number;
   firstRow: boolean;
   pokemon: Pokemon;
-  updateCaught: (p: Pokemon) => void;
+  dexId: string;
+  incrementCounter: () => void;
+  decrementCounter: () => void;
 };
 
 const PokemonRow = (props: PokemonRowProps) => {
   const classes = useStyles();
+  const [caught, setCaught] = useState(props.pokemon.caught);
+
+  const updateCaught = () => {
+    const newCaught = !caught;
+    setCaught(newCaught);
+
+    if (newCaught) {
+      props.incrementCounter();
+    } else {
+      props.decrementCounter();
+    }
+
+    store.dispatch(
+      addToSyncQueue(props.pokemon.dexNumber, newCaught, props.dexId)
+    );
+  };
+
   return (
     <Row key={props.idx} className={props.firstRow ? "" : classes.rowLine}>
       <Column
@@ -52,9 +74,9 @@ const PokemonRow = (props: PokemonRowProps) => {
         md={1}
         className={classNames("center", classes.listItem)}
         key={`${props.idx}-caught`}
-        onClick={() => props.updateCaught(props.pokemon)}
+        onClick={() => updateCaught()}
       >
-        {props.pokemon.caught ? (
+        {caught ? (
           <span className="pokesprite ball poke" />
         ) : (
           <span className="pokesprite ball poke gray-scale" />

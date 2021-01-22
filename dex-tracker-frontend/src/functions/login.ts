@@ -53,8 +53,10 @@ export function openLocallyStoredSession() {
 
         if (err.response?.status == 404) {
           Cookies.remove("dex-token");
+          console.log("404");
           createUserAndDispatchToStore();
         } else {
+          console.log("wtf");
           store.dispatch(loginError());
         }
       });

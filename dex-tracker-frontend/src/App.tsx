@@ -7,10 +7,12 @@ import "pokesprite-spritesheet/assets/pokesprite-inventory.css";
 import "pokesprite-spritesheet/assets/pokesprite-pokemon-gen8.css";
 import { Container } from "@material-ui/core";
 import HomePage from "./views/HomePage";
+import Menu from "./components/Menu";
 
 const App = () => {
   return (
     <div>
+      <Menu />
       <Header />
       <Container>
         <HomePage />

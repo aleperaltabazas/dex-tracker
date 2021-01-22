@@ -16,6 +16,9 @@ const defaultRootState: RootState = {
   games: {
     loaded: false,
   },
+  global: {
+    menuOpen: false,
+  },
 };
 
 const store = createStore(

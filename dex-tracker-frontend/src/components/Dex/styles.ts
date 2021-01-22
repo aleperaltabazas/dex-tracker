@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core";
 const styles = makeStyles((theme) => ({
   root: {
     width: "100%",
+    background: "white",
   },
   game: {
     fontSize: theme.typography.pxToRem(24),
