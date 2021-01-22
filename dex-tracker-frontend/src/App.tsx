@@ -15,16 +15,16 @@ import DexPage from "./views/DexPage";
 const App = () => {
   return (
     <div>
-      <Header />
       <Router>
+        <Header />
         <Menu />
         <Switch>
           <Route path="/dex/:id" component={DexPage} />
           <Route path="/" exact component={HomePage} />
         </Switch>
         <CreatePokedexForm />
+        <Footer />
       </Router>
-      <Footer />
     </div>
   );
 };
