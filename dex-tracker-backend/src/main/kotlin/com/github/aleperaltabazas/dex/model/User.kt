@@ -20,6 +20,7 @@ data class UserDex(
     val game: String,
     val type: PokedexType,
     val region: String,
+    val name: String? = null,
     val pokemon: List<UserDexPokemon>
 ) {
     fun updateStatus(status: List<CaughtStatusDTO>) = this.copy(

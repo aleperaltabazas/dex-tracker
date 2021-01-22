@@ -2,6 +2,7 @@ package com.github.aleperaltabazas.dex.service
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
+import com.github.aleperaltabazas.dex.dto.dex.CreateUserDexDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.exception.ForbiddenException
 import com.github.aleperaltabazas.dex.exception.NotFoundException
@@ -18,13 +19,13 @@ class UsersService(
     private val idGenerator: IdGenerator,
     private val hash: HashHelper,
 ) {
-    fun createUserDex(token: String, game: String, type: PokedexType): UserDex {
+    fun createUserDex(token: String, dexRequest: CreateUserDexDTO): UserDex {
         val user = findUser(token)
 
-        val pokedex = if (type == PokedexType.NATIONAL) {
-            pokemonService.gameNationalPokedex(game)
+        val pokedex = if (dexRequest.type == PokedexType.NATIONAL) {
+            pokemonService.gameNationalPokedex(dexRequest.game)
         } else {
-            pokemonService.gameRegionalPokedex(game)
+            pokemonService.gameRegionalPokedex(dexRequest.game)
         }
 
         val dexId = idGenerator.userDexId()
@@ -40,7 +41,8 @@ class UsersService(
                     dexNumber = it.number,
                     caught = false
                 )
-            }
+            },
+            name = dexRequest.name
         )
 
         storage.update(Collection.USERS)

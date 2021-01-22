@@ -46,8 +46,7 @@ class UsersController(
 
         return usersService.createUserDex(
             token = token,
-            game = body.game,
-            type = body.type
+            dexRequest = body
         )
     }
 
