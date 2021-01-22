@@ -3,6 +3,7 @@ package com.github.aleperaltabazas.dex.storage
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.result.UpdateResult
 import org.bson.Document
 
@@ -12,7 +13,7 @@ open class Storage(
 ) {
     open fun update(collection: Collection, filter: Document, value: Any): UpdateResult = db
         .getCollection(collection.collectionName)
-        .updateOne(filter, convertToDocument(value))
+        .replaceOne(filter, convertToDocument(value))
 
     open fun insert(collection: Collection, value: Any) = db.getCollection(collection.collectionName)
         .insertOne(convertToDocument(value))

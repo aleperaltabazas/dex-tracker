@@ -23,6 +23,10 @@ import {
   PokedexType,
 } from "../../../types/pokedex";
 import classNames from "classnames";
+import Loader from "react-loader-spinner";
+import { createPokedex } from "../../../functions/my-dex";
+import { addUserDex } from "../../../actions/session";
+import store from "../../../store";
 
 type CreatePokedexFormProps = {
   pokedex: GamePokedex[];
@@ -72,7 +76,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
-  const [game, setGame] = useState("gsc");
+  const [game, setGame] = useState<GameTitle>("gsc");
   const [type, setType] = useState<PokedexType>("REGIONAL");
   const [loading, setLoading] = useState(false);
 
@@ -96,63 +100,74 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
           Create a new pokedex
         </DialogTitle>
         <DialogContent>
-          <form className={classes.form} noValidate>
-            <Row spacing={2} className={classes.formRows}>
-              <Column md={6} xs={12} className="center-v">
-                <Row spacing={2}>
-                  <Column md={6} xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel>Choose the game</InputLabel>
+          {loading && (
+            <Loader
+              type="Puff"
+              color="#00BFFF"
+              height={100}
+              width={100}
+              className="center"
+            />
+          )}
+          {!loading && (
+            <form className={classes.form} noValidate>
+              <Row spacing={2} className={classes.formRows}>
+                <Column md={6} xs={12} className="center-v">
+                  <Row spacing={2}>
+                    <Column md={6} xs={12}>
+                      <FormControl fullWidth>
+                        <InputLabel>Choose the game</InputLabel>
 
-                      <Select
-                        fullWidth
-                        onChange={(e) => setGame(e.target.value as GameTitle)}
-                        value={game}
-                      >
-                        {props.games.map((g, idx) => (
-                          <MenuItem key={idx} value={g.title}>
-                            {g.fullTitle}
-                          </MenuItem>
+                        <Select
+                          fullWidth
+                          onChange={(e) => setGame(e.target.value as GameTitle)}
+                          value={game}
+                        >
+                          {props.games.map((g, idx) => (
+                            <MenuItem key={idx} value={g.title}>
+                              {g.fullTitle}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Column>
+                    <Column md={6} xs={12}>
+                      <FormControl fullWidth>
+                        <InputLabel>Choose the pokedex type</InputLabel>
+                        <Select
+                          fullWidth
+                          onChange={(e, t) =>
+                            setType(e.target.value as PokedexType)
+                          }
+                          value={type}
+                        >
+                          <MenuItem value={"NATIONAL"}>National</MenuItem>
+                          <MenuItem value={"REGIONAL"}>Regional</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Column>
+                  </Row>
+                </Column>
+                <Column md={6} xs={12} className={classes.overflowAuto}>
+                  <div className={classes.pokemonColumn}>
+                    <div className={classes.overflowScrollMd}>
+                      {props.pokedex
+                        .find((p) => p.game.title == game && p.type == type)
+                        ?.pokemon.map((p, idx) => (
+                          <div key={idx}>
+                            <span className="pl-1 pl-md-3 pr-md-1">
+                              {p.number}
+                            </span>
+                            <span className={`pokemon pokesprite ${p.name}`} />
+                            <span className="capitalize">{p.name}</span>
+                          </div>
                         ))}
-                      </Select>
-                    </FormControl>
-                  </Column>
-                  <Column md={6} xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel>Choose the pokedex type</InputLabel>
-                      <Select
-                        fullWidth
-                        onChange={(e, t) =>
-                          setType(e.target.value as PokedexType)
-                        }
-                        value={type}
-                      >
-                        <MenuItem value={"NATIONAL"}>National</MenuItem>
-                        <MenuItem value={"REGIONAL"}>Regional</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Column>
-                </Row>
-              </Column>
-              <Column md={6} xs={12} className={classes.overflowAuto}>
-                <div className={classes.pokemonColumn}>
-                  <div className={classes.overflowScrollMd}>
-                    {props.pokedex
-                      .find((p) => p.game.title == game && p.type == type)
-                      ?.pokemon.map((p, idx) => (
-                        <div key={idx}>
-                          <span className="pl-1 pl-md-3 pr-md-1">
-                            {p.number}
-                          </span>
-                          <span className={`pokemon pokesprite ${p.name}`} />
-                          <span className="capitalize">{p.name}</span>
-                        </div>
-                      ))}
+                    </div>
                   </div>
-                </div>
-              </Column>
-            </Row>
-          </form>
+                </Column>
+              </Row>
+            </form>
+          )}
         </DialogContent>
         <DialogActions className={classes.buttons}>
           <Button
@@ -163,7 +178,20 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
             Close
           </Button>
           <Button
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setLoading(true);
+              createPokedex(game, type)
+                .then(addUserDex)
+                .then(store.dispatch)
+                .then(() => {
+                  setLoading(false);
+                  setOpen(false);
+                })
+                .catch(console.log)
+                .then(() => {
+                  setLoading(false);
+                });
+            }}
             color="primary"
             className={classNames(classes.create)}
           >

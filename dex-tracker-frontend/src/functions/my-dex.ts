@@ -10,6 +10,7 @@ export async function createPokedex(game: GameTitle, type: PokedexType) {
   let config: AxiosRequestConfig = {
     url: `${host}/api/v1/users/pokedex`,
     method: "POST",
+    withCredentials: true,
     data: {
       game: game,
       type: type,

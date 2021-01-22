@@ -47,7 +47,9 @@ class UsersService(
         storage.update(
             collection = Collection.USERS,
             filter = Document("userId", user.userId),
-            value = user.copy()
+            value = user.copy(
+                pokedex = user.pokedex + userDex
+            )
         )
 
         return userDex
