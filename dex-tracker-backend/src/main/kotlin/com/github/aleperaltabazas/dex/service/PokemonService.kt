@@ -85,13 +85,14 @@ open class PokemonService(
             .where(Document("gen", game.gen))
             .findAll(POKEMON_REF)
             .filter { it.name in pokedex.pokemon }
-            .mapIndexed { idx, p ->
+            .map { p ->
                 DexEntryDTO(
-                    number = idx + 1,
+                    number = pokedex.pokemon.indexOf(p.name) + 1,
                     name = p.name,
                     forms = p.forms.map { f -> FormDTO(f) }
                 )
             }
+            .sortedBy { it.number }
             .toList()
 
         return GamePokedexDTO(
