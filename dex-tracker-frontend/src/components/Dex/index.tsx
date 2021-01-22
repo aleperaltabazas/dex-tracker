@@ -47,10 +47,6 @@ const Dex = (props: DexProps) => {
   const incrementCounter = () => setCaughtCounter(caughtCounter + 1);
   const decrementCounter = () => setCaughtCounter(caughtCounter - 1);
 
-  if (2 == 2) {
-    return <div></div>;
-  }
-
   return (
     <div className={classes.root}>
       <div
