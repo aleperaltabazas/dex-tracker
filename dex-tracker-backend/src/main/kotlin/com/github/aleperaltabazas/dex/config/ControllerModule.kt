@@ -52,9 +52,11 @@ class ControllerModule : AbstractModule() {
     fun exceptionController(
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
         @Named("env") env: Env,
+        config: Config
     ) = ExceptionController(
         objectMapper = objectMapper,
         env = env,
+        config.getStringList("cors.origins")
     )
 
     @Provides

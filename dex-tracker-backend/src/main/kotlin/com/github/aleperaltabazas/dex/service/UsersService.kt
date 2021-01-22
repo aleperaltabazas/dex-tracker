@@ -1,6 +1,5 @@
 package com.github.aleperaltabazas.dex.service
 
-import arrow.core.extensions.list.foldable.foldLeft
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
@@ -44,13 +43,10 @@ class UsersService(
             }
         )
 
-        storage.update(
-            collection = Collection.USERS,
-            filter = Document("userId", user.userId),
-            value = user.copy(
-                pokedex = user.pokedex + userDex
-            )
-        )
+        storage.update(Collection.USERS)
+            .where(Document("user_id", user.userId))
+            .add("pokedex", userDex)
+            .updateOne()
 
         return userDex
     }
@@ -102,16 +98,18 @@ class UsersService(
             it.pokedexId
         }
 
-        storage.update(
-            collection = Collection.USERS,
-            filter = Document("user_id", user.userId),
-            value = dexToUpdate.toList().foldLeft(user) { u, (dexId, status) ->
-                u.updatePokedex(
-                    dexId,
-                    status
-                )
-            }
-        )
+        storage.update(collection = Collection.USERS)
+            .where(Document("user_id", user.userId))
+            .set(
+                key = "pokedex",
+                value = dexToUpdate.toList().fold(user) { u, (dexId, status) ->
+                    u.updatePokedex(
+                        dexId,
+                        status
+                    )
+                }.pokedex
+            )
+            .updateOne()
     }
 
     companion object {

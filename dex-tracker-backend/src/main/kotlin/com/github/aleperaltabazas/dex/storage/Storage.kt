@@ -3,17 +3,16 @@ package com.github.aleperaltabazas.dex.storage
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.client.MongoDatabase
-import com.mongodb.client.model.UpdateOptions
-import com.mongodb.client.result.UpdateResult
 import org.bson.Document
 
 open class Storage(
     private val db: MongoDatabase,
     private val objectMapper: ObjectMapper,
 ) {
-    open fun update(collection: Collection, filter: Document, value: Any): UpdateResult = db
-        .getCollection(collection.collectionName)
-        .replaceOne(filter, convertToDocument(value))
+    open fun update(collection: Collection): Update = Update(
+        coll = db.getCollection(collection.collectionName),
+        objectMapper = objectMapper
+    )
 
     open fun insert(collection: Collection, value: Any) = db.getCollection(collection.collectionName)
         .insertOne(convertToDocument(value))

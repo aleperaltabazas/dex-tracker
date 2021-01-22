@@ -29,7 +29,7 @@ class UsersController(
             patch("/pokedex/:id", APPLICATION_JSON, this::updateUserDexCaughtStatus, objectMapper::writeValueAsString)
 
             before("") { req, res ->
-                LOGGER.info("[${req.requestMethod()}] ${req.contextPath()} Request headers: ${req.prettyHeaders()}")
+                LOGGER.info("[${req.requestMethod()}] ${req.servletPath()} Request headers: ${req.prettyHeaders()}")
             }
             after("") { _, res ->
                 LOGGER.info("Response: ${res.status()}")

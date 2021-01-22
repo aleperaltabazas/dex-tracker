@@ -10,6 +10,7 @@ import spark.Spark.exception
 class ExceptionController(
     private val objectMapper: ObjectMapper,
     private val env: Env,
+    private val corsOrigins: List<String>
 ) : Controller {
     override fun register() {
         exception(ApiException::class.java) { e, req, res ->
@@ -28,6 +29,14 @@ class ExceptionController(
                 res.body(objectMapper.writeValueAsString(body))
                 res.status(status)
                 res.header("content-type", "application/json")
+
+                if (env == Env.DEV) {
+                    if (req.headers("Origin") in corsOrigins) {
+                        res.header("Access-Control-Allow-Origin", req.headers("Origin"))
+                    }
+
+                    res.header("Access-Control-Allow-Credentials", "true")
+                }
             }
         }
     }
