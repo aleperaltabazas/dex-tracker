@@ -10,10 +10,13 @@ import { fetchGamesPokedex } from "../../functions/poedex";
 import classNames from "classnames";
 import { makeStyles } from "@material-ui/core";
 import CreatePokedexForm from "./Sections/CreatePokedexForm";
+import { GamesState } from "../../store/games";
+import { fetchGames } from "../../functions/games";
 
 type HomePageProps = {
   pokedex: PokedexState;
   session: SessionState;
+  games: GamesState;
 };
 
 const useStyles = makeStyles({
@@ -31,6 +34,7 @@ const HomePage = (props: HomePageProps) => {
   useEffect(() => {
     openLocallyStoredSession();
     fetchGamesPokedex();
+    fetchGames();
   }, []);
 
   if (props.session.isError) {
@@ -42,6 +46,10 @@ const HomePage = (props: HomePageProps) => {
   }
 
   if (!props.pokedex.loaded) {
+    return <div>Cargando perrote</div>;
+  }
+
+  if (!props.games.loaded) {
     return <div>Cargando perrote</div>;
   }
 
@@ -64,7 +72,7 @@ const HomePage = (props: HomePageProps) => {
           </div>
         </div>
       )}
-      <CreatePokedexForm games={gamesPokedex} />
+      <CreatePokedexForm pokedex={gamesPokedex} games={props.games.games} />
     </div>
   );
 };
@@ -72,6 +80,7 @@ const HomePage = (props: HomePageProps) => {
 const mapStateToProps = (root: RootState) => ({
   session: root.session,
   pokedex: root.pokedex,
+  games: root.games,
 });
 
 export default hot(module)(connect(mapStateToProps)(HomePage));
