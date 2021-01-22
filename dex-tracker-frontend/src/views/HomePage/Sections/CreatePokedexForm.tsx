@@ -22,6 +22,7 @@ import {
   GameTitle,
   PokedexType,
 } from "../../../types/pokedex";
+import classNames from "classnames";
 
 type CreatePokedexFormProps = {
   pokedex: GamePokedex[];
@@ -34,6 +35,35 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "column",
       margin: "auto",
+    },
+    formRows: {
+      height: "200px",
+    },
+    overflowScrollMd: {
+      [theme.breakpoints.up("md")]: {
+        overflow: "scroll",
+      },
+    },
+    buttons: {
+      fontWeight: "bolder",
+      [theme.breakpoints.down("sm")]: {
+        display: "flex",
+        justifyContent: "space-around",
+      },
+    },
+    create: {
+      color: "#1976d2",
+      fontWeight: "bolder",
+    },
+    close: {
+      color: "#d70852",
+      fontWeight: "bolder",
+    },
+    overflowAuto: {
+      overflowY: "auto",
+    },
+    pokemonColumn: {
+      maxHeight: "120px",
     },
   })
 );
@@ -66,8 +96,8 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
         </DialogTitle>
         <DialogContent>
           <form className={classes.form} noValidate>
-            <Row spacing={2}>
-              <Column md={6} xs={12}>
+            <Row spacing={2} className={classes.formRows}>
+              <Column md={6} xs={12} className="center-v">
                 <Row spacing={2}>
                   <Column md={6} xs={12}>
                     <FormControl fullWidth>
@@ -103,16 +133,18 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                   </Column>
                 </Row>
               </Column>
-              <Column md={6} xs={12}>
-                <div style={{ maxHeight: "120px" }}>
-                  <div style={{ overflow: "auto" }}>
+              <Column md={6} xs={12} className={classes.overflowAuto}>
+                <div className={classes.pokemonColumn}>
+                  <div className={classes.overflowScrollMd}>
                     {props.pokedex
                       .find((p) => p.game.title == game && p.type == type)
                       ?.pokemon.map((p, idx) => (
                         <div key={idx}>
-                          <span className="pl-3 pr-1">{p.number}</span>
+                          <span className="pl-1 pl-md-3 pr-md-1">
+                            {p.number}
+                          </span>
                           <span className={`pokemon pokesprite ${p.name}`} />
-                          <span>{p.name}</span>
+                          <span className="capitalize">{p.name}</span>
                         </div>
                       ))}
                   </div>
@@ -121,9 +153,20 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
             </Row>
           </form>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)} color="primary">
+        <DialogActions className={classes.buttons}>
+          <Button
+            onClick={() => setOpen(false)}
+            color="secondary"
+            className={classNames(classes.close)}
+          >
             Close
+          </Button>
+          <Button
+            onClick={() => setOpen(false)}
+            color="primary"
+            className={classNames(classes.create)}
+          >
+            Create Dex
           </Button>
         </DialogActions>
       </Dialog>
