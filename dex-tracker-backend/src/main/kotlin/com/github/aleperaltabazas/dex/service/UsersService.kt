@@ -53,6 +53,7 @@ class UsersService(
         return userDex
     }
 
+
     fun findUser(token: String) = storage.query(Collection.SESSIONS)
         .where(Document("token", token))
         .findOne(SESSION_REF)

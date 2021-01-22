@@ -7,10 +7,11 @@ import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
 import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
 import com.github.aleperaltabazas.dex.dto.dex.CreateUserDexDTO
 import com.github.aleperaltabazas.dex.dto.dex.UserDTO
+import com.github.aleperaltabazas.dex.dto.dex.UserDexDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.exception.UnauthorizedException
 import com.github.aleperaltabazas.dex.extension.prettyHeaders
-import com.github.aleperaltabazas.dex.model.UserDex
+import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.service.UsersService
 import org.slf4j.LoggerFactory
 import spark.Request
@@ -20,6 +21,7 @@ import spark.Spark.*
 class UsersController(
     private val objectMapper: ObjectMapper,
     private val usersService: UsersService,
+    private val modelMapper: ModelMapper,
 ) : Controller {
     override fun register() {
         path("/api/v1/users") {
@@ -37,7 +39,7 @@ class UsersController(
         }
     }
 
-    private fun createUserDex(req: Request, res: Response): UserDex {
+    private fun createUserDex(req: Request, res: Response): UserDexDTO {
         val token = requireNotNull(req.cookie(DEX_TOKEN)) {
             throw UnauthorizedException("No dex-token found for")
         }
@@ -47,7 +49,7 @@ class UsersController(
         return usersService.createUserDex(
             token = token,
             dexRequest = body
-        )
+        ).let { modelMapper.mapUserDexToDTO(it) }
     }
 
     private fun updateUserDexCaughtStatus(req: Request, res: Response) {
@@ -69,7 +71,7 @@ class UsersController(
             throw BadRequestException("User has no dex-token stored")
         }
 
-        return UserDTO(usersService.findUser(dexToken))
+        return usersService.findUser(dexToken).let { modelMapper.mapUserToDTO(it) }
     }
 
     private fun createUser(req: Request, res: Response): UserDTO {
@@ -80,7 +82,7 @@ class UsersController(
         val (user, dexToken) = usersService.createUser(null)
         res.cookie("/", DEX_TOKEN, dexToken, 36000000, false)
 
-        return UserDTO(user)
+        return modelMapper.mapUserToDTO(user)
     }
 
     companion object {

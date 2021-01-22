@@ -35,10 +35,8 @@ data class GamePokedexDTO(
 
 data class UserDTO(
     val username: String?,
-    val pokedex: List<UserDex>
-) {
-    constructor(user: User) : this(username = user.username, pokedex = user.pokedex)
-}
+    val pokedex: List<UserDexDTO>
+)
 
 data class CaughtStatusDTO(
     val pokedexId: String,
@@ -50,4 +48,10 @@ data class CreateUserDexDTO(
     val game: String,
     val type: PokedexType,
     val name: String,
+)
+
+data class UserDexDTO(
+    val userDexId: String,
+    val game: GameDTO,
+    val name: String?,
 )

@@ -71,6 +71,7 @@ class DexTracker {
                 FileSystemModule(),
                 HashModule(),
                 JsonModule(),
+                MapperModule(),
                 ServiceModule(),
                 StorageModule(),
             )

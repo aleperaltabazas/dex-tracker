@@ -3,6 +3,7 @@ package com.github.aleperaltabazas.dex.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.controller.*
 import com.github.aleperaltabazas.dex.env.Env
+import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.service.GameService
 import com.github.aleperaltabazas.dex.service.PokemonService
 import com.github.aleperaltabazas.dex.service.UsersService
@@ -31,9 +32,11 @@ class ControllerModule : AbstractModule() {
     fun usersController(
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
         @Named("usersService") usersService: UsersService,
+        @Named("modelMapper") modelMapper: ModelMapper,
     ) = UsersController(
         objectMapper = objectMapper,
         usersService = usersService,
+        modelMapper = modelMapper
     )
 
     @Provides
@@ -77,7 +80,7 @@ class ControllerModule : AbstractModule() {
         @Named("gameService") gameService: GameService,
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper
     ) = GameController(
-        gameService =  gameService,
+        gameService = gameService,
         objectMapper = objectMapper,
     )
 }
