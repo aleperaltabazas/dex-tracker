@@ -47,7 +47,7 @@ data class CaughtStatusDTO(
 data class CreateUserDexDTO(
     val game: String,
     val type: PokedexType,
-    val name: String,
+    val name: String?,
 )
 
 data class UserDexDTO(
