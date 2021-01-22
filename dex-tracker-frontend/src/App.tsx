@@ -6,9 +6,10 @@ import "./styles.scss";
 import "pokesprite-spritesheet/assets/pokesprite-inventory.css";
 import "pokesprite-spritesheet/assets/pokesprite-pokemon-gen8.css";
 import { Container } from "@material-ui/core";
-import HomePage from "./views/HomePage";
 import Menu from "./components/Menu";
 import CreatePokedexForm from "./components/CreatePokedexForm";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import HomePage from "./views/HomePage";
 
 const App = () => {
   return (
@@ -16,7 +17,11 @@ const App = () => {
       <Menu />
       <Header />
       <Container>
-        <HomePage />
+        <Router>
+          <Switch>
+            <Route path="/" exact component={HomePage} />
+          </Switch>
+        </Router>
       </Container>
       <Footer />
       <CreatePokedexForm />
