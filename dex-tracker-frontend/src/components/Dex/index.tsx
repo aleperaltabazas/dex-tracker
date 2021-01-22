@@ -62,11 +62,11 @@ const Dex = (props: DexProps) => {
           className={`pokemon pokesprite ${props.gamePokedex.game.spritePokemon} pt-2`}
         />
         <span style={{ paddingBottom: "3px" }}>
-          {props.gamePokedex.game.title}
+          {props.dex.name || props.gamePokedex.game.fullTitle}
         </span>
       </div>
       <Row className={classNames("ml-2", "mr-2")}>
-        <Column xs={8}>
+        <Column xs={7} md={8}>
           <div>
             <div
               className={classNames(
@@ -79,8 +79,10 @@ const Dex = (props: DexProps) => {
             </div>
           </div>
         </Column>
-        <Column xs={4} className="center">
-          <Typography className={classes.secondaryHeading}>
+        <Column xs={5} md={4} className="center">
+          <Typography
+            className={classNames(classes.secondaryHeading, "pr-1 pr-md-0")}
+          >
             {caughtCounter}/{pokemon.length}
           </Typography>
         </Column>
@@ -100,7 +102,13 @@ const Dex = (props: DexProps) => {
         <Column
           xs={9}
           md={8}
-          className={classNames("center-v", "bold", classes.listItem)}
+          className={classNames(
+            "center-v",
+            "bold",
+            "pl-3",
+            "pl-md-0",
+            classes.listItem
+          )}
         >
           <Input
             value={search}

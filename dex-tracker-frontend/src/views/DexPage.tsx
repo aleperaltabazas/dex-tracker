@@ -18,9 +18,14 @@ interface DexPageProps extends RouteComponentProps<MatchParams> {
   gamePokedex: GamePokedex[];
 }
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     backgroundColor: "white",
+  },
+  noOverflow: {
+    [theme.breakpoints.down("md")]: {
+      overflowX: "hidden",
+    },
   },
 }));
 
@@ -50,7 +55,7 @@ const DexPage = (props: DexPageProps) => {
   console.log(userDex.value);
 
   return (
-    <Container>
+    <Container className={classes.noOverflow}>
       <div className={classNames(classes.container, "mt-3 mt-md-5")}>
         <Dex
           dex={userDex.value}
