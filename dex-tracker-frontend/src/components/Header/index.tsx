@@ -3,16 +3,14 @@ import React from "react";
 import { hot } from "react-hot-loader";
 import "./styles.scss";
 import classNames from "classnames";
-import Row from "../Row";
-import Column from "../Column";
 import OpenMenu from "../Menu/Open";
-import { RouteComponentProps, withRouter } from "react-router";
-
-interface HeaderProps extends RouteComponentProps {}
+import LinkHome from "../Links/Home";
 
 const useStyles = makeStyles(() => ({
   header: {
     backgroundColor: "#2f2f2f",
+    display: "flex",
+    justifyContent: "flex-start",
   },
   dexIcon: {
     display: "flex",
@@ -20,27 +18,23 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Header = (props: HeaderProps) => {
+const Header = () => {
   const classes = useStyles();
   return (
-    <header className={classNames(classes.header)}>
-      <Row>
-        <Column xs={6} className="center-v p-1">
-          <OpenMenu />
-        </Column>
-        <Column
-          xs={6}
-          className={classNames(classes.dexIcon, "p-1")}
-          onClick={() => props.history.push("/")}
-        >
+    <header className={classNames(classes.header, "center-v")}>
+      <div className="center-v p-1">
+        <OpenMenu />
+      </div>
+      <div>
+        <LinkHome>
           <img
             src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
             className="cursor-pointer"
           />
-        </Column>
-      </Row>
+        </LinkHome>
+      </div>
     </header>
   );
 };
 
-export default hot(module)(withRouter(Header));
+export default hot(module)(Header);

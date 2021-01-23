@@ -17,6 +17,7 @@ import { UserDexRef } from "../../types/user";
 import { Game } from "../../types/pokedex";
 import { AddCircle } from "@material-ui/icons";
 import { RouteComponentProps, withRouter } from "react-router";
+import DexLink from "../Links/Dex";
 
 const useStyles = makeStyles({
   list: {
@@ -93,26 +94,27 @@ const Menu = (props: MenuProps) => {
               </div>
               {props.userDex.map((dex) => {
                 return (
-                  <ListItem
-                    key={dex.userDexId}
-                    disableGutters
-                    className="cursor-pointer"
-                    onClick={() => {
-                      props.history.push(`/dex/${dex.userDexId}`);
-                      store.dispatch(closeMenu());
-                    }}
-                  >
-                    <ListItemIcon>
-                      <span
-                        className={`pokesprite pokemon ${dex.game?.spritePokemon}`}
-                      />
-                    </ListItemIcon>
-                    <ListItemText>
-                      <span>{dex.name || dex.game?.fullTitle}</span>
-                    </ListItemText>
-                  </ListItem>
+                  <DexLink dexId={dex.userDexId} key={dex.userDexId}>
+                    <ListItem
+                      disableGutters
+                      className="cursor-pointer"
+                      onClick={() => {
+                        store.dispatch(closeMenu());
+                      }}
+                    >
+                      <ListItemIcon>
+                        <span
+                          className={`pokesprite pokemon ${dex.game?.spritePokemon}`}
+                        />
+                      </ListItemIcon>
+                      <ListItemText>
+                        <span>{dex.name || dex.game?.fullTitle}</span>
+                      </ListItemText>
+                    </ListItem>
+                  </DexLink>
                 );
               })}
+              <Divider />
               <ListItem
                 button
                 onClick={() => {
