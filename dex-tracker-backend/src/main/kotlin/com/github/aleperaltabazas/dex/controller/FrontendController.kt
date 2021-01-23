@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory
 import spark.ModelAndView
 import spark.Request
 import spark.Response
-import spark.Spark.after
 import spark.Spark.get
+import spark.Spark.notFound
 import spark.TemplateEngine
 
 class FrontendController(
@@ -17,6 +17,9 @@ class FrontendController(
     override fun register() {
         get("/", this::home, engine)
         get("/dex/:id", this::home, engine)
+        notFound { req, res ->
+            engine.render(ModelAndView(null, "index.html"))
+        }
     }
 
     private fun home(req: Request, res: Response): ModelAndView {
