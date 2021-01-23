@@ -17,8 +17,8 @@ class DatabaseModule : AbstractModule() {
     @Singleton
     @Named("mongoClient")
     fun mongoClient(config: Config): MongoClient {
-        val user = config.getString("db.user")
-        val password = config.getString("db.password")
+        val user = System.getenv("DATABASE_USERNAME") ?: config.getString("db.user")
+        val password = System.getenv("DATABASE_PASSWORD") ?: config.getString("db.password")
         val host = config.getString("db.host")
         val database = config.getString("db.name")
         val srv = config.hasPath("db.srv") && config.getBoolean("db.srv")

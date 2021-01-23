@@ -1,9 +1,26 @@
 #!/bin/bash
 
+set -e
+
+if [ "$#" -ne 1 ]; then
+    echo "Error: Illegal number of parameters"
+    echo "Run like ./build <env>"
+    exit 1
+fi
+
+ENV=$1
 FRONTEND="dex-tracker-frontend"
 BACKEND="dex-tracker-backend"
 BACKEND_RESOURCES=$BACKEND/src/main/resources
 ARTIFACT="escuelita"
+
+mv $BACKEND_RESOURCES/application.conf application.conf.original
+mv $BACKEND_RESOURCES/sensitive.conf sensitive.conf.original
+mv $FRONTEND/src/config.ts config.ts.original
+
+cp $BACKEND/environments/$ENV/application.conf $BACKEND_RESOURCES/application.conf
+cp $BACKEND/environments/$ENV/sensitive.conf $BACKEND_RESOURCES/sensitive.conf
+cp $FRONTEND/environments/$ENV/config.ts $FRONTEND/src/config.ts
 
 npm install --prefix $FRONTEND
 npm run build --prefix $FRONTEND
@@ -16,4 +33,10 @@ cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/static/index.html
 cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/static/
 
 find $BACKEND_RESOURCES -type f -print0 | xargs -0 sed -i -e 's/\/static\//\//g'
+
+mvn heroku:deploy -Dmaven.test.skip=true
+
+mv application.conf.original $BACKEND_RESOURCES/application.conf
+mv config.ts.original $FRONTEND/src/config.ts
+mv sensitive.conf.original $BACKEND_RESOURCES/sensitive.conf
 

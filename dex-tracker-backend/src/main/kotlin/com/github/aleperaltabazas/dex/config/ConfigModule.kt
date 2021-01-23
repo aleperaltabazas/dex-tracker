@@ -9,5 +9,5 @@ import com.typesafe.config.ConfigFactory
 open class ConfigModule : AbstractModule() {
     @Provides
     @Singleton
-    open fun config(): Config = ConfigFactory.load()
+    open fun config(): Config = ConfigFactory.load("application.conf")
 }
