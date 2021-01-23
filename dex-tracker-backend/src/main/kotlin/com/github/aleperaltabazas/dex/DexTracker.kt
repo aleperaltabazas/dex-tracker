@@ -27,7 +27,9 @@ class DexTracker {
 
     fun run(args: Array<String>) {
         LOGGER.info("Args passed: ${args.joinToString(", ")}")
-        val port = 9290
+        val port = ProcessBuilder().environment()
+            ?.get("PORT")
+            ?.toInt() ?: 9290
         LOGGER.info("Using port $port.")
 
         val handler = ServletContextHandler()

@@ -7,6 +7,8 @@ enum class Env {
     PROD,
     TEST;
 
+    fun isProd() = this == PROD
+
     fun isDev() = this == DEV || this == TEST
 }
 
