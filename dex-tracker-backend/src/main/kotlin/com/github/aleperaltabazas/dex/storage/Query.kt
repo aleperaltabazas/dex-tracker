@@ -11,7 +11,7 @@ open class Query(
     private val objectMapper: ObjectMapper
 ) {
     private var where: Bson? = null
-    private var sort: Document? = null
+    private var sort: Bson? = null
     private var limit: Int? = null
     private var offset: Int? = null
 
@@ -30,7 +30,7 @@ open class Query(
         return this
     }
 
-    open fun sort(by: Document): Query {
+    open fun sort(by: Bson): Query {
         this.sort = by
         return this
     }

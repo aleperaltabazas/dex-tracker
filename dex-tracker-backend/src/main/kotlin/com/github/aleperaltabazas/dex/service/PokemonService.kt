@@ -13,6 +13,7 @@ import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.model.Pokemon
 import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
+import com.mongodb.client.model.Sorts.ascending
 import org.bson.Document
 
 open class PokemonService(
@@ -56,6 +57,7 @@ open class PokemonService(
     private fun gameNationalPokedex(game: Game): GamePokedexDTO {
         val pokemon = storage.query(Collection.POKEMON)
             .where(Document("gen", game.gen))
+            .sort(ascending("national_pokedex_number"))
             .findAll(POKEMON_REF)
             .map {
                 DexEntryDTO(
