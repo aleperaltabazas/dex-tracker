@@ -34,7 +34,7 @@ cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/static/
 
 find $BACKEND_RESOURCES -type f -print0 | xargs -0 sed -i -e 's/\/static\//\//g'
 
-mvn heroku:deploy -Dmaven.test.skip=true
+mvn -f $BACKEND/pom.xml heroku:deploy -Dmaven.test.skip=true
 
 mv application.conf.original $BACKEND_RESOURCES/application.conf
 mv config.ts.original $FRONTEND/src/config.ts
