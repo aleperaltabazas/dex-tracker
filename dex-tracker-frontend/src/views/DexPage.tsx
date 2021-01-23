@@ -6,16 +6,16 @@ import { RouteComponentProps, withRouter } from "react-router";
 import withUserDex from "../hooks/withUserDex";
 import classNames from "classnames";
 import Dex from "../components/Dex";
-import { GamePokedex } from "../types/pokedex";
 import { RootState } from "../reducers";
 import { connect } from "react-redux";
+import { PokedexState } from "../store/pokedex";
 
 type MatchParams = {
   id: string;
 };
 
 interface DexPageProps extends RouteComponentProps<MatchParams> {
-  gamePokedex: GamePokedex[];
+  gamePokedex: PokedexState;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -38,7 +38,7 @@ const DexPage = (props: DexPageProps) => {
     return <div>se rompió algo perrito</div>;
   }
 
-  if (userDex.type == "PENDING") {
+  if (userDex.type == "PENDING" || !props.gamePokedex.loaded) {
     return (
       <div className="h-100 w-100 center">
         <Loader
@@ -52,15 +52,13 @@ const DexPage = (props: DexPageProps) => {
     );
   }
 
-  console.log(userDex.value);
-
   return (
     <Container className={classes.noOverflow}>
       <div className={classNames(classes.container, "mt-3 mt-md-5")}>
         <Dex
           dex={userDex.value}
           gamePokedex={
-            props.gamePokedex.find(
+            props.gamePokedex.pokedex.find(
               (gp) => gp.game.title == userDex.value.game.title
             )!
           }
@@ -72,7 +70,7 @@ const DexPage = (props: DexPageProps) => {
 
 const mapStateToProps = (root: RootState) => {
   return {
-    gamePokedex: root.pokedex.loaded ? root.pokedex.pokedex : [],
+    gamePokedex: root.pokedex,
   };
 };
 

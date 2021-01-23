@@ -1,16 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { hot } from "react-hot-loader";
-import Dex from "../components/Dex";
 import { RootState } from "../reducers";
 import { PokedexState } from "../store/pokedex";
 import { SessionState } from "../store/session";
 import { connect } from "react-redux";
-import { openLocallyStoredSession } from "../functions/login";
-import { fetchGamesPokedex } from "../functions/pokedex";
 import classNames from "classnames";
 import { makeStyles } from "@material-ui/core";
 import { GamesState } from "../store/games";
-import { fetchGames } from "../functions/games";
 import store from "../store";
 import { openCreateDexForm } from "../actions/global";
 
@@ -32,11 +28,6 @@ const useStyles = makeStyles({
 
 const HomePage = (props: HomePageProps) => {
   const classes = useStyles();
-  useEffect(() => {
-    openLocallyStoredSession();
-    fetchGamesPokedex();
-    fetchGames();
-  }, []);
 
   if (props.session.isError) {
     return <div>se rompió algo perrito :(</div>;

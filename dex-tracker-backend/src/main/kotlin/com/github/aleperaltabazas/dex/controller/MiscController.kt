@@ -35,5 +35,8 @@ class MiscController(
 
             res.header("content-type", "application/json")
         }
+
+        after("*.css") { _, res -> res.header("Content-Encoding", "gzip") }
+        after("*.js") { _, res -> res.header("Content-Encoding", "gzip") }
     }
 }

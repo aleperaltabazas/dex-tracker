@@ -5,8 +5,6 @@ import com.github.aleperaltabazas.dex.config.*
 import com.github.aleperaltabazas.dex.controller.Controller
 import com.google.inject.Guice
 import com.google.inject.Injector
-import com.google.inject.Key
-import com.google.inject.name.Names
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.FilterHolder
 import org.eclipse.jetty.servlet.ServletContextHandler
