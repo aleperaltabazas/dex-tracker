@@ -85,7 +85,7 @@ class DexTracker {
         }
 
         private fun registerControllers(injector: Injector) {
-            staticFiles.location("/static")
+            staticFiles.location("/templates")
 
             injector.allBindings.keys
                 .filter { Controller::class.java.isAssignableFrom(it.typeLiteral.rawType) }

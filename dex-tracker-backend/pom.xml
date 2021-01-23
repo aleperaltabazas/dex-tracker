@@ -251,8 +251,8 @@
         </dependency>
         <dependency>
             <groupId>com.sparkjava</groupId>
-            <artifactId>spark-template-velocity</artifactId>
-            <version>${spark.version}</version>
+            <artifactId>spark-template-handlebars</artifactId>
+            <version>2.7.1</version>
         </dependency>
         <dependency>
             <groupId>com.sparkjava</groupId>
@@ -268,6 +268,20 @@
             <version>3.12.7</version>
         </dependency>
         <!-- Mongo -->
+
+        <!-- Handlebars -->
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars-helpers</artifactId>
+            <version>4.0.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars-humanize</artifactId>
+            <version>4.0.6</version>
+        </dependency>
+        <!-- Handlebars -->
     </dependencies>
 
     <build>

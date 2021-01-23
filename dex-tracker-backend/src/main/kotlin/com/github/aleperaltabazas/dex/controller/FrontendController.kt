@@ -11,12 +11,12 @@ import spark.Spark.get
 import spark.TemplateEngine
 
 class FrontendController(
-    private val templateEngine: TemplateEngine,
+    private val engine: TemplateEngine,
     private val usersService: UsersService,
 ) : Controller {
     override fun register() {
-        get("/", this::home, templateEngine)
-        get("/dex/:id", this::home, templateEngine)
+        get("/", this::home, engine)
+        get("/dex/:id", this::home, engine)
     }
 
     private fun home(req: Request, res: Response): ModelAndView {

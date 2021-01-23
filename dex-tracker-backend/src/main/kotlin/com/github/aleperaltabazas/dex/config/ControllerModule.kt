@@ -7,14 +7,13 @@ import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.service.GameService
 import com.github.aleperaltabazas.dex.service.PokemonService
 import com.github.aleperaltabazas.dex.service.UsersService
+import com.github.aleperaltabazas.dex.utils.HandlebarsTemplateEngineBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.google.inject.name.Named
 import com.typesafe.config.Config
-import spark.ModelAndView
-import spark.TemplateEngine
-import java.io.File
+import spark.template.handlebars.HandlebarsTemplateEngine
 
 class ControllerModule : AbstractModule() {
     @Provides
@@ -48,10 +47,9 @@ class ControllerModule : AbstractModule() {
         @Named("usersService") usersService: UsersService
     ) = FrontendController(
         usersService = usersService,
-        templateEngine = object : TemplateEngine() {
-            override fun render(modelAndView: ModelAndView?): String = this.javaClass.getResource("/static/index.html")
-                .let { File(it.path) }.readText(Charsets.UTF_8)
-        },
+        engine = HandlebarsTemplateEngineBuilder(HandlebarsTemplateEngine())
+            .withDefaultHelpers()
+            .build(),
     )
 
     @Provides
