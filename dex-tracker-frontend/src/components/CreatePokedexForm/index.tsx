@@ -18,7 +18,6 @@ import Column from "../../components/Column";
 import Row from "../../components/Row";
 import { Game, GamePokedex, GameTitle, PokedexType } from "../../types/pokedex";
 import classNames from "classnames";
-import Loader from "react-loader-spinner";
 import { createPokedex, toRef } from "../../functions/my-dex";
 import { addUserDex } from "../../actions/session";
 import store from "../../store";
@@ -26,6 +25,7 @@ import { RootState } from "../../reducers";
 import { connect } from "react-redux";
 import { closeCreateDexForm } from "../../actions/global";
 import { RouteComponentProps, withRouter } from "react-router";
+import Loader from "../Loader";
 
 interface CreatePokedexFormProps extends RouteComponentProps {
   pokedex: GamePokedex[];
@@ -92,15 +92,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
           Create a new pokedex
         </DialogTitle>
         <DialogContent>
-          {loading && (
-            <Loader
-              type="Puff"
-              color="#00BFFF"
-              height={100}
-              width={100}
-              className="center"
-            />
-          )}
+          {loading && <Loader />}
           {!loading && (
             <form className={classes.form} noValidate>
               <Row spacing={2} className={classes.formRows}>

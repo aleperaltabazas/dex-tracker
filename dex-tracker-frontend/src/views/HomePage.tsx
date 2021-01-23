@@ -9,6 +9,7 @@ import { makeStyles } from "@material-ui/core";
 import { GamesState } from "../store/games";
 import store from "../store";
 import { openCreateDexForm } from "../actions/global";
+import Loader from "../components/Loader";
 
 type HomePageProps = {
   pokedex: PokedexState;
@@ -33,19 +34,17 @@ const HomePage = (props: HomePageProps) => {
     return <div>se rompió algo perrito :(</div>;
   }
 
-  if (!props.session.isLoggedIn) {
-    return <div>Cargando perrote</div>;
+  if (
+    !props.session.isLoggedIn ||
+    !props.pokedex.loaded ||
+    !props.games.loaded
+  ) {
+    return (
+      <div className="center h-100 w-100">
+        <Loader />
+      </div>
+    );
   }
-
-  if (!props.pokedex.loaded) {
-    return <div>Cargando perrote</div>;
-  }
-
-  if (!props.games.loaded) {
-    return <div>Cargando perrote</div>;
-  }
-
-  const gamesPokedex = props.pokedex.pokedex;
 
   return (
     <div className="mt-5">

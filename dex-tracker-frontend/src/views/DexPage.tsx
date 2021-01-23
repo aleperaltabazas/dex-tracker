@@ -1,7 +1,6 @@
 import { Container, makeStyles } from "@material-ui/core";
 import React from "react";
 import { hot } from "react-hot-loader";
-import Loader from "react-loader-spinner";
 import { RouteComponentProps, withRouter } from "react-router";
 import withUserDex from "../hooks/withUserDex";
 import classNames from "classnames";
@@ -9,6 +8,7 @@ import Dex from "../components/Dex";
 import { RootState } from "../reducers";
 import { connect } from "react-redux";
 import { PokedexState } from "../store/pokedex";
+import Loader from "../components/Loader";
 
 type MatchParams = {
   id: string;
@@ -41,13 +41,7 @@ const DexPage = (props: DexPageProps) => {
   if (userDex.type == "PENDING" || !props.gamePokedex.loaded) {
     return (
       <div className="h-100 w-100 center">
-        <Loader
-          type="ThreeDots"
-          color="#00BFFF"
-          height={100}
-          width={100}
-          className="center"
-        />
+        <Loader />
       </div>
     );
   }

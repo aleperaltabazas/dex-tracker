@@ -21,18 +21,16 @@ const App = () => {
     fetchGames();
   }, []);
   return (
-    <div>
-      <Router>
-        <Header />
-        <Menu />
-        <Switch>
-          <Route path="/dex/:id" component={DexPage} />
-          <Route path="/" exact component={HomePage} />
-        </Switch>
-        <CreatePokedexForm />
-        <Footer />
-      </Router>
-    </div>
+    <Router>
+      <Header />
+      <Menu />
+      <Switch>
+        <Route path="/dex/:id" component={DexPage} />
+        <Route path="/" exact component={HomePage} />
+      </Switch>
+      <CreatePokedexForm />
+      <Footer />
+    </Router>
   );
 };
 
