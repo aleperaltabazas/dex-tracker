@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { clearSynchronizeQueue } from "../actions/syncQueue";
+import { clearSynchronizeQueue, resetTimeout } from "../actions/syncQueue";
 import { host } from "../config";
 import store from "../store";
 import { GameTitle, PokedexType } from "../types/pokedex";
@@ -28,9 +28,27 @@ export async function createPokedex({ game, type, name }: CreateDex) {
 }
 
 export async function synchronize(syncQueue: Sync[]) {
-  console.log("sincronizado perro:");
-  console.log(syncQueue);
-  store.dispatch(clearSynchronizeQueue());
+  if (syncQueue.length > 0) {
+    let config: AxiosRequestConfig = {
+      url: `${host}/api/v1/users/pokedex`,
+      method: "PATCH",
+      withCredentials: true,
+      data: syncQueue.map((s) => ({
+        pokedexId: s.dexId,
+        dexNumber: s.number,
+        caught: s.caught,
+      })),
+    };
+
+    axios
+      .request(config)
+      .then(() => {
+        store.dispatch(clearSynchronizeQueue());
+      })
+      .catch(() => {
+        store.dispatch(resetTimeout());
+      });
+  }
 }
 
 export function toRef(dex: UserDex): UserDexRef {

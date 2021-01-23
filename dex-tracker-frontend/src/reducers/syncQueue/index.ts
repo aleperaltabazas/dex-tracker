@@ -2,6 +2,7 @@ import { synchronize } from "../../functions/my-dex";
 import {
   ADD_TO_SYNC_QUEUE,
   CLEAR_SYNCHRONIZE_QUEUE,
+  RESET_TIMEOUT,
   SyncQueueAction,
   SyncQueueState,
 } from "../../store/syncQueue";
@@ -14,14 +15,21 @@ const defaultSyncQueueState: SyncQueueState = {
   timeout: undefined,
 };
 
-function delaySynchronization(state: SyncQueueState, sync: Sync) {
+function addAndDelay(state: SyncQueueState, sync: Sync) {
   const queue = state.queue.concat(sync);
-  const timeout = setTimeout(() => synchronize(queue), syncTimeout * 1000);
+
+  return delaySynchroniation({ ...state, queue });
+}
+
+function delaySynchroniation(state: SyncQueueState) {
+  const timeout = setTimeout(
+    () => synchronize(state.queue),
+    syncTimeout * 1000
+  );
 
   return {
     ...state,
-    timeout: timeout,
-    queue: queue,
+    timeout,
   };
 }
 
@@ -33,9 +41,9 @@ function syncQueueReducer(
     case ADD_TO_SYNC_QUEUE: {
       if (state.timeout != undefined) {
         clearTimeout(state.timeout);
-        return delaySynchronization(state, action.payload);
+        return addAndDelay(state, action.payload);
       } else {
-        return delaySynchronization(state, action.payload);
+        return addAndDelay(state, action.payload);
       }
     }
     case CLEAR_SYNCHRONIZE_QUEUE: {
@@ -43,6 +51,14 @@ function syncQueueReducer(
         timeout: undefined,
         queue: [],
       };
+    }
+    case RESET_TIMEOUT: {
+      if (state.timeout != undefined) {
+        clearTimeout(state.timeout);
+        return delaySynchroniation(state);
+      } else {
+        return delaySynchroniation(state);
+      }
     }
     default: {
       return state;

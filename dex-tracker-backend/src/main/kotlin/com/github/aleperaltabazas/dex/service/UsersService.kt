@@ -107,18 +107,20 @@ class UsersService(
             it.pokedexId
         }
 
-        storage.update(collection = Collection.USERS)
+        storage
+            .replace(collection = Collection.USERS)
             .where(Document("user_id", user.userId))
             .set(
-                key = "pokedex",
-                value = dexToUpdate.toList().fold(user) { u, (dexId, status) ->
-                    u.updatePokedex(
-                        dexId,
-                        status
-                    )
-                }.pokedex
+                value = user.copy(
+                    pokedex = dexToUpdate.toList().fold(user) { u, (dexId, status) ->
+                        u.updatePokedex(
+                            dexId,
+                            status
+                        )
+                    }.pokedex
+                )
             )
-            .updateOne()
+            .replaceOne()
     }
 
     companion object {

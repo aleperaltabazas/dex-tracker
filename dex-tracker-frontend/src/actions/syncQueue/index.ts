@@ -1,6 +1,7 @@
 import {
   ADD_TO_SYNC_QUEUE,
   CLEAR_SYNCHRONIZE_QUEUE,
+  RESET_TIMEOUT,
   SyncQueueAction,
 } from "../../store/syncQueue";
 
@@ -22,5 +23,11 @@ export function addToSyncQueue(
 export function clearSynchronizeQueue(): SyncQueueAction {
   return {
     type: CLEAR_SYNCHRONIZE_QUEUE,
+  };
+}
+
+export function resetTimeout(): SyncQueueAction {
+  return {
+    type: RESET_TIMEOUT,
   };
 }

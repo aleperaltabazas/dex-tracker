@@ -26,7 +26,7 @@ class UsersController(
             post("", APPLICATION_JSON, this::createUser, objectMapper::writeValueAsString)
             post("/pokedex", APPLICATION_JSON, this::createUserDex, objectMapper::writeValueAsString)
             get("/pokedex/:id", APPLICATION_JSON, this::findUserDex, objectMapper::writeValueAsString)
-            patch("/pokedex/:id", APPLICATION_JSON, this::updateUserDexCaughtStatus, objectMapper::writeValueAsString)
+            patch("/pokedex", APPLICATION_JSON, this::updateUserDexCaughtStatus, objectMapper::writeValueAsString)
 
             before("") { req, res ->
                 LOGGER.info("[${req.requestMethod()}] ${req.servletPath()} Request headers: ${req.prettyHeaders()}")

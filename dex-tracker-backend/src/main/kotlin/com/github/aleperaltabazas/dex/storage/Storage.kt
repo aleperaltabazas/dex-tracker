@@ -14,6 +14,11 @@ open class Storage(
         objectMapper = objectMapper
     )
 
+    open fun replace(collection: Collection): Replace = Replace(
+        coll = db.getCollection(collection.collectionName),
+        objectMapper = objectMapper
+    )
+
     open fun insert(collection: Collection, value: Any) = db.getCollection(collection.collectionName)
         .insertOne(convertToDocument(value))
 
