@@ -6,7 +6,13 @@ import { GameTitle, PokedexType } from "../types/pokedex";
 import { Sync } from "../types/sync";
 import { UserDex, UserDexRef } from "../types/user";
 
-export async function createPokedex(game: GameTitle, type: PokedexType) {
+type CreateDex = {
+  game: GameTitle;
+  type: PokedexType;
+  name?: string;
+};
+
+export async function createPokedex({ game, type, name }: CreateDex) {
   let config: AxiosRequestConfig = {
     url: `${host}/api/v1/users/pokedex`,
     method: "POST",
@@ -14,6 +20,7 @@ export async function createPokedex(game: GameTitle, type: PokedexType) {
     data: {
       game: game,
       type: type,
+      name: name,
     },
   };
 

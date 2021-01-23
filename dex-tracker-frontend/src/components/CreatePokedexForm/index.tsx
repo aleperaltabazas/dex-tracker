@@ -5,11 +5,13 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   FormControl,
   InputLabel,
   makeStyles,
   MenuItem,
   Select,
+  TextField,
   Theme,
 } from "@material-ui/core";
 import React, { useState } from "react";
@@ -40,9 +42,6 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: "column",
       margin: "auto",
     },
-    formRows: {
-      height: "200px",
-    },
     overflowScrollMd: {
       [theme.breakpoints.up("md")]: {
         overflow: "scroll",
@@ -64,10 +63,18 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: "bolder",
     },
     overflowAuto: {
-      overflowY: "auto",
+      [theme.breakpoints.up("md")]: {
+        overflowY: "auto",
+      },
     },
     pokemonColumn: {
       maxHeight: "120px",
+    },
+    namingPrimary: {
+      fontSize: "18px",
+    },
+    namingSecondary: {
+      fontSize: "14px",
     },
   })
 );
@@ -77,6 +84,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
 
   const [game, setGame] = useState<GameTitle>("gsc");
   const [type, setType] = useState<PokedexType>("REGIONAL");
+  const [name, setName] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
   return (
@@ -91,17 +99,17 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
         <DialogTitle id="max-width-dialog-title">
           Create a new pokedex
         </DialogTitle>
+        <Divider />
         <DialogContent>
           {loading && <Loader />}
           {!loading && (
             <form className={classes.form} noValidate>
-              <Row spacing={2} className={classes.formRows}>
+              <Row spacing={2}>
                 <Column md={6} xs={12} className="center-v">
                   <Row spacing={2}>
                     <Column md={6} xs={12}>
                       <FormControl fullWidth>
-                        <InputLabel>Choose the game</InputLabel>
-
+                        <InputLabel>Game</InputLabel>
                         <Select
                           fullWidth
                           onChange={(e) => setGame(e.target.value as GameTitle)}
@@ -117,7 +125,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                     </Column>
                     <Column md={6} xs={12}>
                       <FormControl fullWidth>
-                        <InputLabel>Choose the pokedex type</InputLabel>
+                        <InputLabel>Pokedex type</InputLabel>
                         <Select
                           fullWidth
                           onChange={(e, t) =>
@@ -128,6 +136,24 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                           <MenuItem value={"NATIONAL"}>National</MenuItem>
                           <MenuItem value={"REGIONAL"}>Regional</MenuItem>
                         </Select>
+                      </FormControl>
+                    </Column>
+                    <Column xs={12}>
+                      <div className="mt-1 mt-md-2">
+                        <div className={classes.namingPrimary}>
+                          You can give your Pokedex a name as well
+                        </div>
+                        <div className={classes.namingSecondary}>
+                          Useful if you have multiple Pokedex for the same game
+                        </div>
+                      </div>
+                      <FormControl fullWidth>
+                        <TextField
+                          label="Name"
+                          fullWidth
+                          onChange={(e) => setName(e.target.value)}
+                          value={name}
+                        />
                       </FormControl>
                     </Column>
                   </Row>
@@ -153,6 +179,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
             </form>
           )}
         </DialogContent>
+        <Divider />
         <DialogActions className={classes.buttons}>
           <Button
             onClick={() => store.dispatch(closeCreateDexForm())}
@@ -164,7 +191,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
           <Button
             onClick={() => {
               setLoading(true);
-              createPokedex(game, type)
+              createPokedex({ game, type, name })
                 .then((dex) => {
                   props.history.push(`/dex/${dex.userDexId}`);
                   return dex;
