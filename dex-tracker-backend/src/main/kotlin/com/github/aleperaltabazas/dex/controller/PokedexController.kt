@@ -6,13 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
-import com.github.aleperaltabazas.dex.extension.prettyHeaders
 import com.github.aleperaltabazas.dex.model.Pokemon
 import com.github.aleperaltabazas.dex.service.PokemonService
 import org.slf4j.LoggerFactory
 import spark.Request
 import spark.Response
-import spark.Spark.*
+import spark.Spark.get
+import spark.Spark.path
 
 class PokedexController(
     private val objectMapper: ObjectMapper,
@@ -23,13 +23,6 @@ class PokedexController(
             get("", APPLICATION_JSON, this::allPokedex, objectMapper::writeValueAsString)
             get("/:game/:type", APPLICATION_JSON, this::gamePokedex, objectMapper::writeValueAsString)
             get("/:game/pokemon/:id", APPLICATION_JSON, this::pokemon, objectMapper::writeValueAsString)
-
-            before("/*") { req, res ->
-                LOGGER.info("[${req.requestMethod()}] ${req.contextPath()} Request headers: ${req.prettyHeaders()}")
-            }
-            after("/*") { _, res ->
-                LOGGER.info("Response: ${res.status()}")
-            }
         }
     }
 

@@ -3,6 +3,7 @@ package com.github.aleperaltabazas.dex
 import com.github.aleperaltabazas.dex.cache.Cache
 import com.github.aleperaltabazas.dex.config.*
 import com.github.aleperaltabazas.dex.controller.Controller
+import com.github.aleperaltabazas.dex.controller.LoggingFilter
 import com.google.inject.Guice
 import com.google.inject.Injector
 import org.eclipse.jetty.server.Server
@@ -95,6 +96,8 @@ class DexTracker {
                     LOGGER.info("Registered controller ${controller.javaClass.simpleName}")
                     this.controllers.add(controller)
                 }
+
+            LoggingFilter.register()
         }
 
         private fun startCaches(injector: Injector) {

@@ -25,12 +25,12 @@ cp $FRONTEND/environments/$ENV/config.ts $FRONTEND/src/config.ts
 npm install --prefix $FRONTEND
 npm run build --prefix $FRONTEND
 
-rm -rf $BACKEND_RESOURCES/static
+rm -rf $BACKEND_RESOURCES/templates
 
-mkdir $BACKEND_RESOURCES/static
+mkdir $BACKEND_RESOURCES/templates
 
-cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/static/index.html
-cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/static/
+cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/templates/index.html
+cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/templates/
 
 find $BACKEND_RESOURCES -type f -print0 | xargs -0 sed -i -e 's/\/static\//\//g'
 

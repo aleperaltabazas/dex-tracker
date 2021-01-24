@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
 import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
-import com.github.aleperaltabazas.dex.dto.dex.*
+import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
+import com.github.aleperaltabazas.dex.dto.dex.CreateUserDexDTO
+import com.github.aleperaltabazas.dex.dto.dex.UserDTO
+import com.github.aleperaltabazas.dex.dto.dex.UserDexDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.exception.UnauthorizedException
-import com.github.aleperaltabazas.dex.extension.prettyHeaders
 import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.service.UsersService
 import org.slf4j.LoggerFactory
@@ -27,13 +29,6 @@ class UsersController(
             post("/pokedex", APPLICATION_JSON, this::createUserDex, objectMapper::writeValueAsString)
             get("/pokedex/:id", APPLICATION_JSON, this::findUserDex, objectMapper::writeValueAsString)
             patch("/pokedex", APPLICATION_JSON, this::updateUserDexCaughtStatus, objectMapper::writeValueAsString)
-
-            before("") { req, res ->
-                LOGGER.info("[${req.requestMethod()}] ${req.servletPath()} Request headers: ${req.prettyHeaders()}")
-            }
-            after("") { _, res ->
-                LOGGER.info("Response: ${res.status()}")
-            }
         }
     }
 
