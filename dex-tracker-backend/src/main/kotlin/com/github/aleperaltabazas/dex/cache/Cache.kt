@@ -7,6 +7,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import java.util.concurrent.TimeUnit
 
 data class RefreshRate(
@@ -54,6 +55,7 @@ abstract class Cache<T>(
     protected abstract fun doRefresh(): T?
 
     private fun refresh() {
+        MDC.put("motive", "cache-$name")
         LOGGER.debug("Refreshing $name")
         val newT = doRefresh()
 

@@ -5,7 +5,7 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                %d{ISO8601}{GMT} %-5level [${HOSTNAME}] [%X{reqId}] [] [%thread] %logger{0}: %msg %n
+                %d{ISO8601}{GMT} %-5level [%X{requestId}] [%X{dexClient}] [%X{motive}] [%thread] %logger{0}: %msg %n
             </pattern>
         </encoder>
     </appender>
