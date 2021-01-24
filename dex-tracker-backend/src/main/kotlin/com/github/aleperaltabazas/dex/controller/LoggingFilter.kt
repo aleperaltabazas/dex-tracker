@@ -14,13 +14,13 @@ object LoggingFilter {
     private val LOGGER = LoggerFactory.getLogger(LoggingFilter::class.java)
 
     fun register() {
-        before("*") { req, _ ->
+        before({ req, _ ->
             val requestPath = req.contextPath()
             val headers = req
                 .headersMap()
                 .filterKeys { it in IGNORED_HEADERS }
                 .prettyHeaders()
-            if (!IGNORED_PATHS.contains(requestPath)) {
+            if (!IGNORED_PATHS.any { requestPath.matches(it.toRegex()) }) {
                 LOGGER.info("[REQUEST] ${req.requestMethod()} $requestPath")
                 LOGGER.info("[REQUEST] Headers: [$headers]")
 
@@ -28,11 +28,11 @@ object LoggingFilter {
                     LOGGER.info("[REQUEST] Body: ${req.body()}")
                 }
             }
-        }
+        })
 
-        after("*") { req, res ->
+        after({ req, res ->
             val requestPath = req.contextPath()
-            if (!IGNORED_PATHS.contains(requestPath)) {
+            if (!IGNORED_PATHS.any { requestPath.matches(it.toRegex()) }) {
                 val headers = req
                     .headersMap()
                     .filterKeys { it in IGNORED_HEADERS }
@@ -45,6 +45,6 @@ object LoggingFilter {
                     LOGGER.info("[RESPONSE] Body: ${req.body()}")
                 }
             }
-        }
+        })
     }
 }
