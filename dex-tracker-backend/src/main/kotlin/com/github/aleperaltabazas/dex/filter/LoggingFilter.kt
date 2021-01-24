@@ -11,18 +11,18 @@ object LoggingFilter {
     private val IGNORE_REQUEST_BODY_PATHS: List<String> = listOf(
         "/api/v1/users/*",
         "/api/v1/pokedex/*",
-        "*.html",
-        "*.css",
-        "*.js",
-        "*.png",
+        ".*[.]html",
+        ".*[.]css",
+        ".*[.]js",
+        ".*[.]png",
     )
     private val IGNORE_RESPONSE_BODY_PATHS: List<String> = listOf(
         "/api/v1/users/*",
         "/api/v1/pokedex/*",
-        "*.html",
-        "*.css",
-        "*.js",
-        "*.png",
+        ".*[.]html",
+        ".*[.]css",
+        ".*[.]js",
+        ".*[.]png",
     )
     private val IGNORED_HEADERS: List<String> = listOf("Cookie", "Set-Cookie")
     private val LOGGER = LoggerFactory.getLogger(LoggingFilter::class.java)
