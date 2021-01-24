@@ -9,16 +9,23 @@ import spark.Spark.before
 object LoggingFilter {
     private val IGNORED_PATHS: List<String> = listOf()
     private val IGNORE_REQUEST_BODY_PATHS: List<String> = listOf(
-        "/api/v1/users/*",
-        "/api/v1/pokedex/*",
+        "/api/v1/users",
+        "/api/v1/games",
+        "/api/v1/users",
+        "/api/v1/users/.*",
+        "/api/v1/pokedex/.*",
         ".*[.]html",
         ".*[.]css",
         ".*[.]js",
         ".*[.]png",
     )
+    private val IGNORE_METHODS = listOf("OPTIONS")
     private val IGNORE_RESPONSE_BODY_PATHS: List<String> = listOf(
-        "/api/v1/users/*",
-        "/api/v1/pokedex/*",
+        "/api/v1/users",
+        "/api/v1/games",
+        "/api/v1/users",
+        "/api/v1/users/.*",
+        "/api/v1/pokedex/.*",
         ".*[.]html",
         ".*[.]css",
         ".*[.]js",
@@ -29,12 +36,12 @@ object LoggingFilter {
 
     fun register() {
         before({ req, _ ->
-            val requestPath = req.contextPath()
+            val requestPath = req.pathInfo()
             val headers = req
                 .headersMap()
                 .filterKeys { it !in IGNORED_HEADERS }
                 .prettyHeaders()
-            if (IGNORED_PATHS.none { requestPath.matches(it.toRegex()) }) {
+            if (IGNORE_METHODS.contains(req.requestMethod()) || IGNORED_PATHS.none { requestPath.matches(it.toRegex()) }) {
                 LOGGER.info("[REQUEST] ${req.requestMethod()} $requestPath")
                 LOGGER.info("[REQUEST] Headers: [$headers]")
 
@@ -45,8 +52,8 @@ object LoggingFilter {
         })
 
         after({ req, res ->
-            val requestPath = req.contextPath()
-            if (IGNORED_PATHS.none { requestPath.matches(it.toRegex()) }) {
+            val requestPath = req.pathInfo()
+            if (IGNORE_METHODS.contains(req.requestMethod()) || IGNORED_PATHS.none { requestPath.matches(it.toRegex()) }) {
                 val headers = req
                     .headersMap()
                     .filterKeys { it !in IGNORED_HEADERS }

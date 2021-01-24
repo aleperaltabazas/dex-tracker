@@ -13,12 +13,24 @@ import DexPage from "./views/DexPage";
 import { openLocallyStoredSession } from "./functions/login";
 import { fetchGamesPokedex } from "./functions/pokedex";
 import { fetchGames } from "./functions/games";
+import { fireSynchronize } from "./functions/my-dex";
+import store from "./store";
+import { RootState } from "./reducers";
 
 const App = () => {
   useEffect(() => {
     openLocallyStoredSession();
     fetchGamesPokedex();
     fetchGames();
+
+    window.addEventListener("beforeunload", (e) => {
+      const sync = store.getState().syncQueue;
+
+      if (sync.queue.length != 0 && sync.timeout != undefined) {
+        clearTimeout(sync.timeout);
+        fireSynchronize(sync.queue);
+      }
+    });
   }, []);
   return (
     <Router>

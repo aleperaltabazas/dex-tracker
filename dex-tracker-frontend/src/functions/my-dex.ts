@@ -29,19 +29,7 @@ export async function createPokedex({ game, type, name }: CreateDex) {
 
 export async function synchronize(syncQueue: Sync[]) {
   if (syncQueue.length > 0) {
-    let config: AxiosRequestConfig = {
-      url: `${host}/api/v1/users/pokedex`,
-      method: "PATCH",
-      withCredentials: true,
-      data: syncQueue.map((s) => ({
-        pokedexId: s.dexId,
-        dexNumber: s.number,
-        caught: s.caught,
-      })),
-    };
-
-    axios
-      .request(config)
+    fireSynchronize(syncQueue)
       .then(() => {
         store.dispatch(clearSynchronizeQueue());
       })
@@ -49,6 +37,21 @@ export async function synchronize(syncQueue: Sync[]) {
         store.dispatch(resetTimeout());
       });
   }
+}
+
+export function fireSynchronize(syncQueue: Sync[]) {
+  let config: AxiosRequestConfig = {
+    url: `${host}/api/v1/users/pokedex`,
+    method: "PATCH",
+    withCredentials: true,
+    data: syncQueue.map((s) => ({
+      pokedexId: s.dexId,
+      dexNumber: s.number,
+      caught: s.caught,
+    })),
+  };
+
+  return axios.request(config);
 }
 
 export function toRef(dex: UserDex): UserDexRef {
