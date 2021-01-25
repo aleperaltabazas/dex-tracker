@@ -47,7 +47,7 @@ const HomePage = (props: HomePageProps) => {
   }
 
   return (
-    <div className="mt-5">
+    <div className="mt-5 h-100">
       {/* {props.session.user.pokedex.length > 0 &&
         props.session.user.pokedex.map((p, idx) => {
           const dex = gamesPokedex.find((d) => d.game.title == p.game.title)!;

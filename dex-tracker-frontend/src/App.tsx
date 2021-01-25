@@ -15,7 +15,6 @@ import { fetchGamesPokedex } from "./functions/pokedex";
 import { fetchGames } from "./functions/games";
 import { fireSynchronize } from "./functions/my-dex";
 import store from "./store";
-import { RootState } from "./reducers";
 
 const App = () => {
   useEffect(() => {

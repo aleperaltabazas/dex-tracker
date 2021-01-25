@@ -47,7 +47,7 @@ const DexPage = (props: DexPageProps) => {
   }
 
   return (
-    <Container className={classes.noOverflow}>
+    <Container className={classNames(classes.noOverflow, "center")}>
       <div className={classNames(classes.container, "mt-3 mt-md-5")}>
         <Dex
           dex={userDex.value}
