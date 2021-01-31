@@ -29,5 +29,6 @@ class ModelMapper(
         userDexId = userDex.userDexId,
         game = GameDTO(gameService.gameFromKey(userDex.game)),
         name = userDex.name,
+        caught = userDex.pokemon.count { it.caught },
     )
 }

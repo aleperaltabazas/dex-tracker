@@ -24,4 +24,5 @@ export type UserDexRef = {
   userDexId: string;
   game: Game;
   name?: string;
+  caught: number;
 };

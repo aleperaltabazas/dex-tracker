@@ -1,16 +1,12 @@
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Divider,
   Hidden,
   Input,
   InputAdornment,
   Typography,
 } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { hot } from "react-hot-loader";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import classNames from "classnames";
 import { Search } from "@material-ui/icons";
 import "./styles.scss";

@@ -5,11 +5,13 @@ import { PokedexState } from "../store/pokedex";
 import { SessionState } from "../store/session";
 import { connect } from "react-redux";
 import classNames from "classnames";
-import { makeStyles } from "@material-ui/core";
+import { Container, makeStyles } from "@material-ui/core";
 import { GamesState } from "../store/games";
 import store from "../store";
 import { openCreateDexForm } from "../actions/global";
 import Loader from "../components/Loader";
+import DexLink from "../components/Links/Dex";
+import DexSummary from "../components/Dex/Summary";
 
 type HomePageProps = {
   pokedex: PokedexState;
@@ -46,30 +48,38 @@ const HomePage = (props: HomePageProps) => {
     );
   }
 
+  const pokedex = props.pokedex.pokedex;
+
   return (
     <div className="mt-5 h-100">
-      {/* {props.session.user.pokedex.length > 0 &&
-        props.session.user.pokedex.map((p, idx) => {
-          const dex = gamesPokedex.find((d) => d.game.title == p.game.title)!;
-          return <Dex dex={p} gamePokedex={dex} key={idx} />;
-        })} */}
-      {props.session.user.pokedex.length == 0 && (
-        <div>
-          <div className={classNames("center-h", classes.noPokedexHeading)}>
-            It seems like you don't have a Pokedex yet
+      <Container>
+        {props.session.user.pokedex.length > 0 &&
+          props.session.user.pokedex.map((p) => {
+            return (
+              <DexSummary
+                dex={p}
+                gamePokedex={pokedex.find((d) => d.game.title == p.game.title)!}
+              />
+            );
+          })}
+        {props.session.user.pokedex.length == 0 && (
+          <div>
+            <div className={classNames("center-h", classes.noPokedexHeading)}>
+              It seems like you don't have a Pokedex yet
+            </div>
+            <div className={classNames("center-h", classes.noPokedexSubtitle)}>
+              Click on the pokedex below to create one!
+            </div>
+            <div className="w-100 center-h">
+              <img
+                className="p-1 cursor-pointer center-h"
+                src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
+                onClick={() => store.dispatch(openCreateDexForm())}
+              />
+            </div>
           </div>
-          <div className={classNames("center-h", classes.noPokedexSubtitle)}>
-            Click on the pokedex below to create one!
-          </div>
-          <div className="w-100 center-h">
-            <img
-              className="p-1 cursor-pointer center-h"
-              src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
-              onClick={() => store.dispatch(openCreateDexForm())}
-            />
-          </div>
-        </div>
-      )}
+        )}
+      </Container>
     </div>
   );
 };

@@ -59,5 +59,6 @@ export function toRef(dex: UserDex): UserDexRef {
     name: dex.name,
     game: dex.game,
     userDexId: dex.userDexId,
+    caught: dex.pokemon.filter((p) => p.caught).length,
   };
 }

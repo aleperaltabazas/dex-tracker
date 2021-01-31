@@ -98,7 +98,7 @@ html {
   }
 
   .p-#{$i} {
-    margin: #{$i * 15}px;
+    padding: #{$i * 15}px;
   }
 
   .pl-#{$i} {

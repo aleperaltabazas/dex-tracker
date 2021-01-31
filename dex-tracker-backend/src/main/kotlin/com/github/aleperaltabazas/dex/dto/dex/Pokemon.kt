@@ -63,4 +63,5 @@ data class UserDexRefDTO(
     val userDexId: String,
     val game: GameDTO,
     val name: String?,
+    val caught: Int,
 )
