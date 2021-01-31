@@ -4,6 +4,7 @@ export const INVALIDATE_SESSION = "INVALIDATE_SESSION";
 export const LOG_IN_ACTION = "LOG_IN_ACTION";
 export const LOG_IN_ERROR = "LOG_IN_ERROR";
 export const ADD_USER_DEX = "ADD_USER_DEX";
+export const UPDATE_CAUGHT = "UPDATE_CAUGHT";
 
 interface InvalidateSessionAction {
   type: typeof INVALIDATE_SESSION;
@@ -23,11 +24,20 @@ interface AddUserDexAction {
   payload: UserDexRef;
 }
 
+interface UpdateCaughtAction {
+  type: typeof UPDATE_CAUGHT;
+  payload: {
+    dexId: string;
+    update: (current: number) => number;
+  };
+}
+
 export type SessionAction =
   | InvalidateSessionAction
   | LogInAction
   | LoginErrorAction
-  | AddUserDexAction;
+  | AddUserDexAction
+  | UpdateCaughtAction;
 
 export interface LoggedInState {
   token: string;

@@ -6,6 +6,7 @@ import {
   LOG_IN_ERROR,
   SessionAction,
   SessionState,
+  UPDATE_CAUGHT,
 } from "../../store/session";
 
 const defaultSessionState: SessionState = {
@@ -34,6 +35,10 @@ function sessionReducer(
       };
     }
     case ADD_USER_DEX: {
+      if (!state.isLoggedIn) {
+        return state;
+      }
+
       const loggedIn = state as LoggedInState;
       const user = loggedIn.user;
 
@@ -46,6 +51,23 @@ function sessionReducer(
       };
 
       return newState;
+    }
+    case UPDATE_CAUGHT: {
+      if (!state.isLoggedIn) {
+        return state;
+      }
+
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          pokedex: state.user.pokedex.map((d) =>
+            d.userDexId == action.payload.dexId
+              ? { ...d, caught: action.payload.update(d.caught) }
+              : d
+          ),
+        },
+      };
     }
     default: {
       return state;

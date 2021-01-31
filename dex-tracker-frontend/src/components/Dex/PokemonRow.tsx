@@ -6,9 +6,9 @@ import Row from "../Row";
 import classNames from "classnames";
 import { Pokemon } from "../../types/user";
 import useStyles from "./styles";
-import pokedexReducer from "../../reducers/pokedex";
 import store from "../../store";
 import { addToSyncQueue } from "../../actions/syncQueue";
+import { incrementCaught, decrementCaught } from "../../actions/session";
 
 type PokemonRowProps = {
   idx: number;
@@ -35,6 +35,9 @@ const PokemonRow = (props: PokemonRowProps) => {
 
     store.dispatch(
       addToSyncQueue(props.pokemon.dexNumber, newCaught, props.dexId)
+    );
+    store.dispatch(
+      newCaught ? incrementCaught(props.dexId) : decrementCaught(props.dexId)
     );
   };
 
