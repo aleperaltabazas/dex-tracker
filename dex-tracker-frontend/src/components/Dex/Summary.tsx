@@ -34,37 +34,32 @@ const Summary = (props: SummaryProps) => {
   const classes = useStyles();
 
   return (
-    <>
-      <Hidden smDown>
-        <div className="mt-3 mb-3">
-          <Paper className="p-1">
-            <DexLink dexId={props.dex.userDexId}>
-              <div className={classNames("center-v", classes.summary)}>
-                <div className="center-v">
-                  <span
-                    className={`pokesprite pokemon ${props.gamePokedex.game.spritePokemon} pr-1`}
-                  />
-                  <span className={classes.title}>
-                    {props.dex.name || props.dex.game.fullTitle}
-                  </span>
-                </div>
-                <div className="pr-1">
-                  {props.dex.caught}/{props.gamePokedex.pokemon.length}
-                </div>
+    <div className="mt-3 mb-3">
+      <Paper className="p-1">
+        <DexLink dexId={props.dex.userDexId}>
+          <div className={classNames("center-v", classes.summary)}>
+            <Typography variant="h4">
+              <div className="center-v ellipsis">
+                <span
+                  className={`pokesprite pokemon ${props.gamePokedex.game.spritePokemon} pt-1 pr-1`}
+                />
+                <span className={classNames(classes.title, "bold")}>
+                  {props.dex.name || props.dex.game.fullTitle}
+                </span>
               </div>
-            </DexLink>
-            <div className="mt-2">
-              <LinearProgress
-                value={
-                  (props.dex.caught * 100) / props.gamePokedex.pokemon.length
-                }
-              />
+            </Typography>
+            <div className="pr-1">
+              {props.dex.caught}/{props.gamePokedex.pokemon.length}
             </div>
-          </Paper>
+          </div>
+        </DexLink>
+        <div className="mt-1">
+          <LinearProgress
+            value={(props.dex.caught * 100) / props.gamePokedex.pokemon.length}
+          />
         </div>
-      </Hidden>
-      <Hidden mdUp></Hidden>
-    </>
+      </Paper>
+    </div>
   );
 };
 

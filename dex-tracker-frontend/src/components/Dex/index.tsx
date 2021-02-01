@@ -16,10 +16,14 @@ import { Pokemon, UserDex } from "../../types/user";
 import { GamePokedex } from "../../types/pokedex";
 import PokemonRow from "./PokemonRow";
 import useStyles from "./styles";
+import { RootState } from "../../reducers";
+import { connect } from "react-redux";
+import { Sync } from "../../types/sync";
 
 type DexProps = {
   dex: UserDex;
   gamePokedex: GamePokedex;
+  unsynched: Sync[];
 };
 
 const Dex = (props: DexProps) => {
@@ -34,10 +38,21 @@ const Dex = (props: DexProps) => {
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.dexNumber.toString().includes(search);
 
-  const [pokemon, setPokemon] = useState(props.dex.pokemon);
+  const [pokemon] = useState(props.dex.pokemon);
+
+  function mergeWithUnsynched(p: Pokemon): Pokemon {
+    const unsynched = props.unsynched.find(
+      (s) => s.dexId == props.dex.userDexId && s.number == p.dexNumber
+    );
+    console.log(p.name, unsynched);
+    return {
+      ...p,
+      caught: unsynched ? unsynched.caught : p.caught,
+    };
+  }
 
   const [caughtCounter, setCaughtCounter] = useState(
-    props.dex.pokemon.filter((p) => p.caught).length
+    props.dex.pokemon.map(mergeWithUnsynched).filter((p) => p.caught).length
   );
 
   const incrementCounter = () => setCaughtCounter(caughtCounter + 1);
@@ -45,34 +60,26 @@ const Dex = (props: DexProps) => {
 
   return (
     <div className={classes.root}>
-      <div
-        className={classNames(
-          "bold",
-          "uppercase",
-          "center-v",
-          "pb-1",
-          classes.game
-        )}
-      >
-        <span
-          className={`pokemon pokesprite ${props.gamePokedex.game.spritePokemon} pt-2`}
-        />
-        <span style={{ paddingBottom: "3px" }}>
-          {props.dex.name || props.gamePokedex.game.fullTitle}
-        </span>
-      </div>
+      <Typography variant="h5">
+        <div className={classNames("bold", "center-v", "pb-1")}>
+          <span
+            className={`pokemon pokesprite ${props.gamePokedex.game.spritePokemon} pt-1`}
+          />
+          <span style={{ paddingBottom: "3px" }}>
+            {props.dex.name || props.gamePokedex.game.fullTitle}
+          </span>
+        </div>
+      </Typography>
       <Row className={classNames("ml-2", "mr-2")}>
         <Column xs={7} md={8}>
           <div>
-            <div
-              className={classNames(
-                classes.accordionHeading,
-                "bold",
-                "capitalize"
-              )}
+            <Typography
+              variant="h6"
+              color="textSecondary"
+              className={classNames("capitalize")}
             >
               {props.dex.type.toLowerCase()}
-            </div>
+            </Typography>
           </div>
         </Column>
         <Column xs={5} md={4} className="center">
@@ -92,7 +99,9 @@ const Dex = (props: DexProps) => {
             md={1}
             className={classNames("center", "bold", classes.listItem)}
           >
-            Number
+            <Typography variant="button" style={{ fontSize: "14px" }}>
+              Number
+            </Typography>
           </Column>
         </Hidden>
         <Column
@@ -133,7 +142,7 @@ const Dex = (props: DexProps) => {
             dexId={props.dex.userDexId}
             idx={0}
             firstRow
-            pokemon={pokemon[0]}
+            pokemon={mergeWithUnsynched(pokemon[0])}
             incrementCounter={incrementCounter}
             decrementCounter={decrementCounter}
           />
@@ -147,7 +156,7 @@ const Dex = (props: DexProps) => {
               key={idx}
               idx={idx + 1}
               firstRow={false}
-              pokemon={p}
+              pokemon={mergeWithUnsynched(p)}
               incrementCounter={incrementCounter}
               decrementCounter={decrementCounter}
             />
@@ -157,4 +166,8 @@ const Dex = (props: DexProps) => {
   );
 };
 
-export default hot(module)(Dex);
+const mapStateToProps = (root: RootState) => ({
+  unsynched: root.syncQueue.queue,
+});
+
+export default hot(module)(connect(mapStateToProps)(Dex));

@@ -46,6 +46,10 @@ html {
   text-transform: lowercase;
 }
 
+.ellipsis {
+  text-overflow: ellipsis;
+}
+
 @for $i from 0 through 5 {
   .m-#{$i} {
     margin: #{$i * 15}px;

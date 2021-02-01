@@ -5,7 +5,7 @@ import { PokedexState } from "../store/pokedex";
 import { SessionState } from "../store/session";
 import { connect } from "react-redux";
 import classNames from "classnames";
-import { Container, makeStyles } from "@material-ui/core";
+import { Container, makeStyles, Typography } from "@material-ui/core";
 import { GamesState } from "../store/games";
 import store from "../store";
 import { openCreateDexForm } from "../actions/global";
@@ -53,15 +53,19 @@ const HomePage = (props: HomePageProps) => {
   return (
     <div className="mt-5 h-100">
       <Container>
-        {props.session.user.pokedex.length > 0 &&
-          props.session.user.pokedex.map((p) => {
-            return (
+        {props.session.user.pokedex.length > 0 && (
+          <>
+            <Typography variant="h3" className="center-h">
+              My games
+            </Typography>
+            {props.session.user.pokedex.map((p) => (
               <DexSummary
                 dex={p}
                 gamePokedex={pokedex.find((d) => d.game.title == p.game.title)!}
               />
-            );
-          })}
+            ))}
+          </>
+        )}
         {props.session.user.pokedex.length == 0 && (
           <div>
             <div className={classNames("center-h", classes.noPokedexHeading)}>
