@@ -27,7 +27,7 @@ object TrackingFilter {
             ThreadMap.put("dexClient", client)
             ThreadMap.put(
                 "motive",
-                if (req.contextPath().startsWith("/api/v1")) "api" else "web"
+                if (req.pathInfo().startsWith("/api/v1")) "api" else "web"
             )
         })
     }

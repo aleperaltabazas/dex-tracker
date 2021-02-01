@@ -29,7 +29,7 @@ rm -rf $BACKEND_RESOURCES/templates
 
 mkdir $BACKEND_RESOURCES/templates
 
-cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/templates/index.html
+cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/templates/index.hbs
 cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/templates/
 
 find $BACKEND_RESOURCES -type f -print0 | xargs -0 sed -i -e 's/\/static\//\//g'

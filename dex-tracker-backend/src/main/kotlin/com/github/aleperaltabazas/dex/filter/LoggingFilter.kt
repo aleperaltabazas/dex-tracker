@@ -54,7 +54,7 @@ object LoggingFilter {
         after({ req, res ->
             val requestPath = req.pathInfo()
             if (IGNORE_METHODS.contains(req.requestMethod()) || IGNORED_PATHS.none { requestPath.matches(it.toRegex()) }) {
-                val headers = req
+                val headers = res
                     .headersMap()
                     .filterKeys { it !in IGNORED_HEADERS }
                     .prettyHeaders()
