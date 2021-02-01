@@ -1,4 +1,4 @@
-import { Hidden } from "@material-ui/core";
+import { Checkbox, Hidden } from "@material-ui/core";
 import React, { useState } from "react";
 import { hot } from "react-hot-loader";
 import Column from "../Column";
@@ -79,11 +79,11 @@ const PokemonRow = (props: PokemonRowProps) => {
         key={`${props.idx}-caught`}
         onClick={() => updateCaught()}
       >
-        {caught ? (
-          <span className="pokesprite ball poke" />
-        ) : (
-          <span className="pokesprite ball poke gray-scale" />
-        )}
+        <Checkbox
+          checked={caught}
+          onChange={() => updateCaught()}
+          color="default"
+        />
       </Column>
     </Row>
   );

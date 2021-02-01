@@ -132,7 +132,9 @@ const Dex = (props: DexProps) => {
           md={1}
           className={classNames("center", "bold", classes.listItem)}
         >
-          <span className="pokesprite ball poke" />
+          <Typography variant="button" style={{ fontSize: "14px" }}>
+            Caught
+          </Typography>
         </Column>
       </Row>
       <Divider />
