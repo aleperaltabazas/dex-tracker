@@ -89,6 +89,7 @@ class DexTracker {
         private fun registerControllers(injector: Injector) {
             staticFiles.location("/templates")
             staticFiles.expireTime(60 * 60 * 24 * 365)
+            staticFiles.header("Keep-Alive", "timeout=5, max=1000")
 
             injector.allBindings.keys
                 .filter { Controller::class.java.isAssignableFrom(it.typeLiteral.rawType) }
