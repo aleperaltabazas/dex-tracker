@@ -3,7 +3,6 @@ package com.github.aleperaltabazas.dex.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.connector.RestConnector
-import com.github.aleperaltabazas.dex.model.Game
 import com.github.aleperaltabazas.dex.service.GameService
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
 import com.google.inject.AbstractModule

@@ -1,5 +1,6 @@
 package com.github.aleperaltabazas.dex.controller
 
+import com.github.aleperaltabazas.dex.constants.*
 import com.github.aleperaltabazas.dex.env.Env
 import spark.Spark.after
 import spark.Spark.options
@@ -33,10 +34,10 @@ class MiscController(
                 res.header("Access-Control-Allow-Credentials", "true")
             }
 
-            res.header("content-type", "application/json")
+            res.header(CONTENT_TYPE, APPLICATION_JSON)
+            res.header(CONTENT_ENCODING, GZIP)
+            res.header(KEEP_ALIVE, "timeout=5, max=1000")
+            res.header(CACHE_CONTROL, MAX_AGE_1_YEAR)
         }
-
-        after("*.css") { _, res -> res.header("Content-Encoding", "gzip") }
-        after("*.js") { _, res -> res.header("Content-Encoding", "gzip") }
     }
 }

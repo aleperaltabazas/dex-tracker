@@ -1,6 +1,9 @@
 package com.github.aleperaltabazas.dex.dto.dex
 
-import com.github.aleperaltabazas.dex.model.*
+import com.github.aleperaltabazas.dex.model.Form
+import com.github.aleperaltabazas.dex.model.Game
+import com.github.aleperaltabazas.dex.model.PokedexType
+import com.github.aleperaltabazas.dex.model.UserDexPokemon
 
 data class FormDTO(
     val name: String,

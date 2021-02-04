@@ -2,6 +2,7 @@ package com.github.aleperaltabazas.dex
 
 import com.github.aleperaltabazas.dex.cache.Cache
 import com.github.aleperaltabazas.dex.config.*
+import com.github.aleperaltabazas.dex.constants.*
 import com.github.aleperaltabazas.dex.controller.Controller
 import com.github.aleperaltabazas.dex.filter.LoggingFilter
 import com.github.aleperaltabazas.dex.filter.TrackingFilter
@@ -82,14 +83,13 @@ class DexTracker {
             registerControllers(injector)
         }
 
-        override fun destroy() {
-            caches.forEach { it.stop() }
-        }
+        override fun destroy() = caches.forEach { it.stop() }
 
         private fun registerControllers(injector: Injector) {
             staticFiles.location("/templates")
-            staticFiles.expireTime(60 * 60 * 24 * 365)
-            staticFiles.header("Keep-Alive", "timeout=5, max=1000")
+            staticFiles.header(CONTENT_ENCODING, GZIP)
+            staticFiles.header(KEEP_ALIVE, "timeout=5, max=1000")
+            staticFiles.header(CACHE_CONTROL, MAX_AGE_1_YEAR)
 
             injector.allBindings.keys
                 .filter { Controller::class.java.isAssignableFrom(it.typeLiteral.rawType) }
@@ -104,16 +104,14 @@ class DexTracker {
             LoggingFilter.register()
         }
 
-        private fun startCaches(injector: Injector) {
-            injector.allBindings.keys
-                .filter { Cache::class.java.isAssignableFrom(it.typeLiteral.rawType) }
-                .forEach {
-                    val cache = injector.getInstance(it) as Cache<*>
-                    LOGGER.info("Starting ${cache.name}...")
-                    cache.start()
-                    LOGGER.info("Started cache ${cache.name}")
-                    this.caches.add(cache)
-                }
-        }
+        private fun startCaches(injector: Injector) = injector.allBindings.keys
+            .filter { Cache::class.java.isAssignableFrom(it.typeLiteral.rawType) }
+            .forEach {
+                val cache = injector.getInstance(it) as Cache<*>
+                LOGGER.info("Starting ${cache.name}...")
+                cache.start()
+                LOGGER.info("Started cache ${cache.name}")
+                this.caches.add(cache)
+            }
     }
 }

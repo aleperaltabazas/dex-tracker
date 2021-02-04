@@ -18,7 +18,7 @@ class FrontendController(
         get("", this::home, engine)
         get("/", this::home, engine)
         get("/dex/:id", this::home, engine)
-        notFound { req, res ->
+        notFound { _, _ ->
             engine.render(ModelAndView(null, "index.html"))
         }
     }
@@ -30,11 +30,8 @@ class FrontendController(
             res.cookie("/", DEX_TOKEN, token, 36000000, false)
         }
 
-        keepAlive(req, res)
         return ModelAndView(emptyMap<String, Any?>(), "index.hbs")
     }
-
-    private fun keepAlive(req: Request, res: Response) = res.header("Keep-Alive", "timeout=5, max=1000")
 
     companion object {
         private val LOGGER = LoggerFactory.getLogger(FrontendController::class.java)
