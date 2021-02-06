@@ -20,23 +20,28 @@ import com.github.aleperaltabazas.dex.storage.Storage
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Sorts
 import com.nhaarman.mockito_kotlin.*
-import io.kotlintest.matchers.shouldBe
-import io.kotlintest.matchers.shouldThrow
-import io.kotlintest.specs.WordSpec
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.WordSpec
+import io.kotest.core.test.TestCase
+import io.kotest.matchers.shouldBe
 import org.bson.Document
 import org.mockito.ArgumentMatchers
 
 class PokemonServiceTest : WordSpec() {
-    init {
-        val cacheMock: RegionalPokedexCache = mock {}
-        val storageMock: Storage = mock {}
-        val gameServiceMock: GameService = mock {}
-        val pokemonService = PokemonService(
-            regionalPokedexCache = cacheMock,
-            storage = storageMock,
-            gameService = gameServiceMock
-        )
+    private val cacheMock: RegionalPokedexCache = mock {}
+    private val storageMock: Storage = mock {}
+    private val gameServiceMock: GameService = mock {}
+    private val pokemonService = PokemonService(
+        regionalPokedexCache = cacheMock,
+        storage = storageMock,
+        gameService = gameServiceMock
+    )
 
+    override fun beforeEach(testCase: TestCase) {
+        reset(cacheMock, storageMock, gameServiceMock)
+    }
+
+    init {
         "pokemon" should {
             val goldAndSilver = Game(
                 title = "gs",
