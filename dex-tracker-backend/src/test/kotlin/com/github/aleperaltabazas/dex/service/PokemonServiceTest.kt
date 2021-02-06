@@ -1,24 +1,23 @@
 package com.github.aleperaltabazas.dex.service
 
+import arrow.core.left
+import arrow.core.right
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
-import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
-import com.github.aleperaltabazas.dex.dto.dex.GameDTO
-import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
+import com.github.aleperaltabazas.dex.db.fixture.ivysaur
 import com.github.aleperaltabazas.dex.exception.NotFoundException
 import com.github.aleperaltabazas.dex.model.Game
 import com.github.aleperaltabazas.dex.model.GamePokedex
 import com.github.aleperaltabazas.dex.model.PokedexType
-import com.github.aleperaltabazas.dex.model.Pokemon
+import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Query
 import com.github.aleperaltabazas.dex.storage.Storage
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldThrow
 import io.kotlintest.specs.WordSpec
-import org.mockito.ArgumentMatchers.any as anyClass
+import org.bson.Document
+import org.mockito.ArgumentMatchers
 
 class PokemonServiceTest : WordSpec() {
     init {
@@ -31,109 +30,87 @@ class PokemonServiceTest : WordSpec() {
             gameService = gameServiceMock
         )
 
-        "gameNationalPokedex" should {
-            "find the game associated to the key in the cache and make query the storage for that game's generation" {
-                whenever(cacheMock.get()).thenReturn(
-                    mapOf(
-                        "gsc" to GamePokedex(
-                            type = PokedexType.NATIONAL,
-                            game = Game(
-                                title = "gsc",
-                                fullTitle = "Gold, Silver and Crystal",
-                                region = "johto",
-                                pokeapiId = "original-johto",
-                                spritePokemon = "ho-oh",
-                                gen = 2,
-                            ),
-                            pokemon = emptyList()
-                        )
-                    )
-                )
+        "pokemon" should {
+            val goldAndSilver = Game(
+                title = "gs",
+                fullTitle = "Gold and Silver",
+                spritePokemon = "Ho-oh",
+                region = "Johto",
+                pokeapiId = "123",
+                gen = 2
+            )
 
+            val goldAndSilverPokedex = GamePokedex(
+                game = goldAndSilver,
+                type = PokedexType.NATIONAL,
+                pokemon = emptyList()
+            )
 
+            "find a pokemon by its number" {
                 val queryMock: Query = mock {
-                    on { this.where(any()) }.thenReturn(it)
-                    on { this.findAll(anyClass(TypeReference::class.java)) }.thenReturn(
-                        listOf(
-                            Pokemon(
-                                name = "pichu",
-                                nationalPokedexNumber = 172,
-                                primaryAbility = "static",
-                                secondaryAbility = null,
-                                hiddenAbility = "lightning-rod",
-                                evolutions = emptyList(),
-                                forms = emptyList(),
-                                gen = 2,
-                            )
-                        )
-                    )
+                    on { this.findOne(ArgumentMatchers.any(TypeReference::class.java)) } doReturn ivysaur
                 }
-
+                whenever(queryMock.where(any())).thenReturn(queryMock)
+                whenever(queryMock.limit(any())).thenReturn(queryMock)
+                whenever(cacheMock.pokedexOf(any())).thenReturn(goldAndSilverPokedex)
+                whenever(gameServiceMock.gameFromKey(any())).thenReturn(goldAndSilver)
                 whenever(storageMock.query(any())).thenReturn(queryMock)
 
-                val expected = GamePokedexDTO(
-                    region = "johto",
-                    type = PokedexType.NATIONAL,
-                    game = GameDTO(
-                        title = "gsc",
-                        fullTitle = "Gold, Silver and Crystal",
-                        spritePokemon = "ho-oh"
-                    ),
-                    pokemon = listOf(
-                        DexEntryDTO(
-                            name = "pichu",
-                            number = 172,
-                            forms = emptyList(),
-                        )
-                    )
-                )
-
-                val actual = pokemonService.gameNationalPokedex("gsc")
+                val expected = ivysaur
+                val actual = pokemonService.pokemon("gs", 2.left())
 
                 actual shouldBe expected
+
+                verify(queryMock).where(eq(Document("gen", goldAndSilver.gen).append("national_pokedex_number", 2)))
+                verify(queryMock).limit(eq(1))
+                verify(storageMock).query(eq(Collection.POKEMON))
+                verify(gameServiceMock).gameFromKey(eq("gs"))
+                verify(cacheMock).pokedexOf(eq(goldAndSilver))
             }
 
-            "throw a NotFoundException if no game in the cache matches the key" {
-                whenever(cacheMock.get()).thenReturn(
-                    mapOf(
-                        "rse" to GamePokedex(
-                            type = PokedexType.NATIONAL,
-                            game = Game(
-                                title = "rse",
-                                fullTitle = "Ruby, Sapphire and Emerald",
-                                region = "hoenn",
-                                pokeapiId = "original-hoenn",
-                                spritePokemon = "rayquaza",
-                                gen = 3,
-                            ),
-                            pokemon = emptyList()
-                        )
-                    )
-                )
-
+            "find a pokemon by its name" {
                 val queryMock: Query = mock {
-                    on { this.where(any()) }.thenReturn(it)
-                    on { this.findAll(anyClass(TypeReference::class.java)) }.thenReturn(
-                        listOf(
-                            Pokemon(
-                                name = "pichu",
-                                nationalPokedexNumber = 172,
-                                primaryAbility = "static",
-                                secondaryAbility = null,
-                                hiddenAbility = "lightning-rod",
-                                evolutions = emptyList(),
-                                forms = emptyList(),
-                                gen = 3,
-                            )
-                        )
-                    )
+                    on { this.findOne(ArgumentMatchers.any(TypeReference::class.java)) } doReturn ivysaur
                 }
+                whenever(queryMock.where(any())).thenReturn(queryMock)
+                whenever(queryMock.limit(any())).thenReturn(queryMock)
+                whenever(cacheMock.pokedexOf(any())).thenReturn(goldAndSilverPokedex)
+                whenever(gameServiceMock.gameFromKey(any())).thenReturn(goldAndSilver)
+                whenever(storageMock.query(any())).thenReturn(queryMock)
 
+                val expected = ivysaur
+                val actual = pokemonService.pokemon("gs", "ivysaur".right())
+
+                actual shouldBe expected
+
+                verify(queryMock).where(eq(Document("gen", goldAndSilver.gen).append("name", "ivysaur")))
+                verify(queryMock).limit(eq(1))
+                verify(storageMock).query(eq(Collection.POKEMON))
+                verify(gameServiceMock).gameFromKey(eq("gs"))
+                verify(cacheMock).pokedexOf(eq(goldAndSilver))
+            }
+
+            "throw a NotFoundException if no pokemon matches either criteria" {
+                val queryMock: Query = mock {
+                    on { this.findOne(ArgumentMatchers.any(TypeReference::class.java)) } doReturn null
+                }
+                whenever(queryMock.where(any())).thenReturn(queryMock)
+                whenever(queryMock.limit(any())).thenReturn(queryMock)
+                whenever(cacheMock.pokedexOf(any())).thenReturn(goldAndSilverPokedex)
+                whenever(gameServiceMock.gameFromKey(any())).thenReturn(goldAndSilver)
                 whenever(storageMock.query(any())).thenReturn(queryMock)
 
                 shouldThrow<NotFoundException> {
-                    pokemonService.gameNationalPokedex("gsc")
+                    pokemonService.pokemon("gs", "ivysaur".right())
                 }
+
+                verify(queryMock).where(eq(Document("gen", goldAndSilver.gen).append("name", "ivysaur")))
+
+                shouldThrow<NotFoundException> {
+                    pokemonService.pokemon("gs", 2.left())
+                }
+
+                verify(queryMock).where(eq(Document("gen", goldAndSilver.gen).append("national_pokedex_number", 2)))
             }
         }
     }

@@ -3,6 +3,7 @@ package com.github.aleperaltabazas.dex.storage
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.client.MongoCollection
+import com.mongodb.client.model.Filters
 import org.bson.Document
 import org.bson.conversions.Bson
 
@@ -16,7 +17,7 @@ open class Query(
     private var offset: Int? = null
 
     open fun where(filter: Bson): Query {
-        this.where = filter
+        this.where = Filters.and(where ?: Document(), filter)
         return this
     }
 
@@ -37,7 +38,7 @@ open class Query(
 
     open fun count(): Int = coll.count(where ?: Document()).toInt()
 
-    open fun <T> findOne(`as`: TypeReference<T>): T? = createMongoQuery()
+    open fun <T> findOne(`as`: TypeReference<T>?): T? = createMongoQuery()
         .limit(1)
         .map { objectMapper.convertValue(it, `as`) }
         .firstOrNull()

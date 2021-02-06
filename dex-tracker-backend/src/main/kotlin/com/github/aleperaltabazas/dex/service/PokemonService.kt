@@ -13,6 +13,7 @@ import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.model.Pokemon
 import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
+import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Sorts.ascending
 import org.bson.Document
 
@@ -28,29 +29,31 @@ open class PokemonService(
         return regionals + nationals
     }
 
-    open fun pokemon(gameKey: String, numberOrName: Either<Int, String>) = gameService.gameFromKey(gameKey)
+    open fun pokemon(gameKey: String, numberOrName: Either<Int, String>): Pokemon = gameService.gameFromKey(gameKey)
         .let { regionalPokedexCache.pokedexOf(it) }
-        .let {
-            val gen = it.game.gen
+        .let { dex ->
+            val gen = dex.game.gen
             numberOrName.fold(
                 ifLeft = {
                     storage.query(Collection.POKEMON)
                         .where(Document("gen", gen).append("national_pokedex_number", it))
                         .limit(1)
-                        .findAll(POKEMON_REF)
-                        .firstOrNull()
+                        .findOne(POKEMON_REF)
                 },
                 ifRight = {
                     storage.query(Collection.POKEMON)
                         .where(Document("gen", gen).append("name", it))
                         .limit(1)
-                        .findAll(POKEMON_REF)
-                        .firstOrNull()
+                        .findOne(POKEMON_REF)
                 },
             )
         } ?: throw NotFoundException("No pokemon found with ${numberOrName.fold({ "number $it" }, { "name $it" })}")
 
     open fun gameNationalPokedex(gameKey: String): GamePokedexDTO = gameNationalPokedex(
+        game = gameService.gameFromKey(gameKey)
+    )
+
+    open fun gameRegionalPokedex(gameKey: String): GamePokedexDTO = gameRegionalPokedex(
         game = gameService.gameFromKey(gameKey)
     )
 
@@ -68,16 +71,12 @@ open class PokemonService(
             }
 
         return GamePokedexDTO(
-            pokemon = pokemon.toList(),
+            pokemon = pokemon,
             type = PokedexType.NATIONAL,
             region = game.region,
             game = GameDTO(game)
         )
     }
-
-    open fun gameRegionalPokedex(gameKey: String): GamePokedexDTO = gameRegionalPokedex(
-        game = gameService.gameFromKey(gameKey)
-    )
 
     private fun gameRegionalPokedex(game: Game): GamePokedexDTO {
         val pokedex = regionalPokedexCache.pokedexOf(game)
@@ -85,6 +84,7 @@ open class PokemonService(
         val pokemon = storage
             .query(Collection.POKEMON)
             .where(Document("gen", game.gen))
+            .where(Filters.`in`("name", pokedex.pokemon))
             .findAll(POKEMON_REF)
             .filter { it.name in pokedex.pokemon }
             .map { p ->

@@ -24,8 +24,6 @@ class PokemonServiceTest : WordSpec() {
 
         "gameNationalPokedex" should {
             "return ivysaur, venusaur and eevee for game key rby" {
-
-
                 PokeapiConnector.kantoPokedex(pokeapiMock)
                 regionalPokedexCache.start()
 
@@ -48,7 +46,6 @@ class PokemonServiceTest : WordSpec() {
 
                 actual shouldBe expected
             }
-
         }
     }
 }
