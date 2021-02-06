@@ -23,7 +23,7 @@ open class PokemonService(
     private val storage: Storage,
 ) {
     open fun allPokedex(): List<GamePokedexDTO> {
-        val nationals = gameService.all().map { gameNationalPokedex(it) }
+        val (nationals) = gameService.all().map { gameNationalPokedex(it) }
         val regionals = gameService.all().map { gameRegionalPokedex(it) }
 
         return regionals + nationals
@@ -86,7 +86,6 @@ open class PokemonService(
             .where(Document("gen", game.gen))
             .where(Filters.`in`("name", pokedex.pokemon))
             .findAll(POKEMON_REF)
-            .filter { it.name in pokedex.pokemon }
             .map { p ->
                 DexEntryDTO(
                     number = pokedex.pokemon.indexOf(p.name) + 1,

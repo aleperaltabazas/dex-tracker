@@ -2,6 +2,22 @@ package com.github.aleperaltabazas.dex.db.fixture
 
 import com.github.aleperaltabazas.dex.model.*
 
+val bulbasaur = Pokemon(
+    name = "bulbasaur",
+    nationalPokedexNumber = 1,
+    primaryAbility = "overgrow",
+    secondaryAbility = null,
+    hiddenAbility = "chlorophyll",
+    evolutions = listOf(
+        Evolution(
+            name = "ivysaur",
+            method = LevelUp(16)
+        )
+    ),
+    forms = emptyList(),
+    gen = 1,
+)
+
 val ivysaur = Pokemon(
     name = "ivysaur",
     nationalPokedexNumber = 2,
