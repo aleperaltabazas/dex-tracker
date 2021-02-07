@@ -14,7 +14,6 @@ data class FormDTO(
 data class DexEntryDTO(
     val name: String,
     val number: Int,
-    val forms: List<FormDTO>
 )
 
 data class GameDTO(

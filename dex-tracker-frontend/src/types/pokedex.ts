@@ -5,7 +5,6 @@ export type Form = {
 export type DexEntry = {
   name: string;
   number: number;
-  forms: Form[];
 };
 
 export type Game = {

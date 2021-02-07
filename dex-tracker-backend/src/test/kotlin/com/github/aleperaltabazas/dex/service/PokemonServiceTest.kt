@@ -133,17 +133,14 @@ class PokemonServiceTest : WordSpec() {
                     DexEntryDTO(
                         name = "bulbasaur",
                         number = 1,
-                        forms = emptyList(),
                     ),
                     DexEntryDTO(
                         name = "ivysaur",
                         number = 2,
-                        forms = emptyList(),
                     ),
                     DexEntryDTO(
                         name = "venusaur",
                         number = 3,
-                        forms = emptyList(),
                     ),
                 )
             )
@@ -187,17 +184,14 @@ class PokemonServiceTest : WordSpec() {
                     DexEntryDTO(
                         name = "bulbasaur",
                         number = 1,
-                        forms = emptyList(),
                     ),
                     DexEntryDTO(
                         name = "ivysaur",
                         number = 2,
-                        forms = emptyList(),
                     ),
                     DexEntryDTO(
                         name = "venusaur",
                         number = 3,
-                        forms = emptyList(),
                     ),
                 )
             )

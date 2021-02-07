@@ -104,17 +104,14 @@ class UsersServiceTest : StringSpec() {
                             DexEntryDTO(
                                 name = "bulbasaur",
                                 number = 1,
-                                forms = emptyList(),
                             ),
                             DexEntryDTO(
                                 name = "ivysaur",
                                 number = 2,
-                                forms = emptyList(),
                             ),
                             DexEntryDTO(
                                 name = "venusaur",
                                 number = 3,
-                                forms = emptyList(),
                             ),
                         ),
                         region = "johto",

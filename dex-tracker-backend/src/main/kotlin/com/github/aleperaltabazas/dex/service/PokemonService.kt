@@ -66,7 +66,6 @@ open class PokemonService(
                 DexEntryDTO(
                     name = it.name,
                     number = it.nationalPokedexNumber,
-                    forms = it.forms.map { f -> FormDTO(f) }
                 )
             }
 
@@ -90,7 +89,6 @@ open class PokemonService(
                 DexEntryDTO(
                     number = pokedex.pokemon.indexOf(p.name) + 1,
                     name = p.name,
-                    forms = p.forms.map { f -> FormDTO(f) }
                 )
             }
             .sortedBy { it.number }
