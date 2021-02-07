@@ -158,7 +158,7 @@ class PokemonServiceTest : WordSpec() {
             )
 
             "return the national pokedex for Gold and Silver" {
-                val queryMock = createQueryMock(listOf(ivysaur, bulbasaur, venusaur), Query::findAll)
+                val queryMock = createQueryMock(listOf(bulbasaur, ivysaur, venusaur), Query::findAll)
 
                 whenever(gameServiceMock.gameFromKey(any())).thenReturn(goldAndSilver)
                 whenever(storageMock.query(any())).thenReturn(queryMock)
