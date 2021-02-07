@@ -13,13 +13,13 @@ import com.github.aleperaltabazas.dex.utils.HashHelper
 import com.github.aleperaltabazas.dex.utils.IdGenerator
 import org.bson.Document
 
-class UsersService(
+open class UsersService(
     private val storage: Storage,
     private val pokemonService: PokemonService,
     private val idGenerator: IdGenerator,
     private val hash: HashHelper,
 ) {
-    fun createUserDex(token: String, dexRequest: CreateUserDexDTO): UserDex {
+    open fun createUserDex(token: String, dexRequest: CreateUserDexDTO): UserDex {
         val user = findUser(token)
 
         val pokedex = if (dexRequest.type == PokedexType.NATIONAL) {
@@ -54,7 +54,7 @@ class UsersService(
     }
 
 
-    fun findUser(token: String) = storage.query(Collection.SESSIONS)
+    open fun findUser(token: String) = storage.query(Collection.SESSIONS)
         .where(Document("token", token))
         .findOne(SESSION_REF)
         ?.let {
@@ -81,20 +81,13 @@ class UsersService(
         return user to createSession(userId)
     }
 
-    fun findUserDex(token: String, dexId: String): UserDex = findUser(token).let { user ->
+    open fun findUserDex(token: String, dexId: String): UserDex = findUser(token).let { user ->
         user.pokedex
             .find { it.userDexId == dexId }
             ?: throw NotFoundException("User dex with id $dexId not found for user ${user.userId}")
     }
 
-    private fun createSession(userId: String): String {
-        val token = hash.sha256(userId)
-
-        storage.insert(Collection.SESSIONS, Session(token = token, userId = userId))
-        return token
-    }
-
-    fun updateCaughtStatus(token: String, status: List<CaughtStatusDTO>) {
+    open fun updateCaughtStatus(token: String, status: List<CaughtStatusDTO>) {
         val user = this.findUser(token)
 
         for (s in status) {
@@ -103,12 +96,9 @@ class UsersService(
             }
         }
 
-        val dexToUpdate = status.groupBy {
-            it.pokedexId
-        }
+        val dexToUpdate = status.groupBy { it.pokedexId }
 
-        storage
-            .replace(collection = Collection.USERS)
+        storage.replace(collection = Collection.USERS)
             .where(Document("user_id", user.userId))
             .set(
                 value = user.copy(
@@ -121,6 +111,10 @@ class UsersService(
                 )
             )
             .replaceOne()
+    }
+
+    private fun createSession(userId: String): String = hash.sha256(userId).also { token ->
+        storage.insert(Collection.SESSIONS, Session(token = token, userId = userId))
     }
 
     companion object {

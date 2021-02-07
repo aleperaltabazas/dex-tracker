@@ -11,6 +11,7 @@ import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
 import com.github.aleperaltabazas.dex.dto.dex.GameDTO
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.NotFoundException
+import com.github.aleperaltabazas.dex.mock.createQueryMock
 import com.github.aleperaltabazas.dex.model.Game
 import com.github.aleperaltabazas.dex.model.GamePokedex
 import com.github.aleperaltabazas.dex.model.PokedexType
@@ -59,9 +60,7 @@ class PokemonServiceTest : WordSpec() {
             )
 
             "find a pokemon by its number" {
-                val queryMock: Query = mockQuery(ivysaur) {
-                    this.findOne(ArgumentMatchers.any(TypeReference::class.java))
-                }
+                val queryMock: Query = createQueryMock(ivysaur, Query::findOne)
 
                 whenever(cacheMock.pokedexOf(any())).thenReturn(goldAndSilverPokedex)
                 whenever(gameServiceMock.gameFromKey(any())).thenReturn(goldAndSilver)
@@ -80,9 +79,7 @@ class PokemonServiceTest : WordSpec() {
             }
 
             "find a pokemon by its name" {
-                val queryMock = mockQuery(ivysaur) {
-                    this.findOne(ArgumentMatchers.any(TypeReference::class.java))
-                }
+                val queryMock = createQueryMock(ivysaur, Query::findOne)
 
                 whenever(queryMock.where(any())).thenReturn(queryMock)
                 whenever(queryMock.limit(any())).thenReturn(queryMock)
@@ -104,9 +101,7 @@ class PokemonServiceTest : WordSpec() {
             }
 
             "throw a NotFoundException if no pokemon matches either criteria" {
-                val queryMock: Query = mockQuery(null) {
-                    this.findOne(ArgumentMatchers.any(TypeReference::class.java))
-                }
+                val queryMock: Query = createQueryMock(null, Query::findOne)
                 whenever(cacheMock.pokedexOf(any())).thenReturn(goldAndSilverPokedex)
                 whenever(gameServiceMock.gameFromKey(any())).thenReturn(goldAndSilver)
                 whenever(storageMock.query(any())).thenReturn(queryMock)
@@ -163,9 +158,7 @@ class PokemonServiceTest : WordSpec() {
             )
 
             "return the national pokedex for Gold and Silver" {
-                val queryMock = mockQuery(listOf(bulbasaur, ivysaur, venusaur)) {
-                    this.findAll(ArgumentMatchers.any(TypeReference::class.java))
-                }
+                val queryMock = createQueryMock(listOf(ivysaur, bulbasaur, venusaur), Query::findAll)
 
                 whenever(gameServiceMock.gameFromKey(any())).thenReturn(goldAndSilver)
                 whenever(storageMock.query(any())).thenReturn(queryMock)
@@ -225,9 +218,7 @@ class PokemonServiceTest : WordSpec() {
             )
 
             "return the national pokedex for Gold and Silver" {
-                val queryMock = mockQuery(listOf(ivysaur, bulbasaur, venusaur)) {
-                    this.findAll(ArgumentMatchers.any(TypeReference::class.java))
-                }
+                val queryMock = createQueryMock(listOf(ivysaur, bulbasaur, venusaur), Query::findAll)
 
                 whenever(cacheMock.pokedexOf(any())).thenReturn(goldAndSilverPokedex)
                 whenever(gameServiceMock.gameFromKey(any())).thenReturn(goldAndSilver)
@@ -244,16 +235,5 @@ class PokemonServiceTest : WordSpec() {
                 verify(cacheMock).pokedexOf(eq(goldAndSilver))
             }
         }
-    }
-
-    private fun <T> mockQuery(res: T, execute: Query.() -> T): Query {
-        val query = mock<Query> { on { execute.invoke(this) } doReturn res }
-
-        whenever(query.sort(any())).thenReturn(query)
-        whenever(query.offset(any())).thenReturn(query)
-        whenever(query.limit(any())).thenReturn(query)
-        whenever(query.where(any())).thenReturn(query)
-
-        return query
     }
 }
