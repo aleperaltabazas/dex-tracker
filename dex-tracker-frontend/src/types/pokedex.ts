@@ -1,7 +1,3 @@
-export type Form = {
-  name: string;
-};
-
 export type DexEntry = {
   name: string;
   number: number;

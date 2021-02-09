@@ -141,7 +141,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                     <Column xs={12}>
                       <div className="mt-1 mt-md-2">
                         <div className={classes.namingPrimary}>
-                          You can give your Pokedex a name as well
+                          You can give your Pokedex a name as well!
                         </div>
                         <div className={classes.namingSecondary}>
                           Useful if you have multiple Pokedex for the same game
