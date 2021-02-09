@@ -34,8 +34,6 @@ cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/templates/
 
 find $BACKEND_RESOURCES -type f -print0 | xargs -0 sed -i -e 's/\/static\//\//g'
 
-mvn -f $BACKEND/pom.xml heroku:deploy -Dmaven.test.skip=true
-
 mv application.conf.original $BACKEND_RESOURCES/application.conf
 mv config.ts.original $FRONTEND/src/config.ts
 mv sensitive.conf.original $BACKEND_RESOURCES/sensitive.conf
