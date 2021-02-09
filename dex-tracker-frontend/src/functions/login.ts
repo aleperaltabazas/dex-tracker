@@ -4,8 +4,22 @@ import { User } from "../types/user";
 import Cookies from "js-cookie";
 import store from "../store";
 import { loginError, updateSessionState } from "../actions/session";
+import {
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+} from "react-google-login";
 
-export function login() {
+export function oauthLogin(
+  response: GoogleLoginResponse | GoogleLoginResponseOffline
+) {
+  const succ = response as GoogleLoginResponse;
+  const user = {
+    googleUserId: succ.googleId,
+    email: succ.profileObj.email,
+  };
+}
+
+function fetchLocalStoredUser() {
   let config: AxiosRequestConfig = {
     method: "GET",
     url: `${host}/api/v1/users`,
@@ -39,7 +53,7 @@ export function openLocallyStoredSession() {
   }
 
   if (dexToken) {
-    login()
+    fetchLocalStoredUser()
       .then((res) => {
         console.log(res);
         return res;

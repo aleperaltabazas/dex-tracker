@@ -5,6 +5,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import { googleClientId as googleClientId } from "../../config";
+import { oauthLogin } from "../../functions/login";
 
 type LoginProps = {};
 
@@ -27,7 +28,8 @@ const Login = (props: LoginProps) => {
           className={classNames(classes.account, "cursor-pointer")}
         />
       )}
-      onSuccess={console.log}
+      accessType="online"
+      onSuccess={oauthLogin}
     />
   );
 };

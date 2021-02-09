@@ -7,6 +7,7 @@ import {
   SessionAction,
   SessionState,
   UPDATE_CAUGHT,
+  UPDATE_PICTURE,
 } from "../../store/session";
 
 const defaultSessionState: SessionState = {
@@ -67,6 +68,16 @@ function sessionReducer(
               : d
           ),
         },
+      };
+    }
+    case UPDATE_PICTURE: {
+      if (!state.isLoggedIn) {
+        return state;
+      }
+
+      return {
+        ...state,
+        picture: action.payload,
       };
     }
     default: {

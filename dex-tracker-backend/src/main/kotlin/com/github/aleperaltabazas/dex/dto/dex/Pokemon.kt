@@ -1,15 +1,8 @@
 package com.github.aleperaltabazas.dex.dto.dex
 
-import com.github.aleperaltabazas.dex.model.Form
 import com.github.aleperaltabazas.dex.model.Game
 import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.model.UserDexPokemon
-
-data class FormDTO(
-    val name: String,
-) {
-    constructor(form: Form) : this(name = form.name)
-}
 
 data class DexEntryDTO(
     val name: String,
@@ -37,13 +30,14 @@ data class GamePokedexDTO(
 
 data class UserDTO(
     val username: String?,
-    val pokedex: List<UserDexRefDTO>
+    val pokedex: List<UserDexRefDTO>,
+    val mail: String?,
 )
 
 data class CaughtStatusDTO(
     val pokedexId: String,
     val dexNumber: Int,
-    val caught: Boolean
+    val caught: Boolean,
 )
 
 data class CreateUserDexDTO(
@@ -58,7 +52,7 @@ data class UserDexDTO(
     val type: PokedexType,
     val region: String,
     val name: String? = null,
-    val pokemon: List<UserDexPokemon>
+    val pokemon: List<UserDexPokemon>,
 )
 
 data class UserDexRefDTO(

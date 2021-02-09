@@ -6,7 +6,8 @@ import com.github.aleperaltabazas.dex.extension.mapIf
 data class User(
     val userId: String,
     val username: String? = null,
-    val pokedex: List<UserDex>
+    val pokedex: List<UserDex>,
+    val mail: String? = null,
 ) {
     fun owns(pokedexId: String) = pokedex.any { it.userDexId == pokedexId }
 

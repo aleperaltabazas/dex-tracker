@@ -1,10 +1,11 @@
-import { User, UserDex, UserDexRef } from "../../types/user";
+import { User, UserDexRef } from "../../types/user";
 
 export const INVALIDATE_SESSION = "INVALIDATE_SESSION";
 export const LOG_IN_ACTION = "LOG_IN_ACTION";
 export const LOG_IN_ERROR = "LOG_IN_ERROR";
 export const ADD_USER_DEX = "ADD_USER_DEX";
 export const UPDATE_CAUGHT = "UPDATE_CAUGHT";
+export const UPDATE_PICTURE = "UPDATE_PICTURE";
 
 interface InvalidateSessionAction {
   type: typeof INVALIDATE_SESSION;
@@ -32,16 +33,23 @@ interface UpdateCaughtAction {
   };
 }
 
+interface UpdatePictureAction {
+  type: typeof UPDATE_PICTURE;
+  payload: string;
+}
+
 export type SessionAction =
   | InvalidateSessionAction
   | LogInAction
   | LoginErrorAction
   | AddUserDexAction
-  | UpdateCaughtAction;
+  | UpdateCaughtAction
+  | UpdatePictureAction;
 
 export interface LoggedInState {
   token: string;
   user: User;
+  picture?: string;
   isLoggedIn: true;
   isError: false;
 }

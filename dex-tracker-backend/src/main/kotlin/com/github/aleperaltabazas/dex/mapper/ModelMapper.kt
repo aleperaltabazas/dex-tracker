@@ -13,7 +13,8 @@ class ModelMapper(
 ) {
     fun mapUserToDTO(user: User) = UserDTO(
         username = user.username,
-        pokedex = user.pokedex.map { mapToRefDTO(it) }
+        pokedex = user.pokedex.map { mapToRefDTO(it) },
+        mail = user.mail,
     )
 
     fun mapUserDexToDTO(userDex: UserDex) = UserDexDTO(

@@ -5,6 +5,7 @@ import {
   LOG_IN_ERROR,
   ADD_USER_DEX,
   UPDATE_CAUGHT,
+  UPDATE_PICTURE,
 } from "../../store/session";
 import { User, UserDexRef } from "../../types/user";
 
@@ -52,3 +53,10 @@ export const incrementCaught: (dexId: string) => SessionAction = updateCaught(
 export const decrementCaught: (dexId: string) => SessionAction = updateCaught(
   (n) => n - 1
 );
+
+export function updatePicture(picture: string): SessionAction {
+  return {
+    type: UPDATE_PICTURE,
+    payload: picture,
+  };
+}
