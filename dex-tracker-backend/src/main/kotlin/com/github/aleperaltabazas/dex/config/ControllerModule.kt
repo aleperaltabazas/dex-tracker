@@ -5,6 +5,7 @@ import com.github.aleperaltabazas.dex.controller.*
 import com.github.aleperaltabazas.dex.env.Env
 import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.service.GameService
+import com.github.aleperaltabazas.dex.service.LoginService
 import com.github.aleperaltabazas.dex.service.PokemonService
 import com.github.aleperaltabazas.dex.service.UsersService
 import com.github.aleperaltabazas.dex.utils.HandlebarsTemplateEngineBuilder
@@ -84,6 +85,19 @@ class ControllerModule : AbstractModule() {
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper
     ) = GameController(
         gameService = gameService,
+        objectMapper = objectMapper,
+    )
+
+    @Provides
+    @Singleton
+    @Named("loginController")
+    fun loginController(
+        @Named("loginService") loginService: LoginService,
+        @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
+        @Named("modelMapper") modelMapper: ModelMapper,
+    ) = LoginController(
+        modelMapper = modelMapper,
+        loginService = loginService,
         objectMapper = objectMapper,
     )
 }

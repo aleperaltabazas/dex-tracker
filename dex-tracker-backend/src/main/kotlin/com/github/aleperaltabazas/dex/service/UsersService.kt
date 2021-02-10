@@ -20,7 +20,7 @@ open class UsersService(
     private val hash: HashHelper,
 ) {
     open fun createUserDex(token: String, dexRequest: CreateUserDexDTO): UserDex {
-        val user = findUser(token)
+        val user = unsafeFindUserByToken(token)
 
         val pokedex = if (dexRequest.type == PokedexType.NATIONAL) {
             pokemonService.gameNationalPokedex(dexRequest.game)
@@ -53,17 +53,14 @@ open class UsersService(
         return userDex
     }
 
+    open fun unsafeFindUserByToken(token: String) = findUserByToken(token)
+        ?: throw NotFoundException("No user found for session token $token")
 
-    open fun findUser(token: String) = storage.query(Collection.SESSIONS)
-        .where(Document("token", token))
-        .findOne(SESSION_REF)
-        ?.let {
-            storage.query(Collection.USERS)
-                .where(Document("user_id", it.userId))
-                .findOne(USER_REF)
-        } ?: throw NotFoundException("No user found for session token $token")
+    open fun findUserByToken(token: String) = findUserBy(Document("token", token))
 
-    fun createUser(username: String?): Pair<User, String> {
+    open fun findUserByMail(mail: String) = findUserBy(Document("mail", mail))
+
+    open fun createUser(username: String?, mail: String? = null): Pair<User, String> {
         if (username != null && storage.exists(Collection.USERS, Document("username", username))) {
             throw BadRequestException("Username $username is already in use")
         }
@@ -74,6 +71,7 @@ open class UsersService(
             userId = userId,
             username = username,
             pokedex = emptyList(),
+            mail = mail
         )
 
         storage.insert(Collection.USERS, user)
@@ -81,14 +79,25 @@ open class UsersService(
         return user to createSession(userId)
     }
 
-    open fun findUserDex(token: String, dexId: String): UserDex = findUser(token).let { user ->
+    private fun findUserBy(where: Document): User? {
+        return storage.query(Collection.SESSIONS)
+            .where(where)
+            .findOne(SESSION_REF)
+            ?.let {
+                storage.query(Collection.USERS)
+                    .where(Document("user_id", it.userId))
+                    .findOne(USER_REF)
+            }
+    }
+
+    open fun findUserDex(token: String, dexId: String): UserDex = unsafeFindUserByToken(token).let { user ->
         user.pokedex
             .find { it.userDexId == dexId }
             ?: throw NotFoundException("User dex with id $dexId not found for user ${user.userId}")
     }
 
     open fun updateCaughtStatus(token: String, status: List<CaughtStatusDTO>) {
-        val user = this.findUser(token)
+        val user = this.unsafeFindUserByToken(token)
 
         for (s in status) {
             if (!user.owns(s.pokedexId)) {

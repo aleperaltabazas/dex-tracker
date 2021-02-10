@@ -76,7 +76,7 @@ class UsersController(
             throw BadRequestException("User has no dex-token stored")
         }
 
-        return usersService.findUser(dexToken).let { modelMapper.mapUserToDTO(it) }
+        return usersService.unsafeFindUserByToken(dexToken).let { modelMapper.mapUserToDTO(it) }
     }
 
     private fun createUser(req: Request, res: Response): UserDTO {

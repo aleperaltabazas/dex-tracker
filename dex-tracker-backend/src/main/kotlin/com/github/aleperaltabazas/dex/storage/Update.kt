@@ -41,7 +41,6 @@ open class Update(
     }
 
     companion object {
-        private val MAP_LIST_REF = object : TypeReference<List<Map<String, Any?>>>() {}
         private val MAP_REF = object : TypeReference<Map<String, Any?>>() {}
     }
 }

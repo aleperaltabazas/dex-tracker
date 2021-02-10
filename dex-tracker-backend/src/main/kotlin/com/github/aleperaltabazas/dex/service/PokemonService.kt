@@ -4,7 +4,6 @@ import arrow.core.Either
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
-import com.github.aleperaltabazas.dex.dto.dex.FormDTO
 import com.github.aleperaltabazas.dex.dto.dex.GameDTO
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.NotFoundException

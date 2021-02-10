@@ -54,7 +54,7 @@ class UsersServiceTest : StringSpec() {
                 whenever(storageMock.query(eq(Collection.USERS))).thenReturn(usersQueryMock)
 
                 val expected = user
-                val actual = usersService.findUser("123")
+                val actual = usersService.unsafeFindUserByToken("123")
 
                 actual shouldBe expected
 
@@ -68,7 +68,7 @@ class UsersServiceTest : StringSpec() {
                 whenever(storageMock.query(eq(Collection.SESSIONS))).thenReturn(sessionsQueryMock)
 
                 shouldThrow<NotFoundException> {
-                    usersService.findUser("123")
+                    usersService.unsafeFindUserByToken("123")
                 }
 
                 verify(sessionsQueryMock).where(eq(Document("token", "123")))
@@ -82,7 +82,7 @@ class UsersServiceTest : StringSpec() {
                 whenever(storageMock.query(eq(Collection.USERS))).thenReturn(usersQueryMock)
 
                 shouldThrow<NotFoundException> {
-                    usersService.findUser("123")
+                    usersService.unsafeFindUserByToken("123")
 
                 }
 

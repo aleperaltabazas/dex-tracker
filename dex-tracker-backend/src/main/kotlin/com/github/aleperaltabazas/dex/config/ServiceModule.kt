@@ -3,6 +3,7 @@ package com.github.aleperaltabazas.dex.config
 import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.model.Game
 import com.github.aleperaltabazas.dex.service.GameService
+import com.github.aleperaltabazas.dex.service.LoginService
 import com.github.aleperaltabazas.dex.service.PokemonService
 import com.github.aleperaltabazas.dex.service.UsersService
 import com.github.aleperaltabazas.dex.storage.Storage
@@ -48,5 +49,16 @@ class ServiceModule : AbstractModule() {
     @Named("gameService")
     fun gameService(config: Config) = GameService(
         games = config.getConfigList("pokedex.games").map { Game(it) }
+    )
+
+    @Provides
+    @Singleton
+    @Named("loginService")
+    fun loginService(
+        @Named("storage") storage: Storage,
+        @Named("usersService") usersService: UsersService,
+    ) = LoginService(
+        storage = storage,
+        usersService = usersService,
     )
 }
