@@ -9,18 +9,21 @@ val andrew = User(
     userId = "U-1",
     username = "andrew",
     pokedex = emptyList(),
+    mail = "andrew@test.com",
 )
 
 val brenda = User(
     userId = "U-2",
     username = "brenda",
     pokedex = emptyList(),
+    mail = "brenda@test.com",
 )
 
 val charles = User(
     userId = "U-3",
     username = "charles",
     pokedex = emptyList(),
+    mail = "charles@test.com",
 )
 
 val daniel = User(
@@ -34,7 +37,8 @@ val daniel = User(
             region = "johto",
             pokemon = emptyList(),
         )
-    )
+    ),
+    mail = "daniel@test.com",
 )
 
 val emily = User(
@@ -54,7 +58,8 @@ val emily = User(
                 )
             )
         )
-    )
+    ),
+    mail = "emily@test.com",
 )
 
 val frank = User(
@@ -110,11 +115,13 @@ val frank = User(
                 ),
             )
         )
-    )
+    ),
+    mail = "frank@test.com",
 )
 
 val richard = User(
     userId = "U-7",
     username = "richard",
     pokedex = emptyList(),
+    mail = "richar@test.com",
 )

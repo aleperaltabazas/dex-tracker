@@ -38,7 +38,6 @@ class ServiceModule : AbstractModule() {
         storage = storage,
         pokemonService = pokemonService,
         idGenerator = idGenerator,
-        hash = hashHelper
     )
 
     @Provides
@@ -55,7 +54,6 @@ class ServiceModule : AbstractModule() {
         @Named("storage") storage: Storage,
         @Named("usersService") usersService: UsersService,
     ) = LoginService(
-        storage = storage,
         usersService = usersService,
     )
 

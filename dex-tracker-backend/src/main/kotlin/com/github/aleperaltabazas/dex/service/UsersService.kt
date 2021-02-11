@@ -3,13 +3,11 @@ package com.github.aleperaltabazas.dex.service
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
 import com.github.aleperaltabazas.dex.dto.dex.CreateUserDexDTO
-import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.exception.ForbiddenException
 import com.github.aleperaltabazas.dex.exception.NotFoundException
 import com.github.aleperaltabazas.dex.model.*
 import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
-import com.github.aleperaltabazas.dex.utils.HashHelper
 import com.github.aleperaltabazas.dex.utils.IdGenerator
 import org.bson.Document
 
@@ -17,7 +15,6 @@ open class UsersService(
     private val storage: Storage,
     private val pokemonService: PokemonService,
     private val idGenerator: IdGenerator,
-    private val hash: HashHelper,
 ) {
     open fun createUserDex(token: String, dexRequest: CreateUserDexDTO): UserDex {
         val user = unsafeFindUserByToken(token)
@@ -42,7 +39,7 @@ open class UsersService(
                     caught = false
                 )
             },
-            name = dexRequest.name
+            name = dexRequest.name,
         )
 
         storage.update(Collection.USERS)
@@ -60,17 +57,13 @@ open class UsersService(
 
     open fun findUserByMail(mail: String) = findUserBy(Document("mail", mail))
 
-    open fun createUser(username: String?, mail: String? = null): User {
-        if (username != null && storage.exists(Collection.USERS, Document("username", username))) {
-            throw BadRequestException("Username $username is already in use")
-        }
-
+    open fun createUser(mail: String, pokedex: List<UserDex> = emptyList()): User {
         val userId = idGenerator.userId()
 
         val user = User(
             userId = userId,
-            username = username,
-            pokedex = emptyList(),
+            username = null,
+            pokedex = pokedex,
             mail = mail
         )
 

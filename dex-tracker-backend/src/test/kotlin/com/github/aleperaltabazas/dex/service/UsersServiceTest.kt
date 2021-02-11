@@ -30,11 +30,11 @@ class UsersServiceTest : StringSpec() {
     private val usersService = UsersService(
         storage = storageMock,
         idGenerator = idGeneratorMock,
-        hash = hashMock,
         pokemonService = pokemonMock,
     )
     private val user = User(
         userId = "U-123",
+        mail = "user@test.com",
         username = null,
         pokedex = emptyList(),
     )

@@ -37,7 +37,6 @@ class ControllerModule : AbstractModule() {
         objectMapper = objectMapper,
         usersService = usersService,
         modelMapper = modelMapper,
-        sessionService = sessionService,
     )
 
     @Provides
@@ -47,11 +46,9 @@ class ControllerModule : AbstractModule() {
         @Named("usersService") usersService: UsersService,
         @Named("sessionService") sessionService: SessionService,
     ) = FrontendController(
-        usersService = usersService,
         engine = HandlebarsTemplateEngineBuilder(HandlebarsTemplateEngine())
             .withDefaultHelpers()
             .build(),
-        sessionService = sessionService,
     )
 
     @Provides

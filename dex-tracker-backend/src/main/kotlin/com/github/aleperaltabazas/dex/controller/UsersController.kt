@@ -11,7 +11,6 @@ import com.github.aleperaltabazas.dex.dto.dex.UserDexDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.exception.UnauthorizedException
 import com.github.aleperaltabazas.dex.mapper.ModelMapper
-import com.github.aleperaltabazas.dex.service.SessionService
 import com.github.aleperaltabazas.dex.service.UsersService
 import org.slf4j.LoggerFactory
 import spark.Request
@@ -22,12 +21,10 @@ class UsersController(
     private val objectMapper: ObjectMapper,
     private val usersService: UsersService,
     private val modelMapper: ModelMapper,
-    private val sessionService: SessionService,
 ) : Controller {
     override fun register() {
         path("/api/v1/users") {
             get("", APPLICATION_JSON, this::findUser, objectMapper::writeValueAsString)
-            post("", APPLICATION_JSON, this::createUser, objectMapper::writeValueAsString)
             post("/pokedex", APPLICATION_JSON, this::createUserDex, objectMapper::writeValueAsString)
             get("/pokedex/:id", APPLICATION_JSON, this::findUserDex, objectMapper::writeValueAsString)
             patch("/pokedex", APPLICATION_JSON, this::updateUserDexCaughtStatus, objectMapper::writeValueAsString)
@@ -79,19 +76,6 @@ class UsersController(
         }
 
         return usersService.unsafeFindUserByToken(dexToken).let { modelMapper.mapUserToDTO(it) }
-    }
-
-    private fun createUser(req: Request, res: Response): UserDTO {
-        require(req.cookie(DEX_TOKEN) == null) {
-            throw BadRequestException("User already has a token stored")
-        }
-
-        val user = usersService.createUser(null, null)
-        val token = sessionService.createSession(user.userId)
-
-        res.cookie("/", DEX_TOKEN, token, 36000000, false)
-
-        return modelMapper.mapUserToDTO(user)
     }
 
     companion object {
