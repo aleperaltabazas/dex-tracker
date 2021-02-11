@@ -74,7 +74,7 @@ class LoginServiceTest : WordSpec() {
                 checkAll<String> { mail ->
                     reset(storageMock, usersServiceMock)
                     whenever(usersServiceMock.findUserByMail(any())).thenReturn(null)
-                    whenever(usersServiceMock.createUser(anyOrNull(), anyOrNull())).thenReturn(user to "123")
+                    whenever(usersServiceMock.createUser(anyOrNull(), anyOrNull())).thenReturn(user)
 
                     val expected = user
 

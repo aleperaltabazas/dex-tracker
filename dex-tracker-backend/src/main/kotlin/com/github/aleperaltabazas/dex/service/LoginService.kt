@@ -13,7 +13,7 @@ class LoginService(
     fun login(request: LoginRequestDTO, dexToken: String?): User = usersService
         .findUserByMail(request.mail)
         ?: dexToken?.let { merge(it, request.mail) }
-        ?: usersService.createUser(username = null, mail = request.mail).first
+        ?: usersService.createUser(username = null, mail = request.mail)
 
     private fun merge(dexToken: String, mail: String): User? = usersService.findUserByToken(dexToken)
         ?.also {

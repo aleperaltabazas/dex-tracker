@@ -2,10 +2,7 @@ package com.github.aleperaltabazas.dex.config
 
 import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.model.Game
-import com.github.aleperaltabazas.dex.service.GameService
-import com.github.aleperaltabazas.dex.service.LoginService
-import com.github.aleperaltabazas.dex.service.PokemonService
-import com.github.aleperaltabazas.dex.service.UsersService
+import com.github.aleperaltabazas.dex.service.*
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.HashHelper
 import com.github.aleperaltabazas.dex.utils.IdGenerator
@@ -60,5 +57,16 @@ class ServiceModule : AbstractModule() {
     ) = LoginService(
         storage = storage,
         usersService = usersService,
+    )
+
+    @Provides
+    @Singleton
+    @Named("sessionService")
+    fun sessionService(
+        @Named("storage") storage: Storage,
+        @Named("hash") hashHelper: HashHelper,
+    ) = SessionService(
+        hash = hashHelper,
+        storage = storage,
     )
 }

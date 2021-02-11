@@ -1,6 +1,7 @@
 package com.github.aleperaltabazas.dex.controller
 
 import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
+import com.github.aleperaltabazas.dex.service.SessionService
 import com.github.aleperaltabazas.dex.service.UsersService
 import org.slf4j.LoggerFactory
 import spark.ModelAndView
@@ -13,6 +14,7 @@ import spark.TemplateEngine
 class FrontendController(
     private val engine: TemplateEngine,
     private val usersService: UsersService,
+    private val sessionService: SessionService,
 ) : Controller {
     override fun register() {
         get("", this::home, engine)
@@ -26,7 +28,8 @@ class FrontendController(
     private fun home(req: Request, res: Response): ModelAndView {
         val dexToken = req.cookie(DEX_TOKEN)
         if (dexToken == null) {
-            val (_, token) = usersService.createUser(null)
+            val user = usersService.createUser(null)
+            val token = sessionService.createSession(user.userId)
             res.cookie("/", DEX_TOKEN, token, 36000000, false)
         }
 

@@ -60,7 +60,7 @@ open class UsersService(
 
     open fun findUserByMail(mail: String) = findUserBy(Document("mail", mail))
 
-    open fun createUser(username: String?, mail: String? = null): Pair<User, String> {
+    open fun createUser(username: String?, mail: String? = null): User {
         if (username != null && storage.exists(Collection.USERS, Document("username", username))) {
             throw BadRequestException("Username $username is already in use")
         }
@@ -76,7 +76,7 @@ open class UsersService(
 
         storage.insert(Collection.USERS, user)
 
-        return user to createSession(userId)
+        return user
     }
 
     private fun findUserBy(where: Document): User? {
@@ -120,10 +120,6 @@ open class UsersService(
                 )
             )
             .replaceOne()
-    }
-
-    private fun createSession(userId: String): String = hash.sha256(userId).also { token ->
-        storage.insert(Collection.SESSIONS, Session(token = token, userId = userId))
     }
 
     companion object {

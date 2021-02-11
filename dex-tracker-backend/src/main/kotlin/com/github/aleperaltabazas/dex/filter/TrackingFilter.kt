@@ -19,7 +19,7 @@ object ThreadMap {
 
 object TrackingFilter {
     fun register() {
-        before({ req, res ->
+        before({ req, _ ->
             val requestId = RandomStringUtils.randomAlphanumeric(8)
             val client = req.headers("dex-client") ?: lazy { "dex-" + RandomStringUtils.randomAlphanumeric(8) }.value
 

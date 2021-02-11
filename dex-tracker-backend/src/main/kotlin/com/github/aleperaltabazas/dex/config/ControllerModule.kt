@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.controller.*
 import com.github.aleperaltabazas.dex.env.Env
 import com.github.aleperaltabazas.dex.mapper.ModelMapper
-import com.github.aleperaltabazas.dex.service.GameService
-import com.github.aleperaltabazas.dex.service.LoginService
-import com.github.aleperaltabazas.dex.service.PokemonService
-import com.github.aleperaltabazas.dex.service.UsersService
+import com.github.aleperaltabazas.dex.service.*
 import com.github.aleperaltabazas.dex.utils.HandlebarsTemplateEngineBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
@@ -35,22 +32,26 @@ class ControllerModule : AbstractModule() {
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
         @Named("usersService") usersService: UsersService,
         @Named("modelMapper") modelMapper: ModelMapper,
+        @Named("sessionService") sessionService: SessionService,
     ) = UsersController(
         objectMapper = objectMapper,
         usersService = usersService,
-        modelMapper = modelMapper
+        modelMapper = modelMapper,
+        sessionService = sessionService,
     )
 
     @Provides
     @Singleton
     @Named("frontendController")
     fun frontendController(
-        @Named("usersService") usersService: UsersService
+        @Named("usersService") usersService: UsersService,
+        @Named("sessionService") sessionService: SessionService,
     ) = FrontendController(
         usersService = usersService,
         engine = HandlebarsTemplateEngineBuilder(HandlebarsTemplateEngine())
             .withDefaultHelpers()
             .build(),
+        sessionService = sessionService,
     )
 
     @Provides
@@ -95,9 +96,11 @@ class ControllerModule : AbstractModule() {
         @Named("loginService") loginService: LoginService,
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
         @Named("modelMapper") modelMapper: ModelMapper,
+        @Named("sessionService") sessionService: SessionService,
     ) = LoginController(
         modelMapper = modelMapper,
         loginService = loginService,
         objectMapper = objectMapper,
+        sessionService = sessionService,
     )
 }
