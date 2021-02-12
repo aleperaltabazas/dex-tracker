@@ -11,8 +11,7 @@ import {
 } from "../../store/session";
 
 const defaultSessionState: SessionState = {
-  isLoggedIn: false,
-  isError: false,
+  type: "UNINITIALIZED",
 };
 
 function sessionReducer(
@@ -22,8 +21,7 @@ function sessionReducer(
   switch (action.type) {
     case INVALIDATE_SESSION: {
       return {
-        isLoggedIn: false,
-        isError: false,
+        type: "UNINITIALIZED",
       };
     }
     case LOG_IN_ACTION: {
@@ -31,54 +29,70 @@ function sessionReducer(
     }
     case LOG_IN_ERROR: {
       return {
-        isError: true,
-        isLoggedIn: false,
+        type: "ERROR",
       };
     }
     case ADD_USER_DEX: {
-      if (!state.isLoggedIn) {
-        return state;
+      switch (state.type) {
+        case "LOGGED_IN": {
+          const newState: LoggedInState = {
+            ...state,
+            user: {
+              ...state.user,
+              pokedex: state.user.pokedex.concat(action.payload),
+            },
+          };
+
+          return newState;
+        }
+        case "NOT_LOGGED_IN": {
+          return {
+            ...state,
+            localDex: state.localDex.concat(action.payload),
+          };
+        }
+        default:
+          return state;
       }
-
-      const loggedIn = state as LoggedInState;
-      const user = loggedIn.user;
-
-      const newState: LoggedInState = {
-        ...loggedIn,
-        user: {
-          ...user,
-          pokedex: user.pokedex.concat(action.payload),
-        },
-      };
-
-      return newState;
     }
     case UPDATE_CAUGHT: {
-      if (!state.isLoggedIn) {
-        return state;
+      switch (state.type) {
+        case "LOGGED_IN": {
+          return {
+            ...state,
+            user: {
+              ...state.user,
+              pokedex: state.user.pokedex.map((d) =>
+                d.userDexId == action.payload.dexId
+                  ? { ...d, caught: action.payload.update(d.caught) }
+                  : d
+              ),
+            },
+          };
+        }
+        case "NOT_LOGGED_IN": {
+          return {
+            ...state,
+            localDex: state.localDex.map((d) =>
+              d.userDexId == action.payload.dexId
+                ? { ...d, caught: action.payload.update(d.caught) }
+                : d
+            ),
+          };
+        }
+        default:
+          return state;
       }
-
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          pokedex: state.user.pokedex.map((d) =>
-            d.userDexId == action.payload.dexId
-              ? { ...d, caught: action.payload.update(d.caught) }
-              : d
-          ),
-        },
-      };
     }
     case UPDATE_PICTURE: {
-      if (!state.isLoggedIn) {
-        return state;
+      if (state.type == "LOGGED_IN") {
+        return {
+          ...state,
+          picture: action.payload,
+        };
       }
 
-      return {
-        ...state,
-        picture: action.payload,
-      };
+      return state;
     }
     default: {
       return state;

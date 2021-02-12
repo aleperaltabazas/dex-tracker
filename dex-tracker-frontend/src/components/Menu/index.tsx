@@ -18,6 +18,8 @@ import { Game } from "../../types/pokedex";
 import { AddCircle } from "@material-ui/icons";
 import { RouteComponentProps, withRouter } from "react-router";
 import DexLink from "../Links/Dex";
+import { readLocalPokedex } from "../../functions/storage";
+import { toRef } from "../../functions/my-dex";
 
 const useStyles = makeStyles({
   list: {
@@ -140,9 +142,20 @@ const Menu = (props: MenuProps) => {
 };
 
 const mapStateToProps = (root: RootState) => {
+  let userDex: UserDexRef[];
+
+  switch (root.session.type) {
+    case "LOGGED_IN":
+      userDex = root.session.user.pokedex;
+    case "NOT_LOGGED_IN":
+      userDex = readLocalPokedex().map(toRef);
+    default:
+      userDex = [];
+  }
+
   return {
     open: root.global.menuOpen,
-    userDex: root.session.isLoggedIn ? root.session.user.pokedex : [],
+    userDex: userDex,
     games: root.games.loaded ? root.games.games : [],
   };
 };

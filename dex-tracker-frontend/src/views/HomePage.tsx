@@ -10,8 +10,10 @@ import { GamesState } from "../store/games";
 import store from "../store";
 import { openCreateDexForm } from "../actions/global";
 import Loader from "../components/Loader";
-import DexLink from "../components/Links/Dex";
 import DexSummary from "../components/Dex/Summary";
+import { UserDexRef } from "../types/user";
+import { GamePokedex } from "../types/pokedex";
+import { toRef } from "../functions/my-dex";
 
 type HomePageProps = {
   pokedex: PokedexState;
@@ -32,12 +34,12 @@ const useStyles = makeStyles({
 const HomePage = (props: HomePageProps) => {
   const classes = useStyles();
 
-  if (props.session.isError) {
+  if (props.session.type == "ERROR") {
     return <div>se rompió algo perrito :(</div>;
   }
 
   if (
-    !props.session.isLoggedIn ||
+    props.session.type == "UNINITIALIZED" ||
     !props.pokedex.loaded ||
     !props.games.loaded
   ) {
@@ -48,25 +50,28 @@ const HomePage = (props: HomePageProps) => {
     );
   }
 
-  const pokedex = props.pokedex.pokedex;
-
-  return (
+  const PokedexList = (props: {
+    gamePokedex: GamePokedex[];
+    dex: UserDexRef[];
+  }) => (
     <div className="mt-5 h-100">
       <Container>
-        {props.session.user.pokedex.length > 0 && (
+        {props.dex.length > 0 && (
           <>
             <Typography variant="h3" className="center-h">
               My games
             </Typography>
-            {props.session.user.pokedex.map((p) => (
+            {props.dex.map((p) => (
               <DexSummary
                 dex={p}
-                gamePokedex={pokedex.find((d) => d.game.title == p.game.title)!}
+                gamePokedex={
+                  props.gamePokedex.find((d) => d.game.title == p.game.title)!
+                }
               />
             ))}
           </>
         )}
-        {props.session.user.pokedex.length == 0 && (
+        {props.dex.length == 0 && (
           <div>
             <div className={classNames("center-h", classes.noPokedexHeading)}>
               It seems like you don't have a Pokedex yet
@@ -85,6 +90,22 @@ const HomePage = (props: HomePageProps) => {
         )}
       </Container>
     </div>
+  );
+
+  if (props.session.type == "LOGGED_IN") {
+    return (
+      <PokedexList
+        dex={props.session.user.pokedex}
+        gamePokedex={props.pokedex.pokedex}
+      />
+    );
+  }
+
+  return (
+    <PokedexList
+      dex={props.session.localDex}
+      gamePokedex={props.pokedex.pokedex}
+    />
   );
 };
 

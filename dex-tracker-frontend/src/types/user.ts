@@ -18,7 +18,7 @@ export type Pokemon = {
 export type User = {
   username?: string;
   pokedex: UserDexRef[];
-  mail?: string;
+  mail: string;
 };
 
 export type UserDexRef = {

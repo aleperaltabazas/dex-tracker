@@ -6,6 +6,7 @@ import {
   ADD_USER_DEX,
   UPDATE_CAUGHT,
   UPDATE_PICTURE,
+  NOT_LOGGED_IN,
 } from "../../store/session";
 import { User, UserDexRef } from "../../types/user";
 
@@ -28,9 +29,14 @@ export function updateSessionState(token: string, user: User): SessionAction {
     payload: {
       token,
       user,
-      isLoggedIn: true,
-      isError: false,
+      type: "LOGGED_IN",
     },
+  };
+}
+
+export function notLoggedIn(): SessionAction {
+  return {
+    type: NOT_LOGGED_IN,
   };
 }
 

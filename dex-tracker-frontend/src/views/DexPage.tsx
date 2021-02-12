@@ -1,7 +1,7 @@
 import { Container, makeStyles } from "@material-ui/core";
 import React from "react";
 import { hot } from "react-hot-loader";
-import { RouteComponentProps, withRouter } from "react-router";
+import { Redirect, RouteComponentProps, withRouter } from "react-router";
 import withUserDex from "../hooks/withUserDex";
 import classNames from "classnames";
 import Dex from "../components/Dex";
@@ -9,6 +9,11 @@ import { RootState } from "../reducers";
 import { connect } from "react-redux";
 import { PokedexState } from "../store/pokedex";
 import Loader from "../components/Loader";
+import { UserDex } from "../types/user";
+import { GamePokedex } from "../types/pokedex";
+import { SessionState } from "../store/session";
+import Local from "./DexPage/Local";
+import Remote from "./DexPage/Remote";
 
 type MatchParams = {
   id: string;
@@ -16,29 +21,11 @@ type MatchParams = {
 
 interface DexPageProps extends RouteComponentProps<MatchParams> {
   gamePokedex: PokedexState;
+  session: SessionState;
 }
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    backgroundColor: "white",
-  },
-  noOverflow: {
-    [theme.breakpoints.down("md")]: {
-      overflowX: "hidden",
-    },
-  },
-}));
-
 const DexPage = (props: DexPageProps) => {
-  const classes = useStyles();
-
-  const [userDex] = withUserDex(props.match.params.id, props.match.params.id);
-
-  if (userDex.type == "ERROR") {
-    return <div>se rompió algo perrito</div>;
-  }
-
-  if (userDex.type == "PENDING" || !props.gamePokedex.loaded) {
+  if (!props.gamePokedex.loaded) {
     return (
       <div className="h-100 w-100 center">
         <Loader />
@@ -46,20 +33,25 @@ const DexPage = (props: DexPageProps) => {
     );
   }
 
-  return (
-    <Container className={classNames(classes.noOverflow, "center")}>
-      <div className={classNames(classes.container, "mt-3 mt-md-5")}>
-        <Dex
-          dex={userDex.value}
-          gamePokedex={
-            props.gamePokedex.pokedex.find(
-              (gp) => gp.game.title == userDex.value.game.title
-            )!
-          }
+  switch (props.session.type) {
+    case "NOT_LOGGED_IN":
+      return (
+        <Local
+          id={props.match.params.id}
+          gamePokedex={props.gamePokedex.pokedex}
         />
-      </div>
-    </Container>
-  );
+      );
+    case "LOGGED_IN": {
+      return (
+        <Remote
+          id={props.match.params.id}
+          gamePokedex={props.gamePokedex.pokedex}
+        />
+      );
+    }
+    default:
+      return <Redirect to="/" />;
+  }
 };
 
 const mapStateToProps = (root: RootState) => {

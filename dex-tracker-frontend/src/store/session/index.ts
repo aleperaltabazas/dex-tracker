@@ -6,6 +6,7 @@ export const LOG_IN_ERROR = "LOG_IN_ERROR";
 export const ADD_USER_DEX = "ADD_USER_DEX";
 export const UPDATE_CAUGHT = "UPDATE_CAUGHT";
 export const UPDATE_PICTURE = "UPDATE_PICTURE";
+export const NOT_LOGGED_IN = "NOT_LOGGED_IN";
 
 interface InvalidateSessionAction {
   type: typeof INVALIDATE_SESSION;
@@ -38,30 +39,41 @@ interface UpdatePictureAction {
   payload: string;
 }
 
+interface NotLoggedInAction {
+  type: typeof NOT_LOGGED_IN;
+}
+
 export type SessionAction =
   | InvalidateSessionAction
   | LogInAction
   | LoginErrorAction
   | AddUserDexAction
   | UpdateCaughtAction
-  | UpdatePictureAction;
+  | UpdatePictureAction
+  | NotLoggedInAction;
 
 export interface LoggedInState {
   token: string;
   user: User;
   picture?: string;
-  isLoggedIn: true;
-  isError: false;
+  type: "LOGGED_IN";
+}
+
+export interface UninitializedState {
+  type: "UNINITIALIZED";
 }
 
 export interface NotLoggedInState {
-  isLoggedIn: false;
-  isError: false;
+  type: "NOT_LOGGED_IN";
+  localDex: UserDexRef[];
 }
 
 export interface LoginErrorState {
-  isLoggedIn: false;
-  isError: true;
+  type: "ERROR";
 }
 
-export type SessionState = LoggedInState | NotLoggedInState | LoginErrorState;
+export type SessionState =
+  | LoggedInState
+  | NotLoggedInState
+  | UninitializedState
+  | LoginErrorState;
