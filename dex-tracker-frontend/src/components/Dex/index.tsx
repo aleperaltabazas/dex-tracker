@@ -44,7 +44,7 @@ const Dex = (props: DexProps) => {
     const unsynched = props.unsynched.find(
       (s) => s.dexId == props.dex.userDexId && s.number == p.dexNumber
     );
-    console.log(p.name, unsynched);
+
     return {
       ...p,
       caught: unsynched ? unsynched.caught : p.caught,

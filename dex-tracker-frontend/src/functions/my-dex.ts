@@ -2,9 +2,11 @@ import axios, { AxiosRequestConfig } from "axios";
 import { clearSynchronizeQueue, resetTimeout } from "../actions/syncQueue";
 import { host } from "../config";
 import store from "../store";
+import { GamesLoaded } from "../store/games";
 import { GameTitle, PokedexType } from "../types/pokedex";
 import { Sync } from "../types/sync";
 import { UserDex, UserDexRef } from "../types/user";
+import { addLocalPokedex } from "./storage";
 
 type CreateDex = {
   game: GameTitle;

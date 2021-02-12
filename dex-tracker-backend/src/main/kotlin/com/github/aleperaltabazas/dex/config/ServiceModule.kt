@@ -15,15 +15,17 @@ import com.typesafe.config.Config
 class ServiceModule : AbstractModule() {
     @Provides
     @Singleton
-    @Named("pokemonService")
-    fun pokemonService(
+    @Named("pokedexService")
+    fun pokedexService(
         @Named("gameService") gameService: GameService,
         @Named("gamePokedexCache") regionalPokedexCache: RegionalPokedexCache,
-        @Named("storage") storage: Storage
-    ) = PokemonService(
+        @Named("storage") storage: Storage,
+        @Named("idGenerator") idGenerator: IdGenerator,
+    ) = PokedexService(
         regionalPokedexCache = regionalPokedexCache,
         storage = storage,
-        gameService = gameService
+        gameService = gameService,
+        idGenerator = idGenerator,
     )
 
     @Provides
@@ -31,12 +33,9 @@ class ServiceModule : AbstractModule() {
     @Named("usersService")
     fun usersService(
         @Named("storage") storage: Storage,
-        @Named("pokemonService") pokemonService: PokemonService,
         @Named("idGenerator") idGenerator: IdGenerator,
-        @Named("hash") hashHelper: HashHelper,
     ) = UsersService(
         storage = storage,
-        pokemonService = pokemonService,
         idGenerator = idGenerator,
     )
 

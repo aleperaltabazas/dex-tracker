@@ -19,7 +19,7 @@ class LoginController(
     private val sessionService: SessionService,
 ) : Controller {
     override fun register() {
-        Spark.post("/login", APPLICATION_JSON, this::login, objectMapper::writeValueAsString)
+        Spark.post("/api/v1/login", APPLICATION_JSON, this::login, objectMapper::writeValueAsString)
     }
 
     private fun login(req: Request, res: Response): UserDTO {

@@ -7,7 +7,7 @@ import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.model.Pokemon
-import com.github.aleperaltabazas.dex.service.PokemonService
+import com.github.aleperaltabazas.dex.service.PokedexService
 import org.slf4j.LoggerFactory
 import spark.Request
 import spark.Response
@@ -16,7 +16,7 @@ import spark.Spark.path
 
 class PokedexController(
     private val objectMapper: ObjectMapper,
-    private val pokemonService: PokemonService,
+    private val pokedexService: PokedexService,
 ) : Controller {
     override fun register() {
         path("/api/v1/pokedex") {
@@ -26,7 +26,7 @@ class PokedexController(
         }
     }
 
-    private fun allPokedex(req: Request, res: Response) = pokemonService.allPokedex()
+    private fun allPokedex(req: Request, res: Response) = pokedexService.allPokedex()
 
     private fun gamePokedex(req: Request, res: Response): GamePokedexDTO {
         val game = requireNotNull(req.params(":game")) {
@@ -37,8 +37,8 @@ class PokedexController(
         }
 
         return when (type.toLowerCase()) {
-            "regional" -> pokemonService.gameRegionalPokedex(game)
-            "national" -> pokemonService.gameNationalPokedex(game)
+            "regional" -> pokedexService.gameRegionalPokedex(game)
+            "national" -> pokedexService.gameNationalPokedex(game)
             else -> throw BadRequestException("Unsupported pokedex type $type for game $game")
         }
     }
@@ -53,8 +53,8 @@ class PokedexController(
         }
 
         return numberOrName.toIntOrNull()?.let {
-            pokemonService.pokemon(gameKey = game, numberOrName = it.left())
-        } ?: pokemonService.pokemon(game, numberOrName = numberOrName.right())
+            pokedexService.pokemon(gameKey = game, numberOrName = it.left())
+        } ?: pokedexService.pokemon(game, numberOrName = numberOrName.right())
     }
 
     companion object {

@@ -1,9 +1,12 @@
+import { toRef } from "../../functions/my-dex";
+import { readLocalPokedex } from "../../functions/storage";
 import {
   ADD_USER_DEX,
   INVALIDATE_SESSION,
   LoggedInState,
   LOG_IN_ACTION,
   LOG_IN_ERROR,
+  NOT_LOGGED_IN,
   SessionAction,
   SessionState,
   UPDATE_CAUGHT,
@@ -93,6 +96,12 @@ function sessionReducer(
       }
 
       return state;
+    }
+    case NOT_LOGGED_IN: {
+      return {
+        type: NOT_LOGGED_IN,
+        localDex: readLocalPokedex().map(toRef),
+      };
     }
     default: {
       return state;

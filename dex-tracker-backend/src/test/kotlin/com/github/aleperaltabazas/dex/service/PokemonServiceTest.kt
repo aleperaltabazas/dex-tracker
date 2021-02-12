@@ -2,7 +2,6 @@ package com.github.aleperaltabazas.dex.service
 
 import arrow.core.left
 import arrow.core.right
-import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.db.fixture.bulbasaur
 import com.github.aleperaltabazas.dex.db.fixture.ivysaur
@@ -18,6 +17,7 @@ import com.github.aleperaltabazas.dex.model.PokedexType
 import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Query
 import com.github.aleperaltabazas.dex.storage.Storage
+import com.github.aleperaltabazas.dex.utils.IdGenerator
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Sorts
 import com.nhaarman.mockito_kotlin.*
@@ -26,16 +26,17 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.core.test.TestCase
 import io.kotest.matchers.shouldBe
 import org.bson.Document
-import org.mockito.ArgumentMatchers
 
-class PokemonServiceTest : WordSpec() {
+class PokedexServiceTest : WordSpec() {
     private val cacheMock: RegionalPokedexCache = mock {}
     private val storageMock: Storage = mock {}
     private val gameServiceMock: GameService = mock {}
-    private val pokemonService = PokemonService(
+    private val idGenerator: IdGenerator = mock {}
+    private val pokedexService = PokedexService(
         regionalPokedexCache = cacheMock,
         storage = storageMock,
-        gameService = gameServiceMock
+        gameService = gameServiceMock,
+        idGenerator = idGenerator,
     )
 
     override fun beforeEach(testCase: TestCase) {
@@ -67,7 +68,7 @@ class PokemonServiceTest : WordSpec() {
                 whenever(storageMock.query(any())).thenReturn(queryMock)
 
                 val expected = ivysaur
-                val actual = pokemonService.pokemon("gs", 2.left())
+                val actual = pokedexService.pokemon("gs", 2.left())
 
                 actual shouldBe expected
 
@@ -88,7 +89,7 @@ class PokemonServiceTest : WordSpec() {
                 whenever(storageMock.query(any())).thenReturn(queryMock)
 
                 val expected = ivysaur
-                val actual = pokemonService.pokemon("gs", "ivysaur".right())
+                val actual = pokedexService.pokemon("gs", "ivysaur".right())
 
                 actual shouldBe expected
 
@@ -107,13 +108,13 @@ class PokemonServiceTest : WordSpec() {
                 whenever(storageMock.query(any())).thenReturn(queryMock)
 
                 shouldThrow<NotFoundException> {
-                    pokemonService.pokemon("gs", "ivysaur".right())
+                    pokedexService.pokemon("gs", "ivysaur".right())
                 }
 
                 verify(queryMock).where(eq(Document("gen", goldAndSilver.gen).append("name", "ivysaur")))
 
                 shouldThrow<NotFoundException> {
-                    pokemonService.pokemon("gs", 2.left())
+                    pokedexService.pokemon("gs", 2.left())
                 }
 
                 verify(queryMock).where(eq(Document("gen", goldAndSilver.gen).append("national_pokedex_number", 2)))
@@ -161,7 +162,7 @@ class PokemonServiceTest : WordSpec() {
                 whenever(storageMock.query(any())).thenReturn(queryMock)
 
                 val expected = pokedex
-                val actual = pokemonService.gameNationalPokedex("hgss")
+                val actual = pokedexService.gameNationalPokedex("hgss")
 
                 actual shouldBe expected
 
@@ -219,7 +220,7 @@ class PokemonServiceTest : WordSpec() {
                 whenever(storageMock.query(any())).thenReturn(queryMock)
 
                 val expected = pokedex
-                val actual = pokemonService.gameRegionalPokedex("hgss")
+                val actual = pokedexService.gameRegionalPokedex("hgss")
 
                 actual shouldBe expected
 

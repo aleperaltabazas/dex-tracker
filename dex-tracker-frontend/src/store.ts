@@ -3,8 +3,7 @@ import rootReducer, { RootState } from "./reducers";
 
 const defaultRootState: RootState = {
   session: {
-    isLoggedIn: false,
-    isError: false,
+    type: "UNINITIALIZED",
   },
   syncQueue: {
     timeout: undefined,

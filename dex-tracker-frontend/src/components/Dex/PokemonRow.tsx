@@ -9,12 +9,17 @@ import useStyles from "./styles";
 import store from "../../store";
 import { addToSyncQueue } from "../../actions/syncQueue";
 import { incrementCaught, decrementCaught } from "../../actions/session";
+import { SessionState } from "../../store/session";
+import { RootState } from "../../reducers";
+import { connect } from "react-redux";
+import { updateCaughtLocalPokedex } from "../../functions/storage";
 
 type PokemonRowProps = {
   idx: number;
   firstRow: boolean;
   pokemon: Pokemon;
   dexId: string;
+  session: SessionState;
   incrementCounter: () => void;
   decrementCounter: () => void;
 };
@@ -32,13 +37,16 @@ const PokemonRow = (props: PokemonRowProps) => {
     } else {
       props.decrementCounter();
     }
-
-    store.dispatch(
-      addToSyncQueue(props.pokemon.dexNumber, newCaught, props.dexId)
-    );
     store.dispatch(
       newCaught ? incrementCaught(props.dexId) : decrementCaught(props.dexId)
     );
+    if (props.session.type == "LOGGED_IN") {
+      store.dispatch(
+        addToSyncQueue(props.pokemon.dexNumber, newCaught, props.dexId)
+      );
+    } else if (props.session.type == "NOT_LOGGED_IN") {
+      updateCaughtLocalPokedex(props.dexId, props.pokemon.dexNumber, newCaught);
+    }
   };
 
   return (
@@ -89,4 +97,6 @@ const PokemonRow = (props: PokemonRowProps) => {
   );
 };
 
-export default hot(module)(PokemonRow);
+const mapStateToProps = (root: RootState) => ({ session: root.session });
+
+export default hot(module)(connect(mapStateToProps)(PokemonRow));

@@ -19,10 +19,10 @@ class ControllerModule : AbstractModule() {
     @Named("pokedexController")
     fun pokedexController(
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
-        @Named("pokemonService") pokemonService: PokemonService,
+        @Named("pokedexService") pokedexService: PokedexService,
     ) = PokedexController(
         objectMapper = objectMapper,
-        pokemonService = pokemonService,
+        pokedexService = pokedexService,
     )
 
     @Provides
@@ -32,11 +32,12 @@ class ControllerModule : AbstractModule() {
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
         @Named("usersService") usersService: UsersService,
         @Named("modelMapper") modelMapper: ModelMapper,
-        @Named("sessionService") sessionService: SessionService,
+        @Named("pokedexService") pokedexService: PokedexService
     ) = UsersController(
         objectMapper = objectMapper,
         usersService = usersService,
         modelMapper = modelMapper,
+        pokedexService = pokedexService,
     )
 
     @Provides

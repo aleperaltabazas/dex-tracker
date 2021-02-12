@@ -13,7 +13,6 @@ import Loader from "../components/Loader";
 import DexSummary from "../components/Dex/Summary";
 import { UserDexRef } from "../types/user";
 import { GamePokedex } from "../types/pokedex";
-import { toRef } from "../functions/my-dex";
 
 type HomePageProps = {
   pokedex: PokedexState;

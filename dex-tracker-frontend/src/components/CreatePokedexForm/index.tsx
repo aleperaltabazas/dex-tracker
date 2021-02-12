@@ -1,6 +1,5 @@
 import {
   Button,
-  createStyles,
   Dialog,
   DialogActions,
   DialogContent,
@@ -8,11 +7,9 @@ import {
   Divider,
   FormControl,
   InputLabel,
-  makeStyles,
   MenuItem,
   Select,
   TextField,
-  Theme,
 } from "@material-ui/core";
 import React, { useState } from "react";
 import { hot } from "react-hot-loader";
@@ -28,56 +25,16 @@ import { connect } from "react-redux";
 import { closeCreateDexForm } from "../../actions/global";
 import { RouteComponentProps, withRouter } from "react-router";
 import Loader from "../Loader";
+import useStyles from "./styles";
+import { addLocalPokedex } from "../../functions/storage";
+import { SessionState } from "../../store/session";
 
 interface CreatePokedexFormProps extends RouteComponentProps {
   pokedex: GamePokedex[];
   games: Game[];
   open: boolean;
+  session: SessionState;
 }
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    form: {
-      display: "flex",
-      flexDirection: "column",
-      margin: "auto",
-    },
-    overflowScrollMd: {
-      [theme.breakpoints.up("md")]: {
-        overflow: "scroll",
-      },
-    },
-    buttons: {
-      fontWeight: "bolder",
-      [theme.breakpoints.down("sm")]: {
-        display: "flex",
-        justifyContent: "space-around",
-      },
-    },
-    create: {
-      color: "#1976d2",
-      fontWeight: "bolder",
-    },
-    close: {
-      color: "#d70852",
-      fontWeight: "bolder",
-    },
-    overflowAuto: {
-      [theme.breakpoints.up("md")]: {
-        overflowY: "auto",
-      },
-    },
-    pokemonColumn: {
-      maxHeight: "120px",
-    },
-    namingPrimary: {
-      fontSize: "18px",
-    },
-    namingSecondary: {
-      fontSize: "14px",
-    },
-  })
-);
 
 const CreatePokedexForm = (props: CreatePokedexFormProps) => {
   const classes = useStyles();
@@ -193,6 +150,9 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
               setLoading(true);
               createPokedex({ game, type, name })
                 .then((dex) => {
+                  if (props.session.type == "NOT_LOGGED_IN") {
+                    addLocalPokedex(dex);
+                  }
                   props.history.push(`/dex/${dex.userDexId}`);
                   return dex;
                 })
@@ -203,7 +163,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                   setLoading(false);
                   store.dispatch(closeCreateDexForm());
                 })
-                .catch(console.log)
+                .catch(console.error)
                 .then(() => {
                   setLoading(false);
                 });
@@ -223,6 +183,7 @@ const mapStateToProps = (root: RootState) => ({
   games: root.games.loaded ? root.games.games : [],
   pokedex: root.pokedex.loaded ? root.pokedex.pokedex : [],
   open: root.global.createDexFormOpen,
+  session: root.session,
 });
 
 export default hot(module)(

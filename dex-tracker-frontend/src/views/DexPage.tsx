@@ -1,16 +1,10 @@
-import { Container, makeStyles } from "@material-ui/core";
 import React from "react";
 import { hot } from "react-hot-loader";
 import { Redirect, RouteComponentProps, withRouter } from "react-router";
-import withUserDex from "../hooks/withUserDex";
-import classNames from "classnames";
-import Dex from "../components/Dex";
 import { RootState } from "../reducers";
 import { connect } from "react-redux";
 import { PokedexState } from "../store/pokedex";
 import Loader from "../components/Loader";
-import { UserDex } from "../types/user";
-import { GamePokedex } from "../types/pokedex";
 import { SessionState } from "../store/session";
 import Local from "./DexPage/Local";
 import Remote from "./DexPage/Remote";
@@ -57,6 +51,7 @@ const DexPage = (props: DexPageProps) => {
 const mapStateToProps = (root: RootState) => {
   return {
     gamePokedex: root.pokedex,
+    session: root.session,
   };
 };
 

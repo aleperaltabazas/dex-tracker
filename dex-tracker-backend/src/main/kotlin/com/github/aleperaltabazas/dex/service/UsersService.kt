@@ -2,10 +2,11 @@ package com.github.aleperaltabazas.dex.service
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
-import com.github.aleperaltabazas.dex.dto.dex.CreateUserDexDTO
 import com.github.aleperaltabazas.dex.exception.ForbiddenException
 import com.github.aleperaltabazas.dex.exception.NotFoundException
-import com.github.aleperaltabazas.dex.model.*
+import com.github.aleperaltabazas.dex.model.Session
+import com.github.aleperaltabazas.dex.model.User
+import com.github.aleperaltabazas.dex.model.UserDex
 import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.IdGenerator
@@ -13,41 +14,15 @@ import org.bson.Document
 
 open class UsersService(
     private val storage: Storage,
-    private val pokemonService: PokemonService,
     private val idGenerator: IdGenerator,
 ) {
-    open fun createUserDex(token: String, dexRequest: CreateUserDexDTO): UserDex {
+    open fun createUserDex(token: String, userDex: UserDex) {
         val user = unsafeFindUserByToken(token)
-
-        val pokedex = if (dexRequest.type == PokedexType.NATIONAL) {
-            pokemonService.gameNationalPokedex(dexRequest.game)
-        } else {
-            pokemonService.gameRegionalPokedex(dexRequest.game)
-        }
-
-        val dexId = idGenerator.userDexId()
-
-        val userDex = UserDex(
-            userDexId = dexId,
-            game = pokedex.game.title,
-            region = pokedex.region,
-            type = pokedex.type,
-            pokemon = pokedex.pokemon.map {
-                UserDexPokemon(
-                    name = it.name,
-                    dexNumber = it.number,
-                    caught = false
-                )
-            },
-            name = dexRequest.name,
-        )
 
         storage.update(Collection.USERS)
             .where(Document("user_id", user.userId))
             .add("pokedex", userDex)
             .updateOne()
-
-        return userDex
     }
 
     open fun unsafeFindUserByToken(token: String) = findUserByToken(token)

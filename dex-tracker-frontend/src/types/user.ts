@@ -1,12 +1,12 @@
 import { Game } from "./pokedex";
 
 export type UserDex = {
+  userDexId: string;
   game: Game;
-  name?: string;
   type: "NATIONAL" | "REGIONAL";
   region: string;
+  name?: string;
   pokemon: Pokemon[];
-  userDexId: string;
 };
 
 export type Pokemon = {

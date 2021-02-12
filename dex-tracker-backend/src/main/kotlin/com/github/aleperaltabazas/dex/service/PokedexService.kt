@@ -3,24 +3,50 @@ package com.github.aleperaltabazas.dex.service
 import arrow.core.Either
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
+import com.github.aleperaltabazas.dex.dto.dex.CreateUserDexDTO
 import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
 import com.github.aleperaltabazas.dex.dto.dex.GameDTO
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.NotFoundException
-import com.github.aleperaltabazas.dex.model.Game
-import com.github.aleperaltabazas.dex.model.PokedexType
-import com.github.aleperaltabazas.dex.model.Pokemon
+import com.github.aleperaltabazas.dex.model.*
 import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
+import com.github.aleperaltabazas.dex.utils.IdGenerator
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Sorts.ascending
 import org.bson.Document
 
-open class PokemonService(
+open class PokedexService(
     private val gameService: GameService,
     private val regionalPokedexCache: RegionalPokedexCache,
     private val storage: Storage,
+    private val idGenerator: IdGenerator,
 ) {
+    open fun createUserDex(dexRequest: CreateUserDexDTO): UserDex {
+        val pokedex = if (dexRequest.type == PokedexType.NATIONAL) {
+            this.gameNationalPokedex(dexRequest.game)
+        } else {
+            this.gameRegionalPokedex(dexRequest.game)
+        }
+
+        val dexId = idGenerator.userDexId()
+
+        return UserDex(
+            userDexId = dexId,
+            game = pokedex.game.title,
+            region = pokedex.region,
+            type = pokedex.type,
+            pokemon = pokedex.pokemon.map {
+                UserDexPokemon(
+                    name = it.name,
+                    dexNumber = it.number,
+                    caught = false
+                )
+            },
+            name = dexRequest.name,
+        )
+    }
+
     open fun allPokedex(): List<GamePokedexDTO> {
         val (nationals) = gameService.all().map { gameNationalPokedex(it) }
         val regionals = gameService.all().map { gameRegionalPokedex(it) }

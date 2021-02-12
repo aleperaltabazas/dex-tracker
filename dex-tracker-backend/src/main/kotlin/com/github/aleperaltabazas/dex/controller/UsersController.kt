@@ -11,6 +11,7 @@ import com.github.aleperaltabazas.dex.dto.dex.UserDexDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.exception.UnauthorizedException
 import com.github.aleperaltabazas.dex.mapper.ModelMapper
+import com.github.aleperaltabazas.dex.service.PokedexService
 import com.github.aleperaltabazas.dex.service.UsersService
 import org.slf4j.LoggerFactory
 import spark.Request
@@ -21,6 +22,7 @@ class UsersController(
     private val objectMapper: ObjectMapper,
     private val usersService: UsersService,
     private val modelMapper: ModelMapper,
+    private val pokedexService: PokedexService,
 ) : Controller {
     override fun register() {
         path("/api/v1/users") {
@@ -44,16 +46,13 @@ class UsersController(
     }
 
     private fun createUserDex(req: Request, res: Response): UserDexDTO {
-        val token = requireNotNull(req.cookie(DEX_TOKEN)) {
-            throw UnauthorizedException("No dex-token found for")
-        }
+        val token = req.cookie(DEX_TOKEN)
 
         val body: CreateUserDexDTO = objectMapper.readValue(req.body())
+        val pokedex = pokedexService.createUserDex(body)
+        token?.let { usersService.createUserDex(it, pokedex) }
 
-        return usersService.createUserDex(
-            token = token,
-            dexRequest = body
-        ).let { modelMapper.mapUserDexToDTO(it) }
+        return modelMapper.mapUserDexToDTO(pokedex)
     }
 
     private fun updateUserDexCaughtStatus(req: Request, res: Response) {
