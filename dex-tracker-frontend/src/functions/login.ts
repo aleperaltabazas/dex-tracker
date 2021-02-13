@@ -4,8 +4,10 @@ import { User } from "../types/user";
 import Cookies from "js-cookie";
 import store from "../store";
 import {
+  invalidateSession,
   loginError,
   notLoggedIn,
+  uninitialize,
   updatePicture,
   updateSessionState,
 } from "../actions/session";
@@ -36,6 +38,22 @@ export function oauthLogin(
     .then(() => store.dispatch(updatePicture(succ.profileObj.imageUrl)))
     .then(clearLocalPokedex)
     .catch((err) => console.error("Error in login", err));
+}
+
+export function logout() {
+  let config: AxiosRequestConfig = {
+    method: "POST",
+    url: `${host}/api/v1/logout`,
+    withCredentials: true,
+  };
+
+  store.dispatch(uninitialize());
+
+  return axios
+    .request(config)
+    .then(invalidateSession)
+    .then(store.dispatch)
+    .catch(console.error);
 }
 
 function dispatchUser(user: User) {

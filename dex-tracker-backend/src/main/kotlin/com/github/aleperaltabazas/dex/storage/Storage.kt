@@ -9,6 +9,10 @@ open class Storage(
     private val db: MongoDatabase,
     private val objectMapper: ObjectMapper,
 ) {
+    open fun delete(collection: Collection) = Delete(
+        coll = db.getCollection(collection.collectionName),
+    )
+
     open fun update(collection: Collection): Update = Update(
         coll = db.getCollection(collection.collectionName),
         objectMapper = objectMapper

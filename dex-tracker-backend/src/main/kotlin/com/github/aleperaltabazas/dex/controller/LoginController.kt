@@ -10,7 +10,7 @@ import com.github.aleperaltabazas.dex.service.LoginService
 import com.github.aleperaltabazas.dex.service.SessionService
 import spark.Request
 import spark.Response
-import spark.Spark
+import spark.Spark.post
 
 class LoginController(
     private val objectMapper: ObjectMapper,
@@ -19,7 +19,8 @@ class LoginController(
     private val sessionService: SessionService,
 ) : Controller {
     override fun register() {
-        Spark.post("/api/v1/login", APPLICATION_JSON, this::login, objectMapper::writeValueAsString)
+        post("/api/v1/login", APPLICATION_JSON, this::login, objectMapper::writeValueAsString)
+        post("/api/v1/logout", APPLICATION_JSON, this::logout, objectMapper::writeValueAsString)
     }
 
     private fun login(req: Request, res: Response): UserDTO {
@@ -35,5 +36,10 @@ class LoginController(
         }
 
         return modelMapper.mapUserToDTO(user)
+    }
+
+    private fun logout(req: Request, res: Response) {
+        req.cookie(DEX_TOKEN)?.let { loginService.logout(it) }
+        res.cookie("/", DEX_TOKEN, "", 0, false)
     }
 }

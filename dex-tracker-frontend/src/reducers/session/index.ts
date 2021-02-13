@@ -9,6 +9,7 @@ import {
   NOT_LOGGED_IN,
   SessionAction,
   SessionState,
+  UNINITIALIZE_SESSION,
   UPDATE_CAUGHT,
   UPDATE_PICTURE,
 } from "../../store/session";
@@ -24,7 +25,8 @@ function sessionReducer(
   switch (action.type) {
     case INVALIDATE_SESSION: {
       return {
-        type: "UNINITIALIZED",
+        type: "NOT_LOGGED_IN",
+        localDex: [],
       };
     }
     case LOG_IN_ACTION: {
@@ -57,6 +59,11 @@ function sessionReducer(
         default:
           return state;
       }
+    }
+    case UNINITIALIZE_SESSION: {
+      return {
+        type: "UNINITIALIZED",
+      };
     }
     case UPDATE_CAUGHT: {
       switch (state.type) {

@@ -7,6 +7,7 @@ import {
   UPDATE_CAUGHT,
   UPDATE_PICTURE,
   NOT_LOGGED_IN,
+  UNINITIALIZE_SESSION,
 } from "../../store/session";
 import { User, UserDexRef } from "../../types/user";
 
@@ -14,6 +15,12 @@ export function addUserDex(dex: UserDexRef): SessionAction {
   return {
     type: ADD_USER_DEX,
     payload: dex,
+  };
+}
+
+export function uninitialize(): SessionAction {
+  return {
+    type: UNINITIALIZE_SESSION,
   };
 }
 

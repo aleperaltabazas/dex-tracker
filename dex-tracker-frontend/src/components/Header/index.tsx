@@ -1,4 +1,4 @@
-import { Grid, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import React from "react";
 import { hot } from "react-hot-loader";
 import "./styles.scss";
@@ -6,6 +6,10 @@ import classNames from "classnames";
 import OpenMenu from "../Menu/Open";
 import LinkHome from "../Links/Home";
 import Login from "./Login";
+import { SessionState } from "../../store/session";
+import { RootState } from "../../reducers";
+import { connect } from "react-redux";
+import User from "./User";
 
 const useStyles = makeStyles(() => ({
   header: {
@@ -19,8 +23,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Header = () => {
+type HeaderProps = {
+  session: SessionState;
+};
+
+const Header = (props: HeaderProps) => {
   const classes = useStyles();
+
   return (
     <header className={classNames(classes.header, "center-v")}>
       <div className="center-v p-1">
@@ -33,10 +42,16 @@ const Header = () => {
         </LinkHome>
       </div>
       <div className="center-v p-1 pr-2 pr-md-3">
-        <Login />
+        {props.session.type == "LOGGED_IN" ? (
+          <User session={props.session} />
+        ) : (
+          <Login />
+        )}
       </div>
     </header>
   );
 };
 
-export default hot(module)(Header);
+const mapStateToProps = (root: RootState) => ({ session: root.session });
+
+export default hot(module)(connect(mapStateToProps)(Header));

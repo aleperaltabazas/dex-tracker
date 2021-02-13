@@ -52,8 +52,10 @@ class ServiceModule : AbstractModule() {
     fun loginService(
         @Named("storage") storage: Storage,
         @Named("usersService") usersService: UsersService,
+        @Named("sessionService") sessionService: SessionService,
     ) = LoginService(
         usersService = usersService,
+        sessionService = sessionService,
     )
 
     @Provides

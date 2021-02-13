@@ -7,6 +7,11 @@ export const ADD_USER_DEX = "ADD_USER_DEX";
 export const UPDATE_CAUGHT = "UPDATE_CAUGHT";
 export const UPDATE_PICTURE = "UPDATE_PICTURE";
 export const NOT_LOGGED_IN = "NOT_LOGGED_IN";
+export const UNINITIALIZE_SESSION = "UNINITIALIZE_SESSION";
+
+interface UninitializeSessionAction {
+  type: typeof UNINITIALIZE_SESSION;
+}
 
 interface InvalidateSessionAction {
   type: typeof INVALIDATE_SESSION;
@@ -50,7 +55,8 @@ export type SessionAction =
   | AddUserDexAction
   | UpdateCaughtAction
   | UpdatePictureAction
-  | NotLoggedInAction;
+  | NotLoggedInAction
+  | UninitializeSessionAction;
 
 export interface LoggedInState {
   token: string;

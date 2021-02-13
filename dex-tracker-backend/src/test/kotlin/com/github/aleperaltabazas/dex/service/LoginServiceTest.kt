@@ -10,8 +10,10 @@ import io.kotest.property.checkAll
 class LoginServiceTest : WordSpec() {
     init {
         val usersServiceMock: UsersService = mock {}
+        val sessionServiceMock: SessionService = mock {}
         val loginService = LoginService(
             usersService = usersServiceMock,
+            sessionService = sessionServiceMock
         )
 
         "loginFromToken" should {
