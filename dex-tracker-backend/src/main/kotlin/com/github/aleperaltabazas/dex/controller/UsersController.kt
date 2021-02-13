@@ -25,8 +25,9 @@ class UsersController(
     private val pokedexService: PokedexService,
 ) : Controller {
     override fun register() {
-        path("/api/v1/users") {
+            path("/api/v1/users") {
             get("", APPLICATION_JSON, this::findUser, objectMapper::writeValueAsString)
+            get("/pokedex", APPLICATION_JSON, this::usersPokedex, objectMapper::writeValueAsString)
             post("/pokedex", APPLICATION_JSON, this::createUserDex, objectMapper::writeValueAsString)
             get("/pokedex/:id", APPLICATION_JSON, this::findUserDex, objectMapper::writeValueAsString)
             patch("/pokedex", APPLICATION_JSON, this::updateUserDexCaughtStatus, objectMapper::writeValueAsString)
@@ -75,6 +76,16 @@ class UsersController(
         }
 
         return usersService.unsafeFindUserByToken(dexToken).let { modelMapper.mapUserToDTO(it) }
+    }
+
+    private fun usersPokedex(req: Request, res: Response): List<UserDexDTO> {
+        val dexToken = requireNotNull(req.cookie(DEX_TOKEN)) {
+            throw BadRequestException("User has no dex-token stored")
+        }
+
+        return usersService.unsafeFindUserByToken(dexToken)
+            .pokedex
+            .let { dex -> dex.map { modelMapper.mapUserDexToDTO(it) } }
     }
 
     companion object {

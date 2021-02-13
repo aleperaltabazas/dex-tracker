@@ -47,7 +47,7 @@ const User = (props: UserProps) => {
         <MenuItem
           onClick={() => {
             handleClose();
-            logout();
+            logout(props.session.token);
           }}
         >
           <ExitToAppIcon /> Log out

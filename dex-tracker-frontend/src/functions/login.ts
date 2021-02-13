@@ -15,12 +15,9 @@ import {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from "react-google-login";
-import {
-  clearLocalPokedex,
-  readLocalPokedex,
-  writeLocalPokedex,
-} from "./storage";
+import { readLocalPokedex, writeLocalPokedex } from "./storage";
 import { toRef } from "./my-dex";
+import { fetchAllUsersDex } from "./my-dex";
 
 type LoginResponse = {
   username?: string;
@@ -58,7 +55,7 @@ export function oauthLogin(
     .catch((err) => console.error("Error in login", err));
 }
 
-export function logout() {
+export function logout(token: string) {
   let config: AxiosRequestConfig = {
     method: "POST",
     url: `${host}/api/v1/logout`,
@@ -67,8 +64,9 @@ export function logout() {
 
   store.dispatch(uninitialize());
 
-  return axios
-    .request(config)
+  return fetchAllUsersDex(token)
+    .then(writeLocalPokedex)
+    .then(() => axios.request(config))
     .then(invalidateSession)
     .then(store.dispatch)
     .catch(console.error);

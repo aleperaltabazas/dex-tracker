@@ -26,7 +26,7 @@ function sessionReducer(
     case INVALIDATE_SESSION: {
       return {
         type: "NOT_LOGGED_IN",
-        localDex: [],
+        localDex: readLocalPokedex().map(toRef),
       };
     }
     case LOG_IN_ACTION: {

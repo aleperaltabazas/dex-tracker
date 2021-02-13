@@ -64,3 +64,13 @@ export function toRef(dex: UserDex): UserDexRef {
     caught: dex.pokemon.filter((p) => p.caught).length,
   };
 }
+
+export async function fetchAllUsersDex(token: string) {
+  let config: AxiosRequestConfig = {
+    method: "GET",
+    url: `${host}/api/v1/users/pokedex`,
+    withCredentials: true,
+  };
+
+  return axios.request<Array<UserDex>>(config).then((res) => res.data);
+}
