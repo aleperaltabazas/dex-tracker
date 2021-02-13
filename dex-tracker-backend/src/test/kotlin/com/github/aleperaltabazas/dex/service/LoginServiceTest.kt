@@ -2,6 +2,7 @@ package com.github.aleperaltabazas.dex.service
 
 import com.github.aleperaltabazas.dex.dto.dex.LoginRequestDTO
 import com.github.aleperaltabazas.dex.model.User
+import com.github.aleperaltabazas.dex.model.UserDex
 import com.nhaarman.mockito_kotlin.*
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
@@ -63,6 +64,7 @@ class LoginServiceTest : WordSpec() {
                     actual shouldBe expected
 
                     verify(usersServiceMock).findUserByMail(eq(mail))
+                    verify(usersServiceMock).updateUser(eq(expected.copy(pokedex = expected.pokedex + login.localDex.map { UserDex(it) })))
                 }
             }
 
