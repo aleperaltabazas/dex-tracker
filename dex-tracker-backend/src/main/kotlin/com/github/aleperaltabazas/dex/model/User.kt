@@ -15,6 +15,10 @@ data class User(
     fun updatePokedex(userDexId: String, status: List<CaughtStatusDTO>) = this.copy(
         pokedex = this.pokedex.mapIf({ it.userDexId == userDexId }) { it.updateStatus(status) }
     )
+
+    fun mergePokedex(pokedex: List<UserDex>) = pokedex.fold(this) { acc, userDex ->
+        acc.copy(pokedex = pokedex.mapIf({ it.userDexId == userDex.userDexId }) { userDex })
+    }
 }
 
 data class UserDex(

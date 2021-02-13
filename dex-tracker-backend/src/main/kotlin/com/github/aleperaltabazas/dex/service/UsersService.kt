@@ -16,6 +16,13 @@ open class UsersService(
     private val storage: Storage,
     private val idGenerator: IdGenerator,
 ) {
+    open fun updateUser(user: User) {
+        storage.replace(Collection.USERS)
+            .where(Document("user_id", user.userId))
+            .set(user)
+            .replaceOne()
+    }
+
     open fun createUserDex(token: String, userDex: UserDex) {
         val user = unsafeFindUserByToken(token)
 

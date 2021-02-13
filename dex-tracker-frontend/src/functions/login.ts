@@ -31,6 +31,8 @@ export function oauthLogin(
     },
   };
 
+  store.dispatch(uninitialize());
+
   axios
     .request<User>(config)
     .then((res) => res.data)
