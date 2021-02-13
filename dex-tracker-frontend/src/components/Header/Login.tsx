@@ -6,19 +6,36 @@ import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import { googleClientId as googleClientId } from "../../config";
 import { oauthLogin } from "../../functions/login";
+import { SessionState } from "../../store/session";
+import { RootState } from "../../reducers";
+import { connect } from "react-redux";
 
-type LoginProps = {};
+type LoginProps = {
+  session: SessionState;
+};
 
 const useStyles = makeStyles(() => ({
   account: {
     fontSize: "48px",
     color: "white",
   },
+  userPicture: {
+    height: "48px",
+    width: "48px",
+    borderRadius: "50%",
+  },
 }));
 
 const Login = (props: LoginProps) => {
   const classes = useStyles();
 
+  if (props.session.type == "LOGGED_IN") {
+    return (
+      <div className={classes.userPicture}>
+        <img src={props.session.picture} className={classes.userPicture} />
+      </div>
+    );
+  }
   return (
     <GoogleLogin
       clientId={googleClientId}
@@ -34,4 +51,6 @@ const Login = (props: LoginProps) => {
   );
 };
 
-export default hot(module)(Login);
+const mapStateToProps = (root: RootState) => ({ session: root.session });
+
+export default hot(module)(connect(mapStateToProps)(Login));

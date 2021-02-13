@@ -28,9 +28,18 @@ open class UsersService(
     open fun unsafeFindUserByToken(token: String) = findUserByToken(token)
         ?: throw NotFoundException("No user found for session token $token")
 
-    open fun findUserByToken(token: String) = findUserBy(Document("token", token))
+    open fun findUserByToken(token: String) = storage.query(Collection.SESSIONS)
+        .where(Document("token", token))
+        .findOne(SESSION_REF)
+        ?.let {
+            storage.query(Collection.USERS)
+                .where(Document("user_id", it.userId))
+                .findOne(USER_REF)
+        }
 
-    open fun findUserByMail(mail: String) = findUserBy(Document("mail", mail))
+    open fun findUserByMail(mail: String) = storage.query(Collection.USERS)
+        .where(Document("mail", mail))
+        .findOne(USER_REF)
 
     open fun createUser(mail: String, pokedex: List<UserDex> = emptyList()): User {
         val userId = idGenerator.userId()
@@ -45,17 +54,6 @@ open class UsersService(
         storage.insert(Collection.USERS, user)
 
         return user
-    }
-
-    private fun findUserBy(where: Document): User? {
-        return storage.query(Collection.SESSIONS)
-            .where(where)
-            .findOne(SESSION_REF)
-            ?.let {
-                storage.query(Collection.USERS)
-                    .where(Document("user_id", it.userId))
-                    .findOne(USER_REF)
-            }
     }
 
     open fun findUserDex(token: String, dexId: String): UserDex = unsafeFindUserByToken(token).let { user ->

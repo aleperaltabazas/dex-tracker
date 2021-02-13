@@ -6,6 +6,7 @@ import store from "../store";
 import {
   loginError,
   notLoggedIn,
+  updatePicture,
   updateSessionState,
 } from "../actions/session";
 import {
@@ -32,6 +33,7 @@ export function oauthLogin(
     .request<User>(config)
     .then((res) => res.data)
     .then(dispatchUser)
+    .then(() => store.dispatch(updatePicture(succ.profileObj.imageUrl)))
     .then(clearLocalPokedex)
     .catch((err) => console.error("Error in login", err));
 }
