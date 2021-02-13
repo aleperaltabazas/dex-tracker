@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
 import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
-import com.github.aleperaltabazas.dex.dto.dex.UserDTO
+import com.github.aleperaltabazas.dex.dto.dex.LoginResponseDTO
 import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.service.LoginService
 import com.github.aleperaltabazas.dex.service.SessionService
@@ -23,7 +23,7 @@ class LoginController(
         post("/api/v1/logout", APPLICATION_JSON, this::logout, objectMapper::writeValueAsString)
     }
 
-    private fun login(req: Request, res: Response): UserDTO {
+    private fun login(req: Request, res: Response): LoginResponseDTO {
         val dexToken = req.cookie(DEX_TOKEN)
 
         val user = if (dexToken != null) {
@@ -35,7 +35,7 @@ class LoginController(
             }
         }
 
-        return modelMapper.mapUserToDTO(user)
+        return modelMapper.mapToLoginResponseDTO(user)
     }
 
     private fun logout(req: Request, res: Response) {

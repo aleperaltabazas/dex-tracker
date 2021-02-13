@@ -61,3 +61,9 @@ data class UserDexRefDTO(
     val name: String?,
     val caught: Int,
 )
+
+data class LoginResponseDTO(
+    val username: String?,
+    val pokedex: List<UserDexDTO>,
+    val mail: String,
+)

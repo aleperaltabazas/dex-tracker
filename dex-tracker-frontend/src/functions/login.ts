@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { host } from "../config";
-import { User } from "../types/user";
+import { User, UserDex } from "../types/user";
 import Cookies from "js-cookie";
 import store from "../store";
 import {
@@ -15,7 +15,18 @@ import {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from "react-google-login";
-import { clearLocalPokedex, readLocalPokedex } from "./storage";
+import {
+  clearLocalPokedex,
+  readLocalPokedex,
+  writeLocalPokedex,
+} from "./storage";
+import { toRef } from "./my-dex";
+
+type LoginResponse = {
+  username?: string;
+  mail: string;
+  pokedex: UserDex[];
+};
 
 export function oauthLogin(
   response: GoogleLoginResponse | GoogleLoginResponseOffline
@@ -34,11 +45,16 @@ export function oauthLogin(
   store.dispatch(uninitialize());
 
   axios
-    .request<User>(config)
+    .request<LoginResponse>(config)
     .then((res) => res.data)
-    .then(dispatchUser)
+    .then((u) => {
+      dispatchUser({
+        ...u,
+        pokedex: u.pokedex.map(toRef),
+      });
+      writeLocalPokedex(u.pokedex);
+    })
     .then(() => store.dispatch(updatePicture(succ.profileObj.imageUrl)))
-    .then(clearLocalPokedex)
     .catch((err) => console.error("Error in login", err));
 }
 
