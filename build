@@ -40,3 +40,5 @@ mv application.conf.original $BACKEND_RESOURCES/application.conf
 mv config.ts.original $FRONTEND/src/config.ts
 mv sensitive.conf.original $BACKEND_RESOURCES/sensitive.conf
 
+mvn clean -f $BACKEND/pom.xml
+
