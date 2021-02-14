@@ -7,6 +7,7 @@ export type UserDex = {
   region: string;
   name?: string;
   pokemon: Pokemon[];
+  caught: number;
 };
 
 export type Pokemon = {
@@ -17,13 +18,6 @@ export type Pokemon = {
 
 export type User = {
   username?: string;
-  pokedex: UserDexRef[];
+  pokedex: UserDex[];
   mail: string;
-};
-
-export type UserDexRef = {
-  userDexId: string;
-  game: Game;
-  name?: string;
-  caught: number;
 };

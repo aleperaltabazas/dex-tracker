@@ -1,4 +1,4 @@
-import { User, UserDexRef } from "../../types/user";
+import { User, UserDex } from "../../types/user";
 
 export const INVALIDATE_SESSION = "INVALIDATE_SESSION";
 export const LOG_IN_ACTION = "LOG_IN_ACTION";
@@ -28,7 +28,7 @@ interface LoginErrorAction {
 
 interface AddUserDexAction {
   type: typeof ADD_USER_DEX;
-  payload: UserDexRef;
+  payload: UserDex;
 }
 
 interface UpdateCaughtAction {
@@ -71,7 +71,7 @@ export interface UninitializedState {
 
 export interface NotLoggedInState {
   type: "NOT_LOGGED_IN";
-  localDex: UserDexRef[];
+  localDex: UserDex[];
 }
 
 export interface LoginErrorState {

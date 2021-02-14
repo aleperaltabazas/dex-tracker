@@ -11,7 +11,7 @@ import store from "../store";
 import { openCreateDexForm } from "../actions/global";
 import Loader from "../components/Loader";
 import DexSummary from "../components/Dex/Summary";
-import { UserDexRef } from "../types/user";
+import { UserDex } from "../types/user";
 import { GamePokedex } from "../types/pokedex";
 
 type HomePageProps = {
@@ -51,7 +51,7 @@ const HomePage = (props: HomePageProps) => {
 
   const PokedexList = (props: {
     gamePokedex: GamePokedex[];
-    dex: UserDexRef[];
+    dex: UserDex[];
   }) => (
     <div className="mt-5 h-100">
       <Container>

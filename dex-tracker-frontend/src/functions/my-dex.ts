@@ -5,7 +5,7 @@ import store from "../store";
 import { GamesLoaded } from "../store/games";
 import { GameTitle, PokedexType } from "../types/pokedex";
 import { Sync } from "../types/sync";
-import { UserDex, UserDexRef } from "../types/user";
+import { UserDex } from "../types/user";
 import { addLocalPokedex } from "./storage";
 
 type CreateDex = {
@@ -54,15 +54,6 @@ export function fireSynchronize(syncQueue: Sync[]) {
   };
 
   return axios.request(config);
-}
-
-export function toRef(dex: UserDex): UserDexRef {
-  return {
-    name: dex.name,
-    game: dex.game,
-    userDexId: dex.userDexId,
-    caught: dex.pokemon.filter((p) => p.caught).length,
-  };
 }
 
 export async function fetchAllUsersDex(token: string) {

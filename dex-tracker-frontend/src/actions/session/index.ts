@@ -3,20 +3,13 @@ import {
   SessionAction,
   LOG_IN_ACTION,
   LOG_IN_ERROR,
-  ADD_USER_DEX,
   UPDATE_CAUGHT,
   UPDATE_PICTURE,
   NOT_LOGGED_IN,
   UNINITIALIZE_SESSION,
+  ADD_USER_DEX,
 } from "../../store/session";
-import { User, UserDexRef } from "../../types/user";
-
-export function addUserDex(dex: UserDexRef): SessionAction {
-  return {
-    type: ADD_USER_DEX,
-    payload: dex,
-  };
-}
+import { User, UserDex } from "../../types/user";
 
 export function uninitialize(): SessionAction {
   return {
@@ -71,5 +64,12 @@ export function updatePicture(picture: string): SessionAction {
   return {
     type: UPDATE_PICTURE,
     payload: picture,
+  };
+}
+
+export function addUserDex(dex: UserDex): SessionAction {
+  return {
+    type: ADD_USER_DEX,
+    payload: dex,
   };
 }

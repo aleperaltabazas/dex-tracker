@@ -16,14 +16,7 @@ import {
   GoogleLoginResponseOffline,
 } from "react-google-login";
 import { readLocalPokedex, writeLocalPokedex } from "./storage";
-import { toRef } from "./my-dex";
 import { fetchAllUsersDex } from "./my-dex";
-
-type LoginResponse = {
-  username?: string;
-  mail: string;
-  pokedex: UserDex[];
-};
 
 export function oauthLogin(
   response: GoogleLoginResponse | GoogleLoginResponseOffline
@@ -42,12 +35,12 @@ export function oauthLogin(
   store.dispatch(uninitialize());
 
   axios
-    .request<LoginResponse>(config)
+    .request<User>(config)
     .then((res) => res.data)
     .then((u) => {
       dispatchUser({
         ...u,
-        pokedex: u.pokedex.map(toRef),
+        pokedex: u.pokedex,
       });
       writeLocalPokedex(u.pokedex);
     })

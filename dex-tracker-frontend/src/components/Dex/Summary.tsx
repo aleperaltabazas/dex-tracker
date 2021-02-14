@@ -10,13 +10,13 @@ import {
 import React from "react";
 import { hot } from "react-hot-loader";
 import { GamePokedex } from "../../types/pokedex";
-import { UserDexRef } from "../../types/user";
 import DexLink from "../Links/Dex";
 import classNames from "classnames";
 import LinearProgress from "../Progress/Linear";
+import { UserDex } from "../../types/user";
 
 type SummaryProps = {
-  dex: UserDexRef;
+  dex: UserDex;
   gamePokedex: GamePokedex;
 };
 

@@ -17,7 +17,7 @@ import Column from "../../components/Column";
 import Row from "../../components/Row";
 import { Game, GamePokedex, GameTitle, PokedexType } from "../../types/pokedex";
 import classNames from "classnames";
-import { createPokedex, toRef } from "../../functions/my-dex";
+import { createPokedex } from "../../functions/my-dex";
 import { addUserDex } from "../../actions/session";
 import store from "../../store";
 import { RootState } from "../../reducers";
@@ -156,7 +156,6 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                   props.history.push(`/dex/${dex.userDexId}`);
                   return dex;
                 })
-                .then(toRef)
                 .then(addUserDex)
                 .then(store.dispatch)
                 .then(() => {

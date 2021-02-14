@@ -13,13 +13,12 @@ import { closeMenu, openCreateDexForm } from "../../actions/global";
 import store from "../../store";
 import classNames from "classnames";
 import CloseMenu from "./Close";
-import { UserDexRef } from "../../types/user";
+import { UserDex } from "../../types/user";
 import { Game } from "../../types/pokedex";
 import { AddCircle } from "@material-ui/icons";
 import { RouteComponentProps, withRouter } from "react-router";
 import DexLink from "../Links/Dex";
 import { readLocalPokedex } from "../../functions/storage";
-import { toRef } from "../../functions/my-dex";
 
 const useStyles = makeStyles({
   list: {
@@ -41,7 +40,7 @@ type Anchor = "top" | "left" | "bottom" | "right";
 
 interface MenuProps extends RouteComponentProps {
   open: boolean;
-  userDex: UserDexRef[];
+  userDex: UserDex[];
   games: Game[];
 }
 
@@ -142,13 +141,13 @@ const Menu = (props: MenuProps) => {
 };
 
 const mapStateToProps = (root: RootState) => {
-  let userDex: UserDexRef[];
+  let userDex: UserDex[];
 
   switch (root.session.type) {
     case "LOGGED_IN":
       userDex = root.session.user.pokedex;
     case "NOT_LOGGED_IN":
-      userDex = readLocalPokedex().map(toRef);
+      userDex = readLocalPokedex();
     default:
       userDex = [];
   }
