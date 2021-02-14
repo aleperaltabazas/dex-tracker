@@ -71,7 +71,6 @@ function dispatchUser(user: User) {
 
 export function openLocallyStoredSession() {
   const dexToken = Cookies.get("dex-token");
-  console.log("checking for dex-token", dexToken);
 
   if (dexToken) {
     let config: AxiosRequestConfig = {
@@ -94,7 +93,6 @@ export function openLocallyStoredSession() {
         }
       });
   } else {
-    console.log("No user");
     store.dispatch(notLoggedIn());
   }
 }

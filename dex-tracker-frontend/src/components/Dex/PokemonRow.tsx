@@ -1,5 +1,5 @@
 import { Checkbox, Hidden } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
 import Column from "../Column";
 import Row from "../Row";
@@ -8,7 +8,6 @@ import { Pokemon } from "../../types/user";
 import useStyles from "./styles";
 import store from "../../store";
 import { addToSyncQueue } from "../../actions/syncQueue";
-import { incrementCaught, decrementCaught } from "../../actions/session";
 import { SessionState } from "../../store/session";
 import { RootState } from "../../reducers";
 import { connect } from "react-redux";
@@ -20,17 +19,24 @@ type PokemonRowProps = {
   pokemon: Pokemon;
   dexId: string;
   session: SessionState;
-  incrementCounter: () => void;
-  decrementCounter: () => void;
+  onChange: (b: boolean) => void;
 };
 
 const PokemonRow = (props: PokemonRowProps) => {
   const classes = useStyles();
 
-  const updateCaught = (_: any, caught: boolean) => {
-    // store.dispatch(
-    //   caught ? incrementCaught(props.dexId) : decrementCaught(props.dexId)
-    // );
+  useEffect(() => {
+    return () => {};
+  }, []);
+
+  const updateCaught = useCallback((_: any, caught: boolean) => {
+    const counter = document.getElementById("counter");
+    if (counter) {
+      const current = Number.parseInt(counter.innerHTML);
+      counter.innerHTML = (caught ? current + 1 : current - 1).toString();
+    }
+
+    props.onChange(caught);
     if (props.session.type == "LOGGED_IN") {
       store.dispatch(
         addToSyncQueue(props.pokemon.dexNumber, caught, props.dexId)
@@ -38,7 +44,7 @@ const PokemonRow = (props: PokemonRowProps) => {
     } else if (props.session.type == "NOT_LOGGED_IN") {
       updateCaughtLocalPokedex(props.dexId, props.pokemon.dexNumber, caught);
     }
-  };
+  }, []);
 
   return (
     <Row key={props.idx} className={props.firstRow ? "" : classes.rowLine}>

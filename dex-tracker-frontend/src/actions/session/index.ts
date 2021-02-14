@@ -3,7 +3,7 @@ import {
   SessionAction,
   LOG_IN_ACTION,
   LOG_IN_ERROR,
-  UPDATE_CAUGHT,
+  UPDATE_USER_DEX,
   UPDATE_PICTURE,
   NOT_LOGGED_IN,
   UNINITIALIZE_SESSION,
@@ -46,20 +46,6 @@ export function loginError(): SessionAction {
   };
 }
 
-const updateCaught: (
-  update: (current: number) => number
-) => (dexId: string) => SessionAction = (
-  update: (current: number) => number
-) => (dexId: string) => ({ type: UPDATE_CAUGHT, payload: { dexId, update } });
-
-export const incrementCaught: (dexId: string) => SessionAction = updateCaught(
-  (n) => n + 1
-);
-
-export const decrementCaught: (dexId: string) => SessionAction = updateCaught(
-  (n) => n - 1
-);
-
 export function updatePicture(picture: string): SessionAction {
   return {
     type: UPDATE_PICTURE,
@@ -73,3 +59,22 @@ export function addUserDex(dex: UserDex): SessionAction {
     payload: dex,
   };
 }
+
+export function updatePokedex(
+  dexId: string,
+  f: (dex: UserDex) => UserDex
+): SessionAction {
+  return {
+    type: UPDATE_USER_DEX,
+    payload: {
+      dexId: dexId,
+      update: f,
+    },
+  };
+}
+
+export const increment = (dexId: string) =>
+  updatePokedex(dexId, (dex) => ({ ...dex, caught: dex.caught + 1 }));
+
+export const decrement = (dexId: string) =>
+  updatePokedex(dexId, (dex) => ({ ...dex, caught: dex.caught - 1 }));

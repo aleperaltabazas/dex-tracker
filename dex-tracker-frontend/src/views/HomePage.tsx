@@ -66,6 +66,7 @@ const HomePage = (props: HomePageProps) => {
                 gamePokedex={
                   props.gamePokedex.find((d) => d.game.title == p.game.title)!
                 }
+                key={p.userDexId}
               />
             ))}
           </>

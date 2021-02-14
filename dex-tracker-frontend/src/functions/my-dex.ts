@@ -42,11 +42,19 @@ export async function synchronize(syncQueue: Sync[]) {
 }
 
 export function fireSynchronize(syncQueue: Sync[]) {
+  const curatedSyncQueue: Sync[] = [];
+
+  syncQueue.reverse().forEach((s) => {
+    if (!curatedSyncQueue.some((s2) => s2.number == s.number)) {
+      curatedSyncQueue.push(s);
+    }
+  });
+
   let config: AxiosRequestConfig = {
     url: `${host}/api/v1/users/pokedex`,
     method: "PATCH",
     withCredentials: true,
-    data: syncQueue.map((s) => ({
+    data: curatedSyncQueue.map((s) => ({
       pokedexId: s.dexId,
       dexNumber: s.number,
       caught: s.caught,

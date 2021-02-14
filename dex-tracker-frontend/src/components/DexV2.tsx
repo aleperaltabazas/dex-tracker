@@ -5,24 +5,77 @@ import {
   InputAdornment,
   Typography,
 } from "@material-ui/core";
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { hot } from "react-hot-loader";
 import { GamePokedex } from "../types/pokedex";
-import { UserDex } from "../types/user";
+import { Pokemon, UserDex } from "../types/user";
 import useStyles from "./Dex/styles";
 import classNames from "classnames";
 import Row from "./Row";
 import Column from "./Column";
 import { Search } from "@material-ui/icons";
 import PokemonRow from "./Dex/PokemonRow";
+import Counter from "./Dex/Counter";
+import { updatePokedex } from "../actions/session";
+import store from "../store";
 
 type DexV2Props = {
   dex: UserDex;
   gamePokedex: GamePokedex;
 };
 
+type Change = {
+  number: number;
+  caught: boolean;
+};
+
 const DexV2 = (props: DexV2Props) => {
   const classes = useStyles();
+  const [search, setSearch] = useState<string | undefined>(undefined);
+  const changes = useRef<Array<Change>>([]);
+
+  const handleChange = (b: boolean, n: number) => {
+    changes.current.push({ number: n, caught: b });
+  };
+
+  const handleSearchChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setSearch(event.currentTarget.value),
+    []
+  );
+
+  const shouldRender = useCallback(
+    (p: Pokemon) =>
+      search == undefined ||
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.dexNumber.toString().includes(search),
+    [search]
+  );
+
+  useEffect(() => {
+    return () => {
+      const curatedChanges: Change[] = [];
+      changes.current.reverse().forEach((c) => {
+        if (!curatedChanges.some((cc) => cc.number == c.number)) {
+          curatedChanges.push(c);
+        }
+      });
+
+      console.log(curatedChanges);
+      store.dispatch(
+        updatePokedex(props.dex.userDexId, (d) => ({
+          ...d,
+          pokemon: d.pokemon.map((p) => ({
+            ...p,
+            caught:
+              curatedChanges.find((cc) => cc.number == p.dexNumber)?.caught ||
+              p.caught,
+          })),
+        }))
+      );
+    };
+  }, [props.dex.userDexId]);
+
   return (
     <div className={classes.root}>
       <Typography variant="h5">
@@ -48,11 +101,10 @@ const DexV2 = (props: DexV2Props) => {
           </div>
         </Column>
         <Column xs={5} md={4} className="center">
-          <Typography
-            className={classNames(classes.secondaryHeading, "pr-1 pr-md-0")}
-          >
-            {props.dex.caught}/{props.dex.pokemon.length}
-          </Typography>
+          <Counter
+            dexId={props.dex.userDexId}
+            total={props.dex.pokemon.length}
+          />
         </Column>
       </Row>
       <Row>
@@ -83,6 +135,8 @@ const DexV2 = (props: DexV2Props) => {
           <Input
             fullWidth
             placeholder="Bulbasaur"
+            value={search}
+            onChange={handleSearchChange}
             endAdornment={
               <InputAdornment position="end">
                 <Search />
@@ -102,17 +156,20 @@ const DexV2 = (props: DexV2Props) => {
       </Row>
       <Divider />
       <Row className={classes.dexContainer}>
-        <PokemonRow
-          dexId={props.dex.userDexId}
-          idx={0}
-          firstRow
-          pokemon={props.dex.pokemon[0]}
-          incrementCounter={() => {}}
-          decrementCounter={() => {}}
-        />
+        {shouldRender(props.dex.pokemon[0]) && (
+          <PokemonRow
+            dexId={props.dex.userDexId}
+            idx={0}
+            firstRow
+            pokemon={props.dex.pokemon[0]}
+            onChange={(b: boolean) =>
+              handleChange(b, props.dex.pokemon[0].dexNumber)
+            }
+          />
+        )}
         {props.dex.pokemon
           .slice(1)
-          //   .filter(shouldRender)
+          .filter(shouldRender)
           .map((p, idx) => (
             <PokemonRow
               dexId={props.dex.userDexId}
@@ -120,8 +177,7 @@ const DexV2 = (props: DexV2Props) => {
               idx={idx + 1}
               firstRow={false}
               pokemon={p}
-              incrementCounter={() => {}}
-              decrementCounter={() => {}}
+              onChange={(b: boolean) => handleChange(b, p.dexNumber)}
             />
           ))}
       </Row>

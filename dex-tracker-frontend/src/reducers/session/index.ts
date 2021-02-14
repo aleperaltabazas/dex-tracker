@@ -9,7 +9,7 @@ import {
   SessionAction,
   SessionState,
   UNINITIALIZE_SESSION,
-  UPDATE_CAUGHT,
+  UPDATE_USER_DEX,
   UPDATE_PICTURE,
 } from "../../store/session";
 
@@ -64,7 +64,7 @@ function sessionReducer(
         type: "UNINITIALIZED",
       };
     }
-    case UPDATE_CAUGHT: {
+    case UPDATE_USER_DEX: {
       switch (state.type) {
         case "LOGGED_IN": {
           return {
@@ -73,7 +73,7 @@ function sessionReducer(
               ...state.user,
               pokedex: state.user.pokedex.map((d) =>
                 d.userDexId == action.payload.dexId
-                  ? { ...d, caught: action.payload.update(d.caught) }
+                  ? action.payload.update(d)
                   : d
               ),
             },
@@ -83,9 +83,7 @@ function sessionReducer(
           return {
             ...state,
             localDex: state.localDex.map((d) =>
-              d.userDexId == action.payload.dexId
-                ? { ...d, caught: action.payload.update(d.caught) }
-                : d
+              d.userDexId == action.payload.dexId ? action.payload.update(d) : d
             ),
           };
         }

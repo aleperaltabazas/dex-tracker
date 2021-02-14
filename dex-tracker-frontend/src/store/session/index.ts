@@ -4,7 +4,7 @@ export const INVALIDATE_SESSION = "INVALIDATE_SESSION";
 export const LOG_IN_ACTION = "LOG_IN_ACTION";
 export const LOG_IN_ERROR = "LOG_IN_ERROR";
 export const ADD_USER_DEX = "ADD_USER_DEX";
-export const UPDATE_CAUGHT = "UPDATE_CAUGHT";
+export const UPDATE_USER_DEX = "UPDATE_USER_DEX";
 export const UPDATE_PICTURE = "UPDATE_PICTURE";
 export const NOT_LOGGED_IN = "NOT_LOGGED_IN";
 export const UNINITIALIZE_SESSION = "UNINITIALIZE_SESSION";
@@ -31,11 +31,11 @@ interface AddUserDexAction {
   payload: UserDex;
 }
 
-interface UpdateCaughtAction {
-  type: typeof UPDATE_CAUGHT;
+interface UpdateUserDexAction {
+  type: typeof UPDATE_USER_DEX;
   payload: {
     dexId: string;
-    update: (current: number) => number;
+    update: (dex: UserDex) => UserDex;
   };
 }
 
@@ -53,7 +53,7 @@ export type SessionAction =
   | LogInAction
   | LoginErrorAction
   | AddUserDexAction
-  | UpdateCaughtAction
+  | UpdateUserDexAction
   | UpdatePictureAction
   | NotLoggedInAction
   | UninitializeSessionAction;
