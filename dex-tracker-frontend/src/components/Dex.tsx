@@ -18,15 +18,11 @@ import PokemonRow from "./Dex/PokemonRow";
 import Counter from "./Dex/Counter";
 import { updatePokedex } from "../actions/session";
 import store from "../store";
+import { applyChanges, Change } from "../functions/my-dex";
 
 type DexV2Props = {
   dex: UserDex;
   gamePokedex: GamePokedex;
-};
-
-type Change = {
-  number: number;
-  caught: boolean;
 };
 
 const DexV2 = (props: DexV2Props) => {
@@ -62,15 +58,7 @@ const DexV2 = (props: DexV2Props) => {
       });
 
       store.dispatch(
-        updatePokedex(props.dex.userDexId, (d) => ({
-          ...d,
-          pokemon: d.pokemon.map((p) => ({
-            ...p,
-            caught:
-              curatedChanges.find((cc) => cc.number == p.dexNumber)?.caught ||
-              p.caught,
-          })),
-        }))
+        updatePokedex(props.dex.userDexId, applyChanges(curatedChanges))
       );
     };
   }, [props.dex.userDexId]);

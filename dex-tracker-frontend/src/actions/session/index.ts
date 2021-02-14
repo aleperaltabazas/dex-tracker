@@ -72,9 +72,3 @@ export function updatePokedex(
     },
   };
 }
-
-export const increment = (dexId: string) =>
-  updatePokedex(dexId, (dex) => ({ ...dex, caught: dex.caught + 1 }));
-
-export const decrement = (dexId: string) =>
-  updatePokedex(dexId, (dex) => ({ ...dex, caught: dex.caught - 1 }));

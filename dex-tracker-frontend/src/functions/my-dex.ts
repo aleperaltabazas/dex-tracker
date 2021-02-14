@@ -2,11 +2,9 @@ import axios, { AxiosRequestConfig } from "axios";
 import { clearSynchronizeQueue, resetTimeout } from "../actions/syncQueue";
 import { host } from "../config";
 import store from "../store";
-import { GamesLoaded } from "../store/games";
 import { GameTitle, PokedexType } from "../types/pokedex";
 import { Sync } from "../types/sync";
-import { UserDex } from "../types/user";
-import { addLocalPokedex } from "./storage";
+import { Pokemon, UserDex } from "../types/user";
 
 type CreateDex = {
   game: GameTitle;
@@ -72,4 +70,35 @@ export async function fetchAllUsersDex(token: string) {
   };
 
   return axios.request<Array<UserDex>>(config).then((res) => res.data);
+}
+
+export type Change = {
+  number: number;
+  caught: boolean;
+};
+
+export function applyChanges(changes: Change[]) {
+  const curatedChanges: Change[] = [];
+  changes.reverse().forEach((c) => {
+    if (!curatedChanges.some((cc) => cc.number == c.number)) {
+      curatedChanges.push(c);
+    }
+  });
+
+  return (d: UserDex): UserDex => {
+    const updatedMons: Pokemon[] = d.pokemon.map((p) => ({
+      ...p,
+      caught:
+        curatedChanges.find((cc) => cc.number == p.dexNumber)?.caught !=
+        undefined
+          ? curatedChanges.find((cc) => cc.number == p.dexNumber)!.caught
+          : p.caught,
+    }));
+
+    return {
+      ...d,
+      pokemon: updatedMons,
+      caught: updatedMons.filter((p) => p.caught).length,
+    };
+  };
 }
