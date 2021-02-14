@@ -146,10 +146,13 @@ const mapStateToProps = (root: RootState) => {
   switch (root.session.type) {
     case "LOGGED_IN":
       userDex = root.session.user.pokedex;
+      break;
     case "NOT_LOGGED_IN":
       userDex = readLocalPokedex();
+      break;
     default:
       userDex = [];
+      break;
   }
 
   return {

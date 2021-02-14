@@ -9,7 +9,7 @@ import { SessionState } from "../store/session";
 import { Container, makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import { UserDex } from "../types/user";
-import Dex from "../components/Dex";
+import Dex from "../components/DexV2";
 
 type MatchParams = {
   id: string;

@@ -26,26 +26,17 @@ type PokemonRowProps = {
 
 const PokemonRow = (props: PokemonRowProps) => {
   const classes = useStyles();
-  const [caught, setCaught] = useState(props.pokemon.caught);
 
-  const updateCaught = () => {
-    const newCaught = !caught;
-    setCaught(newCaught);
-
-    if (newCaught) {
-      props.incrementCounter();
-    } else {
-      props.decrementCounter();
-    }
-    store.dispatch(
-      newCaught ? incrementCaught(props.dexId) : decrementCaught(props.dexId)
-    );
+  const updateCaught = (_: any, caught: boolean) => {
+    // store.dispatch(
+    //   caught ? incrementCaught(props.dexId) : decrementCaught(props.dexId)
+    // );
     if (props.session.type == "LOGGED_IN") {
       store.dispatch(
-        addToSyncQueue(props.pokemon.dexNumber, newCaught, props.dexId)
+        addToSyncQueue(props.pokemon.dexNumber, caught, props.dexId)
       );
     } else if (props.session.type == "NOT_LOGGED_IN") {
-      updateCaughtLocalPokedex(props.dexId, props.pokemon.dexNumber, newCaught);
+      updateCaughtLocalPokedex(props.dexId, props.pokemon.dexNumber, caught);
     }
   };
 
@@ -85,12 +76,12 @@ const PokemonRow = (props: PokemonRowProps) => {
         md={1}
         className={classNames("center", classes.listItem)}
         key={`${props.idx}-caught`}
-        onClick={() => updateCaught()}
+        onClick={() => {}}
       >
         <Checkbox
-          checked={caught}
-          onChange={() => updateCaught()}
+          onChange={updateCaught}
           color="default"
+          defaultChecked={props.pokemon.caught}
         />
       </Column>
     </Row>
