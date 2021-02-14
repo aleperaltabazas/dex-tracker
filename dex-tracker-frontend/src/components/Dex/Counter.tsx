@@ -1,23 +1,33 @@
 import { Typography } from "@material-ui/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
 import classNames from "classnames";
 import useStyles from "./styles";
 import { UserDex } from "../../types/user";
 import { RootState } from "../../reducers";
 import { connect } from "react-redux";
+import { RouteComponentProps, withRouter } from "react-router";
 
-type CounterProps = {
+type MatchParams = {
+  id: string;
+};
+
+interface CounterProps extends RouteComponentProps<MatchParams> {
   dexId: string;
   dex: Array<UserDex>;
   total: number;
-};
+}
 
 const Counter = (props: CounterProps) => {
   const classes = useStyles();
 
-  const caughtCounter = props.dex.find((d) => d.userDexId == props.dexId)
-    ?.caught;
+  const [caughtCounter, setCaughtCounter] = useState(
+    props.dex.find((d) => d.userDexId == props.dexId)?.caught
+  );
+
+  useEffect(() => {
+    return () => setCaughtCounter(0);
+  }, [props.match.params.id]);
 
   return (
     <Typography
@@ -39,4 +49,4 @@ const mapStateToProps = (root: RootState) => {
   }
 };
 
-export default hot(module)(connect(mapStateToProps)(Counter));
+export default hot(module)(connect(mapStateToProps)(withRouter(Counter)));

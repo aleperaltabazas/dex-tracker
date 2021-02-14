@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
 import { Redirect, RouteComponentProps, withRouter } from "react-router";
 import { RootState } from "../reducers";
@@ -9,7 +9,7 @@ import { SessionState } from "../store/session";
 import { Container, makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import { UserDex } from "../types/user";
-import Dex from "../components/DexV2";
+import Dex from "../components/Dex";
 
 type MatchParams = {
   id: string;
@@ -33,6 +33,24 @@ interface DexPageProps extends RouteComponentProps<MatchParams> {
 
 const DexPage = (props: DexPageProps) => {
   const classes = useStyles();
+
+  const [dex, setDex] = useState<UserDex | undefined>();
+
+  useEffect(() => {
+    setDex(undefined);
+    if (props.session.type == "LOGGED_IN") {
+      setDex(
+        props.session.user.pokedex.find(
+          (d) => d.userDexId == props.match.params.id
+        )
+      );
+    } else if (props.session.type == "NOT_LOGGED_IN") {
+      setDex(
+        props.session.localDex.find((d) => d.userDexId == props.match.params.id)
+      );
+    }
+  }, [props.match.params.id]);
+
   if (!props.gamePokedex.loaded || props.session.type == "UNINITIALIZED") {
     return (
       <div className="h-100 w-100 center">
@@ -45,27 +63,18 @@ const DexPage = (props: DexPageProps) => {
     return <Redirect to="/" />;
   }
 
-  let dex: UserDex | undefined;
-
-  if (props.session.type == "LOGGED_IN") {
-    dex = props.session.user.pokedex.find(
-      (d) => d.userDexId == props.match.params.id
-    );
-  } else {
-    dex = props.session.localDex.find(
-      (d) => d.userDexId == props.match.params.id
-    );
-  }
-
   if (!dex) {
-    return <Redirect to="/" />;
+    return <Loader />;
   }
 
   return (
-    <Container className={classNames(classes.noOverflow, "center")}>
+    <Container
+      className={classNames(classes.noOverflow, "center")}
+      key={dex?.userDexId}
+    >
       <div className={classNames(classes.container, "mt-3 mt-md-5")}>
         <Dex
-          dex={dex}
+          dex={dex!}
           gamePokedex={
             props.gamePokedex.pokedex.find(
               (gp) => gp.game.title == dex!.game.title

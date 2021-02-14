@@ -61,7 +61,6 @@ const DexV2 = (props: DexV2Props) => {
         }
       });
 
-      console.log(curatedChanges);
       store.dispatch(
         updatePokedex(props.dex.userDexId, (d) => ({
           ...d,

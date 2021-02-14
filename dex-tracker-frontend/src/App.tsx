@@ -36,7 +36,11 @@ const App = () => {
       <Header />
       <Menu />
       <Switch>
-        <Route path="/dex/:id" component={DexPage} />
+        <Route
+          path="/dex/:id"
+          component={DexPage}
+          key={window.location.pathname}
+        />
         <Route path="/" exact component={HomePage} />
       </Switch>
       <CreatePokedexForm />
