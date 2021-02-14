@@ -51,6 +51,8 @@ data class UserDex(
             )
         }
     )
+
+    fun caught(): Int = pokemon.count { it.caught }
 }
 
 data class UserDexPokemon(

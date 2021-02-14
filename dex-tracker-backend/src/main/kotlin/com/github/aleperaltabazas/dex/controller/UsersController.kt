@@ -25,7 +25,7 @@ class UsersController(
     private val pokedexService: PokedexService,
 ) : Controller {
     override fun register() {
-            path("/api/v1/users") {
+        path("/api/v1/users") {
             get("", APPLICATION_JSON, this::findUser, objectMapper::writeValueAsString)
             get("/pokedex", APPLICATION_JSON, this::usersPokedex, objectMapper::writeValueAsString)
             post("/pokedex", APPLICATION_JSON, this::createUserDex, objectMapper::writeValueAsString)
