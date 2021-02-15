@@ -122,27 +122,20 @@ class PokedexServiceTest : WordSpec() {
         }
 
         "gameNationalPokedex" should {
-            val pokedex = GamePokedexDTO(
-                region = "johto",
+            val pokedex = GamePokedex(
                 type = PokedexType.NATIONAL,
-                game = GameDTO(
+                game = Game(
                     title = "gs",
                     fullTitle = "Gold and Silver",
-                    spritePokemon = "ho-oh"
+                    spritePokemon = "ho-oh",
+                    region = "johto",
+                    pokeapiId = "123",
+                    gen = 2,
                 ),
                 pokemon = listOf(
-                    DexEntryDTO(
-                        name = "bulbasaur",
-                        number = 1,
-                    ),
-                    DexEntryDTO(
-                        name = "ivysaur",
-                        number = 2,
-                    ),
-                    DexEntryDTO(
-                        name = "venusaur",
-                        number = 3,
-                    ),
+                    "bulbasaur",
+                    "ivysaur",
+                    "venusaur",
                 )
             )
 
@@ -173,27 +166,20 @@ class PokedexServiceTest : WordSpec() {
         }
 
         "gameRegionalPokedex" should {
-            val pokedex = GamePokedexDTO(
-                region = "johto",
+            val pokedex = GamePokedex(
                 type = PokedexType.REGIONAL,
-                game = GameDTO(
+                game = Game(
                     title = "gs",
                     fullTitle = "Gold and Silver",
-                    spritePokemon = "ho-oh"
+                    spritePokemon = "ho-oh",
+                    region = "johto",
+                    pokeapiId = "123",
+                    gen = 2,
                 ),
                 pokemon = listOf(
-                    DexEntryDTO(
-                        name = "bulbasaur",
-                        number = 1,
-                    ),
-                    DexEntryDTO(
-                        name = "ivysaur",
-                        number = 2,
-                    ),
-                    DexEntryDTO(
-                        name = "venusaur",
-                        number = 3,
-                    ),
+                    "bulbasaur",
+                    "ivysaur",
+                    "venusaur",
                 )
             )
 

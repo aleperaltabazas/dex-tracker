@@ -1,8 +1,5 @@
 package com.github.aleperaltabazas.dex.service
 
-import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
-import com.github.aleperaltabazas.dex.dto.dex.GameDTO
-import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.NotFoundException
 import com.github.aleperaltabazas.dex.mock.createQueryMock
 import com.github.aleperaltabazas.dex.mock.createUpdateMock
@@ -98,27 +95,20 @@ class UsersServiceTest : StringSpec() {
 
                 whenever(idGeneratorMock.userDexId()).thenReturn("UD-123")
                 whenever(pokedexMock.gameNationalPokedex(any())).thenReturn(
-                    GamePokedexDTO(
+                    GamePokedex(
                         pokemon = listOf(
-                            DexEntryDTO(
-                                name = "bulbasaur",
-                                number = 1,
-                            ),
-                            DexEntryDTO(
-                                name = "ivysaur",
-                                number = 2,
-                            ),
-                            DexEntryDTO(
-                                name = "venusaur",
-                                number = 3,
-                            ),
+                            "bulbasaur",
+                            "ivysaur",
+                            "venusaur",
                         ),
-                        region = "johto",
                         type = PokedexType.NATIONAL,
-                        game = GameDTO(
+                        game = Game(
+                            region = "johto",
                             title = "hgss",
                             fullTitle = "HeartGold and SoulSilver",
-                            spritePokemon = "ho-oh"
+                            spritePokemon = "ho-oh",
+                            pokeapiId = "123",
+                            gen = 4,
                         )
                     )
                 )

@@ -4,9 +4,6 @@ import arrow.core.Either
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
 import com.github.aleperaltabazas.dex.dto.dex.CreateUserDexDTO
-import com.github.aleperaltabazas.dex.dto.dex.DexEntryDTO
-import com.github.aleperaltabazas.dex.dto.dex.GameDTO
-import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.NotFoundException
 import com.github.aleperaltabazas.dex.model.*
 import com.github.aleperaltabazas.dex.storage.Collection
@@ -34,12 +31,12 @@ open class PokedexService(
         return UserDex(
             userDexId = dexId,
             game = pokedex.game.title,
-            region = pokedex.region,
+            region = pokedex.game.region,
             type = pokedex.type,
-            pokemon = pokedex.pokemon.map {
+            pokemon = pokedex.pokemon.mapIndexed { number, name ->
                 UserDexPokemon(
-                    name = it.name,
-                    dexNumber = it.number,
+                    name = name,
+                    dexNumber = number,
                     caught = false
                 )
             },
@@ -47,7 +44,7 @@ open class PokedexService(
         )
     }
 
-    open fun allPokedex(): List<GamePokedexDTO> {
+    open fun allPokedex(): List<GamePokedex> {
         val (nationals) = gameService.all().map { gameNationalPokedex(it) }
         val regionals = gameService.all().map { gameRegionalPokedex(it) }
 
@@ -74,35 +71,29 @@ open class PokedexService(
             )
         } ?: throw NotFoundException("No pokemon found with ${numberOrName.fold({ "number $it" }, { "name $it" })}")
 
-    open fun gameNationalPokedex(gameKey: String): GamePokedexDTO = gameNationalPokedex(
+    open fun gameNationalPokedex(gameKey: String): GamePokedex = gameNationalPokedex(
         game = gameService.gameFromKey(gameKey)
     )
 
-    open fun gameRegionalPokedex(gameKey: String): GamePokedexDTO = gameRegionalPokedex(
+    open fun gameRegionalPokedex(gameKey: String): GamePokedex = gameRegionalPokedex(
         game = gameService.gameFromKey(gameKey)
     )
 
-    private fun gameNationalPokedex(game: Game): GamePokedexDTO {
+    private fun gameNationalPokedex(game: Game): GamePokedex {
         val pokemon = storage.query(Collection.POKEMON)
             .where(Document("gen", game.gen))
             .sort(ascending("national_pokedex_number"))
             .findAll(POKEMON_REF)
-            .map {
-                DexEntryDTO(
-                    name = it.name,
-                    number = it.nationalPokedexNumber,
-                )
-            }
+            .map { it.name }
 
-        return GamePokedexDTO(
-            pokemon = pokemon,
+        return GamePokedex(
+            game = game,
             type = PokedexType.NATIONAL,
-            region = game.region,
-            game = GameDTO(game)
+            pokemon = pokemon,
         )
     }
 
-    private fun gameRegionalPokedex(game: Game): GamePokedexDTO {
+    private fun gameRegionalPokedex(game: Game): GamePokedex {
         val pokedex = regionalPokedexCache.pokedexOf(game)
 
         val pokemon = storage
@@ -110,20 +101,18 @@ open class PokedexService(
             .where(Document("gen", game.gen))
             .where(Filters.`in`("name", pokedex.pokemon))
             .findAll(POKEMON_REF)
+            .asSequence()
             .map { p ->
-                DexEntryDTO(
-                    number = pokedex.pokemon.indexOf(p.name) + 1,
-                    name = p.name,
-                )
+                pokedex.pokemon.indexOf(p.name) + 1 to p.name
             }
-            .sortedBy { it.number }
+            .sortedBy { (number, _) -> number }
+            .map { (_, name) -> name }
             .toList()
 
-        return GamePokedexDTO(
+        return GamePokedex(
             pokemon = pokemon.toList(),
             type = PokedexType.REGIONAL,
-            region = pokedex.game.region,
-            game = GameDTO(pokedex.game)
+            game = game,
         )
     }
 

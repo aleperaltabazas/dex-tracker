@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
 import com.github.aleperaltabazas.dex.dto.dex.GamePokedexDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
+import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.model.Pokemon
 import com.github.aleperaltabazas.dex.service.PokedexService
 import org.slf4j.LoggerFactory
@@ -17,6 +18,7 @@ import spark.Spark.path
 class PokedexController(
     private val objectMapper: ObjectMapper,
     private val pokedexService: PokedexService,
+    private val modelMapper: ModelMapper,
 ) : Controller {
     override fun register() {
         path("/api/v1/pokedex") {
@@ -37,8 +39,8 @@ class PokedexController(
         }
 
         return when (type.toLowerCase()) {
-            "regional" -> pokedexService.gameRegionalPokedex(game)
-            "national" -> pokedexService.gameNationalPokedex(game)
+            "regional" -> pokedexService.gameRegionalPokedex(game).let { modelMapper.mapGamePokedexToDTO(it) }
+            "national" -> pokedexService.gameNationalPokedex(game).let { modelMapper.mapGamePokedexToDTO(it) }
             else -> throw BadRequestException("Unsupported pokedex type $type for game $game")
         }
     }
