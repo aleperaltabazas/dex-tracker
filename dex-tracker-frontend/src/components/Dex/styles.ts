@@ -20,7 +20,7 @@ const styles = makeStyles((theme) => ({
   },
   listItem: {
     fontSize: "16px",
-    height: "72px",
+    height: "100%",
   },
   dexContainer: {
     overflow: "scroll",

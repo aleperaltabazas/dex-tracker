@@ -9,7 +9,7 @@ import { SessionState } from "../store/session";
 import { Container, makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import { UserDex } from "../types/user";
-import Dex from "../components/Dex";
+import DexV2 from "../components/Dex";
 
 type MatchParams = {
   id: string;
@@ -73,14 +73,7 @@ const DexPage = (props: DexPageProps) => {
       key={dex?.userDexId}
     >
       <div className={classNames(classes.container, "mt-3 mt-md-5")}>
-        <Dex
-          dex={dex!}
-          gamePokedex={
-            props.gamePokedex.pokedex.find(
-              (gp) => gp.game.title == dex!.game.title
-            )!
-          }
-        />
+        <DexV2 dex={dex!} />;
       </div>
     </Container>
   );

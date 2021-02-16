@@ -5,7 +5,10 @@ const LOCAL_DEX = "local_dex";
 export function readLocalPokedex(): UserDex[] {
   const localDex = localStorage.getItem(LOCAL_DEX);
 
-  return localDex ? JSON.parse(localDex) : [];
+  return (localDex ? JSON.parse(localDex) : []).map((d: UserDex) => ({
+    ...d,
+    caught: d.pokemon.filter((p) => p.caught).length,
+  }));
 }
 
 export function addLocalPokedex(dex: UserDex) {

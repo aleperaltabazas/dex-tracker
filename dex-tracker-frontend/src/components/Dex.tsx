@@ -1,3 +1,7 @@
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { hot } from "react-hot-loader";
+import { Pokemon, UserDex } from "../types/user";
+import { FixedSizeList as List } from "react-window";
 import {
   Divider,
   Hidden,
@@ -5,47 +9,63 @@ import {
   InputAdornment,
   Typography,
 } from "@material-ui/core";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { hot } from "react-hot-loader";
-import { GamePokedex } from "../types/pokedex";
-import { Pokemon, UserDex } from "../types/user";
+import { Search } from "@material-ui/icons";
+import Row from "./Dex/Row";
 import useStyles from "./Dex/styles";
 import classNames from "classnames";
-import Row from "./Row";
-import Column from "./Column";
-import { Search } from "@material-ui/icons";
-import PokemonRow from "./Dex/PokemonRow";
-import Counter from "./Dex/Counter";
-import { updatePokedex } from "../actions/session";
-import store from "../store";
+import GridRow from "./Row";
+import GridColumn from "./Column";
 import { applyChanges, Change } from "../functions/my-dex";
+import store from "../store";
+import { updatePokedex as updateUserDex } from "../actions/session";
 
-type DexV2Props = {
+type DexProps = {
   dex: UserDex;
-  gamePokedex: GamePokedex;
 };
 
-const DexV2 = (props: DexV2Props) => {
-  const classes = useStyles();
-  const [search, setSearch] = useState<string | undefined>(undefined);
+const Dex = (props: DexProps) => {
   const changes = useRef<Array<Change>>([]);
 
   const handleChange = (b: boolean, n: number) => {
     changes.current.push({ number: n, caught: b });
   };
 
-  const handleSearchChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setSearch(event.currentTarget.value),
-    []
-  );
+  const classes = useStyles();
+
+  const [search, setSearch] = useState<string | undefined>(undefined);
 
   const shouldRender = useCallback(
     (p: Pokemon) =>
       search == undefined ||
+      search == "" ||
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.dexNumber.toString().includes(search),
     [search]
+  );
+
+  const togglePokemonCaught = (index: number) => {
+    const item = items[index - 1]; // -1 because we are indexing by pokedex id, which starts at 1
+    const newItems = items.concat();
+    newItems[index - 1] = {
+      ...item,
+      caught: !item.caught,
+    };
+
+    setItems(newItems);
+    handleChange(!item.caught, index);
+  };
+  const [items, setItems] = useState(props.dex.pokemon);
+  const itemData = {
+    items,
+    togglePokemonCaught,
+    displayedItems: items.filter(shouldRender),
+    dexId: props.dex.userDexId,
+  };
+
+  const handleSearchChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setSearch(event.currentTarget.value),
+    []
   );
 
   useEffect(() => {
@@ -58,7 +78,7 @@ const DexV2 = (props: DexV2Props) => {
       });
 
       store.dispatch(
-        updatePokedex(props.dex.userDexId, applyChanges(curatedChanges))
+        updateUserDex(props.dex.userDexId, applyChanges(curatedChanges))
       );
     };
   }, [props.dex.userDexId]);
@@ -68,15 +88,15 @@ const DexV2 = (props: DexV2Props) => {
       <Typography variant="h5">
         <div className={classNames("bold", "center-v", "pb-1")}>
           <span
-            className={`pokemon pokesprite ${props.gamePokedex.game.spritePokemon} pt-1`}
+            className={`pokemon pokesprite ${props.dex.game.spritePokemon} pt-1`}
           />
           <span style={{ paddingBottom: "3px" }}>
-            {props.dex.name || props.gamePokedex.game.fullTitle}
+            {props.dex.name || props.dex.game.fullTitle}
           </span>
         </div>
       </Typography>
-      <Row className={classNames("ml-2", "mr-2")}>
-        <Column xs={7} md={8}>
+      <GridRow className={classNames("ml-2", "mr-2")}>
+        <GridColumn xs={7} md={8}>
           <div>
             <Typography
               variant="h6"
@@ -86,29 +106,31 @@ const DexV2 = (props: DexV2Props) => {
               {props.dex.type.toLowerCase()}
             </Typography>
           </div>
-        </Column>
-        <Column xs={5} md={4} className="center">
-          <Counter
-            dexId={props.dex.userDexId}
-            total={props.dex.pokemon.length}
-          />
-        </Column>
-      </Row>
-      <Row>
+        </GridColumn>
+        <GridColumn xs={5} md={4} className="center">
+          <Typography
+            className={classNames(classes.secondaryHeading, "pr-1 pr-md-0")}
+          >
+            <span id="counter">{items.filter((p) => p.caught).length}</span>/
+            {items.length}
+          </Typography>
+        </GridColumn>
+      </GridRow>
+      <GridRow style={{ height: "72px" }}>
         <Hidden smDown>
-          <Column xs={3} md={1} className="center" />
+          <GridColumn xs={3} md={1} className="center" />
         </Hidden>
         <Hidden smDown>
-          <Column
+          <GridColumn
             md={1}
             className={classNames("center", "bold", classes.listItem)}
           >
             <Typography variant="button" style={{ fontSize: "14px" }}>
               Number
             </Typography>
-          </Column>
+          </GridColumn>
         </Hidden>
-        <Column
+        <GridColumn
           xs={9}
           md={8}
           className={classNames(
@@ -130,8 +152,8 @@ const DexV2 = (props: DexV2Props) => {
               </InputAdornment>
             }
           />
-        </Column>
-        <Column
+        </GridColumn>
+        <GridColumn
           xs={3}
           md={1}
           className={classNames("center", "bold", classes.listItem)}
@@ -139,37 +161,20 @@ const DexV2 = (props: DexV2Props) => {
           <Typography variant="button" style={{ fontSize: "14px" }}>
             Caught
           </Typography>
-        </Column>
-      </Row>
+        </GridColumn>
+      </GridRow>
       <Divider />
-      <Row className={classes.dexContainer}>
-        {shouldRender(props.dex.pokemon[0]) && (
-          <PokemonRow
-            dexId={props.dex.userDexId}
-            idx={0}
-            firstRow
-            pokemon={props.dex.pokemon[0]}
-            onChange={(b: boolean) =>
-              handleChange(b, props.dex.pokemon[0].dexNumber)
-            }
-          />
-        )}
-        {props.dex.pokemon
-          .slice(1)
-          .filter(shouldRender)
-          .map((p, idx) => (
-            <PokemonRow
-              dexId={props.dex.userDexId}
-              key={idx}
-              idx={idx + 1}
-              firstRow={false}
-              pokemon={p}
-              onChange={(b: boolean) => handleChange(b, p.dexNumber)}
-            />
-          ))}
-      </Row>
+      <List
+        height={720}
+        itemCount={items.filter(shouldRender).length}
+        itemData={itemData}
+        itemSize={72}
+        width={"100%"}
+      >
+        {Row}
+      </List>
     </div>
   );
 };
 
-export default hot(module)(DexV2);
+export default hot(module)(Dex);
