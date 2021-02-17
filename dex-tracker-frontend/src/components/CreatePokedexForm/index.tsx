@@ -44,6 +44,8 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
   const [name, setName] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
+  console.log(props.pokedex);
+
   return (
     <React.Fragment>
       <Dialog
@@ -123,10 +125,10 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                         ?.pokemon.map((p, idx) => (
                           <div key={idx}>
                             <span className="pl-1 pl-md-3 pr-md-1">
-                              {p.number}
+                              {idx + 1}
                             </span>
-                            <span className={`pokemon pokesprite ${p.name}`} />
-                            <span className="capitalize">{p.name}</span>
+                            <span className={`pokemon pokesprite ${p}`} />
+                            <span className="capitalize">{p}</span>
                           </div>
                         ))}
                     </div>

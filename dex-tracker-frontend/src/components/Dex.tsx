@@ -164,15 +164,28 @@ const Dex = (props: DexProps) => {
         </GridColumn>
       </GridRow>
       <Divider />
-      <List
-        height={720}
-        itemCount={items.filter(shouldRender).length}
-        itemData={itemData}
-        itemSize={72}
-        width={"100%"}
-      >
-        {Row}
-      </List>
+      <Hidden smDown>
+        <List
+          height={720}
+          itemCount={items.filter(shouldRender).length}
+          itemData={itemData}
+          itemSize={72}
+          width={"100%"}
+        >
+          {Row}
+        </List>
+      </Hidden>
+      <Hidden mdUp>
+        <List
+          height={320}
+          itemCount={items.filter(shouldRender).length}
+          itemData={itemData}
+          itemSize={72}
+          width={"100%"}
+        >
+          {Row}
+        </List>
+      </Hidden>
     </div>
   );
 };

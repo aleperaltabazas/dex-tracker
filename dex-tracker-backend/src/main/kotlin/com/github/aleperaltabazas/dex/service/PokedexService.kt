@@ -45,7 +45,7 @@ open class PokedexService(
     }
 
     open fun allPokedex(): List<GamePokedex> {
-        val (nationals) = gameService.all().map { gameNationalPokedex(it) }
+        val nationals = gameService.all().map { gameNationalPokedex(it) }
         val regionals = gameService.all().map { gameRegionalPokedex(it) }
 
         return regionals + nationals

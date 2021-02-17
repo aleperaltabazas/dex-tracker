@@ -1,8 +1,3 @@
-export type DexEntry = {
-  name: string;
-  number: number;
-};
-
 export type Game = {
   title: GameTitle;
   fullTitle: string;
@@ -12,7 +7,7 @@ export type Game = {
 export type PokedexType = "NATIONAL" | "REGIONAL";
 
 export type GamePokedex = {
-  pokemon: DexEntry[];
+  pokemon: string[];
   region: string;
   type: PokedexType;
   game: Game;

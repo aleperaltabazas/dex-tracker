@@ -49,9 +49,13 @@ const DexPage = (props: DexPageProps) => {
         props.session.localDex.find((d) => d.userDexId == props.match.params.id)
       );
     }
-  }, [props.match.params.id]);
+  }, [props.match.params.id, props.session.type]);
 
-  if (!props.gamePokedex.loaded || props.session.type == "UNINITIALIZED") {
+  if (
+    !props.gamePokedex.loaded ||
+    props.session.type == "UNINITIALIZED" ||
+    !dex
+  ) {
     return (
       <div className="h-100 w-100 center">
         <Loader />
@@ -63,17 +67,13 @@ const DexPage = (props: DexPageProps) => {
     return <Redirect to="/" />;
   }
 
-  if (!dex) {
-    return <Loader />;
-  }
-
   return (
     <Container
       className={classNames(classes.noOverflow, "center")}
-      key={dex?.userDexId}
+      key={dex.userDexId}
     >
       <div className={classNames(classes.container, "mt-3 mt-md-5")}>
-        <DexV2 dex={dex!} />;
+        <DexV2 dex={dex} />
       </div>
     </Container>
   );
