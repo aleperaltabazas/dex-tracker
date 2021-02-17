@@ -10,7 +10,7 @@ open class SessionService(
     private val storage: Storage,
     private val hash: HashHelper
 ) {
-    open fun createSession(userId: String) = hash.sha256(userId).also { token ->
+    open fun createSession(key: String, userId: String) = hash.sha256(key).also { token ->
         storage.insert(Collection.SESSIONS, Session(token = token, userId = userId))
     }
 

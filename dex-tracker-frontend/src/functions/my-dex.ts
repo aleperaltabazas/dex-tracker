@@ -95,17 +95,10 @@ export function applyChanges(changes: Change[]) {
           : p.caught,
     }));
 
-    console.log("a");
-
-    const a = {
+    return {
       ...d,
       pokemon: updatedMons,
       caught: updatedMons.filter((p) => p.caught).length,
     };
-
-    console.log("blah");
-    console.log(a);
-
-    return a;
   };
 }

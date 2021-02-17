@@ -49,6 +49,7 @@ class LoginServiceTest : WordSpec() {
             val login = LoginRequestDTO(
                 mail = "test@test.com",
                 localDex = emptyList(),
+                googleToken = "123",
             )
 
             "return the user with the given email" {

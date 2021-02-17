@@ -44,8 +44,6 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
   const [name, setName] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
-  console.log(props.pokedex);
-
   return (
     <React.Fragment>
       <Dialog

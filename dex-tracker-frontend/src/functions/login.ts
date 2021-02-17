@@ -29,6 +29,7 @@ export function oauthLogin(
     data: {
       mail: succ.profileObj.email,
       localDex: readLocalPokedex(),
+      googleToken: succ.tokenId,
     },
   };
 
@@ -48,7 +49,10 @@ export function oauthLogin(
       store.dispatch(updatePicture(succ.profileObj.imageUrl));
       Cookies.set("picture", succ.profileObj.imageUrl);
     })
-    .catch((err) => console.error("Error in login", err));
+    .catch((err) => {
+      console.error("Error in login", err);
+      store.dispatch(loginError());
+    });
 }
 
 export function logout(token: string) {
@@ -63,9 +67,9 @@ export function logout(token: string) {
   return fetchAllUsersDex(token)
     .then(writeLocalPokedex)
     .then(() => axios.request(config))
+    .catch(console.error)
     .then(invalidateSession)
-    .then(store.dispatch)
-    .catch(console.error);
+    .then(store.dispatch);
 }
 
 function dispatchUser(user: User) {

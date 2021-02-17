@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
 import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
+import com.github.aleperaltabazas.dex.dto.dex.LoginRequestDTO
 import com.github.aleperaltabazas.dex.dto.dex.UserDTO
 import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.service.LoginService
@@ -29,8 +30,9 @@ class LoginController(
         val user = if (dexToken != null) {
             loginService.loginFromToken(dexToken)
         } else {
-            loginService.loginFromMail(objectMapper.readValue(req.body())).also {
-                val token = sessionService.createSession(it.userId)
+            val loginRequest = objectMapper.readValue<LoginRequestDTO>(req.body())
+            loginService.loginFromMail(loginRequest).also {
+                val token = sessionService.createSession(key = loginRequest.googleToken, userId = it.userId)
                 res.cookie("/", DEX_TOKEN, token, 36000000, false)
             }
         }

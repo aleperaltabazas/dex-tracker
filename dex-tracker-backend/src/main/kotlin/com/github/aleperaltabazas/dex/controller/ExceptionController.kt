@@ -13,13 +13,16 @@ class ExceptionController(
     private val corsOrigins: List<String>
 ) : Controller {
     override fun register() {
-        exception(ApiException::class.java) { e, req, res ->
+        exception(Exception::class.java) { e, req, res ->
+            val status = when (e) {
+                is ApiException -> e.status
+                else -> 500
+            }
+
+            LOGGER.error("Error: {} - {}", status, e.message, e)
+
             if (req.servletPath().startsWith("/api/v1")) {
-                LOGGER.error("error")
-                val status = when (e) {
-                    is ApiException -> e.status
-                    else -> 500
-                }
+
                 val body = ErrorDTO(
                     status = status,
                     message = e.message,
