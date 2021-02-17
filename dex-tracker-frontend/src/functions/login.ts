@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { host } from "../config";
-import { User, UserDex } from "../types/user";
+import { User } from "../types/user";
 import Cookies from "js-cookie";
 import store from "../store";
 import {
@@ -44,7 +44,10 @@ export function oauthLogin(
       });
       writeLocalPokedex(u.pokedex);
     })
-    .then(() => store.dispatch(updatePicture(succ.profileObj.imageUrl)))
+    .then(() => {
+      store.dispatch(updatePicture(succ.profileObj.imageUrl));
+      Cookies.set("picture", succ.profileObj.imageUrl);
+    })
     .catch((err) => console.error("Error in login", err));
 }
 
@@ -82,6 +85,12 @@ export function openLocallyStoredSession() {
     axios
       .request<User>(config)
       .then((res) => store.dispatch(updateSessionState(dexToken, res.data)))
+      .then(() => {
+        const picture = Cookies.get("picture");
+        if (picture) {
+          store.dispatch(updatePicture(picture));
+        }
+      })
       .catch((err: AxiosError) => {
         console.error("Error logging in", err);
 
