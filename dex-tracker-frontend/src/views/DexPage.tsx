@@ -9,7 +9,7 @@ import { SessionState } from "../store/session";
 import { Container, makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import { UserDex } from "../types/user";
-import DexV2 from "../components/Dex";
+import Dex from "../components/Dex";
 
 type MatchParams = {
   id: string;
@@ -73,7 +73,7 @@ const DexPage = (props: DexPageProps) => {
       key={dex.userDexId}
     >
       <div className={classNames(classes.container, "mt-3 mt-md-5")}>
-        <DexV2 dex={dex} />
+        <Dex dex={dex} />
       </div>
     </Container>
   );
