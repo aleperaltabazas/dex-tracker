@@ -27,7 +27,7 @@ class UsersController(
             get("/pokedex", APPLICATION_JSON, this::usersPokedex, objectMapper::writeValueAsString)
             post("/pokedex", APPLICATION_JSON, this::createUserDex, objectMapper::writeValueAsString)
             get("/pokedex/:id", APPLICATION_JSON, this::findUserDex, objectMapper::writeValueAsString)
-            get("/:id", APPLICATION_JSON, this::findUserById, objectMapper::writeValueAsString)
+            get("/:username", APPLICATION_JSON, this::findUsername, objectMapper::writeValueAsString)
             patch("", APPLICATION_JSON, this::updateUser, objectMapper::writeValueAsString)
             patch("/pokedex", APPLICATION_JSON, this::updateUserDexCaughtStatus, objectMapper::writeValueAsString)
         }
@@ -77,13 +77,13 @@ class UsersController(
         return usersService.unsafeFindUserByToken(dexToken).let { modelMapper.mapUserToDTO(it) }
     }
 
-    private fun findUserById(req: Request, res: Response): UserDTO {
-        val userId = requireNotNull(req.params(":id")) {
+    private fun findUsername(req: Request, res: Response): UserDTO {
+        val username = requireNotNull(req.params(":username")) {
             throw BadRequestException("User id cannot be null")
         }
 
-        return usersService.findUserById(userId)?.let { modelMapper.mapUserToDTO(it) }
-            ?: throw NotFoundException("User with id $userId not found")
+        return usersService.findByUsername(username)?.let { modelMapper.mapUserToDTO(it) }
+            ?: throw NotFoundException("User with id $username not found")
     }
 
     private fun usersPokedex(req: Request, res: Response): List<UserDexDTO> {

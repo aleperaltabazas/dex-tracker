@@ -16,8 +16,8 @@ interface UserPageProps extends RouteComponentProps<MatchParams> {}
 
 const useStyles = makeStyles(() => ({
   picture: {
-    height: "64px",
-    width: "64px",
+    height: "256px",
+    width: "256px",
     borderRadius: "50%",
   },
 }));
@@ -42,9 +42,9 @@ const UserPage = (props: UserPageProps) => {
   }
 
   return (
-    <Container>
+    <Container className="mt-3">
       <Row>
-        <Column xs={3}>
+        <Column xs={12} md={3}>
           <img
             src={
               user.value.picture ||
@@ -52,6 +52,12 @@ const UserPage = (props: UserPageProps) => {
             }
             className={classes.picture}
           />
+          <div>{user.value.username}</div>
+        </Column>
+        <Column xs={12} md={9}>
+          {user.value.pokedex.map((d) => (
+            <div>{d.name || d.game.fullTitle} </div>
+          ))}
         </Column>
       </Row>
     </Container>
