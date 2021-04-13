@@ -73,6 +73,10 @@ open class UsersService(
             ?: throw NotFoundException("User dex with id $dexId not found for user ${user.userId}")
     }
 
+    open fun findUserDexByUsername(username: String, name: String): UserDex? = findByUsername(username)
+        ?.pokedex
+        ?.find { it.name == name }
+
     open fun updateCaughtStatus(token: String, status: List<CaughtStatusDTO>) {
         val user = this.unsafeFindUserByToken(token)
 

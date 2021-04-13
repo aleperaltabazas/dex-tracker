@@ -1,5 +1,7 @@
 package com.github.aleperaltabazas.dex.extension
 
+import com.github.aleperaltabazas.dex.exception.BadRequestException
+import com.github.aleperaltabazas.dex.exception.UnauthorizedException
 import spark.Request
 import spark.Response
 
@@ -10,3 +12,7 @@ fun Response.headersMap(): Map<String, String> = this.raw().let { res ->
 }
 
 fun Map<String, String>.prettyHeaders() = this.map { (k, v) -> "\"$k:${v}\"" }.joinToString(",")
+
+fun Request.paramNotNull(param: String) = requireNotNull(this.params(param)) {
+    throw BadRequestException("$param path param should not be null")
+}

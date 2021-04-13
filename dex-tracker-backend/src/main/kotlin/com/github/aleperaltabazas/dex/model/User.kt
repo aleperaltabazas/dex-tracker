@@ -30,6 +30,10 @@ data class User(
     fun update(changes: UpdateUserDTO): User = this.copy(
         username = changes.username ?: this.username,
     )
+
+    fun filterPublic(): User = this.copy(
+        pokedex = this.pokedex.filter { it.public },
+    )
 }
 
 data class UserDex(
@@ -48,6 +52,9 @@ data class UserDex(
         name = dto.name,
         pokemon = dto.pokemon,
     )
+
+    val public: Boolean
+        get() = name != null
 
     fun updateStatus(status: List<CaughtStatusDTO>) = this.copy(
         pokemon = this.pokemon.map {

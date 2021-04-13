@@ -8,6 +8,7 @@ import com.github.aleperaltabazas.dex.dto.dex.*
 import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.exception.NotFoundException
 import com.github.aleperaltabazas.dex.exception.UnauthorizedException
+import com.github.aleperaltabazas.dex.extension.paramNotNull
 import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.service.PokedexService
 import com.github.aleperaltabazas.dex.service.UsersService
@@ -28,6 +29,7 @@ class UsersController(
             post("/pokedex", APPLICATION_JSON, this::createUserDex, objectMapper::writeValueAsString)
             get("/pokedex/:id", APPLICATION_JSON, this::findUserDex, objectMapper::writeValueAsString)
             get("/:username", APPLICATION_JSON, this::findUsername, objectMapper::writeValueAsString)
+            get("/:username/pokedex/:name", APPLICATION_JSON, this::findUserPublicDex, objectMapper::writeValueAsString)
             patch("", APPLICATION_JSON, this::updateUser, objectMapper::writeValueAsString)
             patch("/pokedex", APPLICATION_JSON, this::updateUserDexCaughtStatus, objectMapper::writeValueAsString)
         }
@@ -38,11 +40,21 @@ class UsersController(
             throw UnauthorizedException("No dex-token found")
         }
 
-        val dexId = requireNotNull(req.params(":id")) {
-            throw BadRequestException(":id path param should not be null")
-        }
+        val dexId = req.paramNotNull(":id")
 
         return modelMapper.mapUserDexToDTO(usersService.findUserDex(token, dexId))
+    }
+
+    private fun findUserPublicDex(req: Request, res: Response): UserDexDTO {
+        val username = req.paramNotNull(":username")
+        val name = req.paramNotNull(":name")
+
+        return usersService.findUserDexByUsername(
+            username = username,
+            name = name,
+        )
+            ?.let { modelMapper.mapUserDexToDTO(it) }
+            ?: throw NotFoundException("User $username has no dex named $name")
     }
 
     private fun createUserDex(req: Request, res: Response): UserDexDTO {
@@ -82,7 +94,9 @@ class UsersController(
             throw BadRequestException("User id cannot be null")
         }
 
-        return usersService.findByUsername(username)?.let { modelMapper.mapUserToDTO(it) }
+        return usersService.findByUsername(username)
+            ?.filterPublic()
+            ?.let { modelMapper.mapUserToDTO(it) }
             ?: throw NotFoundException("User with id $username not found")
     }
 
