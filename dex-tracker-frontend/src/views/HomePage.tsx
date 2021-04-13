@@ -57,7 +57,11 @@ const HomePage = (props: HomePageProps) => {
       <Container>
         {props.dex.length > 0 && (
           <>
-            <Typography variant="h3" className="center-h">
+            <Typography
+              variant="h3"
+              className="center-h"
+              style={{ fontWeight: 500 }}
+            >
               My games
             </Typography>
             {props.dex.map((p) => (

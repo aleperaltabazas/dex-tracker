@@ -21,7 +21,7 @@ class ExceptionController(
 
             LOGGER.error("Error: {} - {}", status, e.message, e)
 
-            if (req.servletPath().startsWith("/api/v1")) {
+            if (req.pathInfo().startsWith("/api/v1")) {
 
                 val body = ErrorDTO(
                     status = status,

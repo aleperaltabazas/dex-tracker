@@ -44,6 +44,10 @@ open class UsersService(
                 .findOne(USER_REF)
         }
 
+    open fun findUserById(userId: String) = storage.query(Collection.USERS)
+        .where(Document("user_id", userId))
+        .findOne(USER_REF)
+
     open fun findUserByMail(mail: String) = storage.query(Collection.USERS)
         .where(Document("mail", mail))
         .findOne(USER_REF)

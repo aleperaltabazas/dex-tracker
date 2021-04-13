@@ -20,4 +20,5 @@ export type User = {
   username?: string;
   pokedex: UserDex[];
   mail: string;
+  picture?: string;
 };

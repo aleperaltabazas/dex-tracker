@@ -47,7 +47,7 @@ export function oauthLogin(
     })
     .then(() => {
       store.dispatch(updatePicture(succ.profileObj.imageUrl));
-      Cookies.set("picture", succ.profileObj.imageUrl);
+      Cookies.set("picture", succ.profileObj.imageUrl, { expires: 3600000 });
     })
     .catch((err) => {
       console.error("Error in login", err);

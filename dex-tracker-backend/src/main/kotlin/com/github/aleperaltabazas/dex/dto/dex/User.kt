@@ -7,6 +7,7 @@ data class UserDTO(
     val username: String?,
     val pokedex: List<UserDexDTO>,
     val mail: String?,
+    val picture: String?,
 )
 
 data class UserDexDTO(
@@ -29,4 +30,8 @@ data class CaughtStatusDTO(
     val pokedexId: String,
     val dexNumber: Int,
     val caught: Boolean,
+)
+
+data class UpdateUserDTO(
+    val username: String?,
 )

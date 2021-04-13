@@ -1,6 +1,7 @@
 package com.github.aleperaltabazas.dex.model
 
 import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
+import com.github.aleperaltabazas.dex.dto.dex.UpdateUserDTO
 import com.github.aleperaltabazas.dex.dto.dex.UserDexDTO
 import com.github.aleperaltabazas.dex.extension.mapIf
 
@@ -9,6 +10,7 @@ data class User(
     val username: String? = null,
     val pokedex: List<UserDex>,
     val mail: String,
+    val picture: String? = null,
 ) {
     fun owns(pokedexId: String) = pokedex.any { it.userDexId == pokedexId }
 
@@ -24,6 +26,10 @@ data class User(
             pokedex = old + new
         )
     }
+
+    fun update(changes: UpdateUserDTO): User = this.copy(
+        username = changes.username ?: this.username,
+    )
 }
 
 data class UserDex(

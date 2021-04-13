@@ -15,6 +15,7 @@ import { fetchGamesPokedex } from "./functions/pokedex";
 import { fetchGames } from "./functions/games";
 import { fireSynchronize } from "./functions/my-dex";
 import store from "./store";
+import UserPage from "./views/UserPage";
 
 const App = () => {
   useEffect(() => {
@@ -39,6 +40,11 @@ const App = () => {
         <Route
           path="/dex/:id"
           component={DexPage}
+          key={window.location.pathname}
+        />
+        <Route
+          path="/users/:id"
+          component={UserPage}
           key={window.location.pathname}
         />
         <Route path="/" exact component={HomePage} />

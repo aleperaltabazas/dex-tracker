@@ -4,16 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
 import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
-import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
-import com.github.aleperaltabazas.dex.dto.dex.CreateUserDexDTO
-import com.github.aleperaltabazas.dex.dto.dex.UserDTO
-import com.github.aleperaltabazas.dex.dto.dex.UserDexDTO
+import com.github.aleperaltabazas.dex.dto.dex.*
 import com.github.aleperaltabazas.dex.exception.BadRequestException
+import com.github.aleperaltabazas.dex.exception.NotFoundException
 import com.github.aleperaltabazas.dex.exception.UnauthorizedException
 import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.service.PokedexService
 import com.github.aleperaltabazas.dex.service.UsersService
-import org.slf4j.LoggerFactory
 import spark.Request
 import spark.Response
 import spark.Spark.*
@@ -30,6 +27,8 @@ class UsersController(
             get("/pokedex", APPLICATION_JSON, this::usersPokedex, objectMapper::writeValueAsString)
             post("/pokedex", APPLICATION_JSON, this::createUserDex, objectMapper::writeValueAsString)
             get("/pokedex/:id", APPLICATION_JSON, this::findUserDex, objectMapper::writeValueAsString)
+            get("/:id", APPLICATION_JSON, this::findUserById, objectMapper::writeValueAsString)
+            patch("", APPLICATION_JSON, this::updateUser, objectMapper::writeValueAsString)
             patch("/pokedex", APPLICATION_JSON, this::updateUserDexCaughtStatus, objectMapper::writeValueAsString)
         }
     }
@@ -78,6 +77,15 @@ class UsersController(
         return usersService.unsafeFindUserByToken(dexToken).let { modelMapper.mapUserToDTO(it) }
     }
 
+    private fun findUserById(req: Request, res: Response): UserDTO {
+        val userId = requireNotNull(req.params(":id")) {
+            throw BadRequestException("User id cannot be null")
+        }
+
+        return usersService.findUserById(userId)?.let { modelMapper.mapUserToDTO(it) }
+            ?: throw NotFoundException("User with id $userId not found")
+    }
+
     private fun usersPokedex(req: Request, res: Response): List<UserDexDTO> {
         val dexToken = requireNotNull(req.cookie(DEX_TOKEN)) {
             throw BadRequestException("User has no dex-token stored")
@@ -88,7 +96,14 @@ class UsersController(
             .let { dex -> dex.map { modelMapper.mapUserDexToDTO(it) } }
     }
 
-    companion object {
-        private val LOGGER = LoggerFactory.getLogger(UsersController::class.java)
+    private fun updateUser(req: Request, res: Response) {
+        val dexToken = requireNotNull(req.cookie(DEX_TOKEN)) {
+            throw BadRequestException("User has no dex-token stored")
+        }
+
+        val changes: UpdateUserDTO = objectMapper.readValue(req.body())
+        val user = usersService.unsafeFindUserByToken(dexToken)
+
+        usersService.updateUser(user.update(changes))
     }
 }

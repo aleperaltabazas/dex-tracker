@@ -13,6 +13,7 @@ class ModelMapper(
         username = user.username,
         pokedex = user.pokedex.map { mapUserDexToDTO(it) },
         mail = user.mail,
+        picture = user.picture,
     )
 
     fun mapUserDexToDTO(userDex: UserDex) = UserDexDTO(
