@@ -2,17 +2,18 @@ package com.github.aleperaltabazas.dex
 
 import com.github.aleperaltabazas.dex.cache.Cache
 import com.github.aleperaltabazas.dex.config.*
-import com.github.aleperaltabazas.dex.constants.*
 import com.github.aleperaltabazas.dex.controller.Controller
 import com.github.aleperaltabazas.dex.filter.LoggingFilter
 import com.github.aleperaltabazas.dex.filter.TrackingFilter
+import com.github.aleperaltabazas.dex.utils.StaticFilesResolver
 import com.google.inject.Guice
 import com.google.inject.Injector
+import com.google.inject.Key
+import com.google.inject.name.Names
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.FilterHolder
 import org.eclipse.jetty.servlet.ServletContextHandler
 import org.slf4j.LoggerFactory
-import spark.Spark.staticFiles
 import spark.servlet.SparkApplication
 import spark.servlet.SparkFilter
 import kotlin.system.exitProcess
@@ -77,6 +78,8 @@ class DexTracker {
                 MapperModule(),
                 ServiceModule(),
                 StorageModule(),
+                TemplatingModule(),
+                UtilsModule(),
             )
 
             startCaches(injector)
@@ -86,10 +89,8 @@ class DexTracker {
         override fun destroy() = caches.forEach { it.stop() }
 
         private fun registerControllers(injector: Injector) {
-            staticFiles.location("/templates")
-            staticFiles.header(CONTENT_ENCODING, GZIP)
-            staticFiles.header(KEEP_ALIVE, "timeout=5, max=1000")
-            staticFiles.header(CACHE_CONTROL, MAX_AGE_1_YEAR)
+            val resolver: StaticFilesResolver = injector.get("staticFilesResolver")
+            resolver.register()
 
             injector.allBindings.keys
                 .filter { Controller::class.java.isAssignableFrom(it.typeLiteral.rawType) }
@@ -104,6 +105,9 @@ class DexTracker {
             LoggingFilter.register()
         }
 
+        private inline fun <reified T> Injector.get(name: String): T =
+            this.getInstance(Key.get(T::class.java, Names.named(name)))
+
         private fun startCaches(injector: Injector) = injector.allBindings.keys
             .filter { Cache::class.java.isAssignableFrom(it.typeLiteral.rawType) }
             .forEach {
@@ -114,4 +118,5 @@ class DexTracker {
                 this.caches.add(cache)
             }
     }
+
 }

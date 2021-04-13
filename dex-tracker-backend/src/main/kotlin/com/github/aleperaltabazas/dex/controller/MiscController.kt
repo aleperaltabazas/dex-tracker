@@ -1,16 +1,17 @@
 package com.github.aleperaltabazas.dex.controller
 
 import com.github.aleperaltabazas.dex.constants.*
-import com.github.aleperaltabazas.dex.env.Env
+import com.github.aleperaltabazas.dex.utils.Environment
 import spark.Spark.after
 import spark.Spark.options
 
 class MiscController(
-    private val env: Env,
+    private val env: Environment,
     private val corsOrigins: List<String>,
 ) : Controller {
     override fun register() {
-        options("/*"
+        options(
+            "/*"
         ) { request, response ->
             val accessControlRequestHeaders = request
                 .headers("Access-Control-Request-Headers")
@@ -26,7 +27,7 @@ class MiscController(
         }
 
         after("/api/v1/*") { req, res ->
-            if (env == Env.DEV) {
+            if (env.isDev()) {
                 if (req.headers("Origin") in corsOrigins) {
                     res.header("Access-Control-Allow-Origin", req.headers("Origin"))
                 }

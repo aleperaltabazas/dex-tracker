@@ -25,14 +25,14 @@ cp $FRONTEND/environments/$ENV/config.ts $FRONTEND/src/config.ts
 npm install --prefix $FRONTEND
 npm run build --prefix $FRONTEND
 
-rm -rf $BACKEND_RESOURCES/templates
+rm -rf $BACKEND_RESOURCES/assets
 
-mkdir $BACKEND_RESOURCES/templates
+mkdir $BACKEND_RESOURCES/assets
+mkdir $BACKEND_RESOURCES/assets/templates
+mkdir $BACKEND_RESOURCES/assets/static
 
-cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/templates/index.hbs
-cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/templates/
-
-find $BACKEND_RESOURCES -type f -print0 | xargs -0 sed -i -e 's/\/static\//\//g'
+cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/assets/templates/index.hbs
+cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/assets/static
 
 #mvn -f $BACKEND/pom.xml heroku:deploy -Dmaven.test.skip=true
 

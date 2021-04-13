@@ -2,14 +2,14 @@ package com.github.aleperaltabazas.dex.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.dto.dex.ErrorDTO
-import com.github.aleperaltabazas.dex.env.Env
 import com.github.aleperaltabazas.dex.exception.ApiException
+import com.github.aleperaltabazas.dex.utils.Environment
 import org.slf4j.LoggerFactory
 import spark.Spark.exception
 
 class ExceptionController(
     private val objectMapper: ObjectMapper,
-    private val env: Env,
+    private val env: Environment,
     private val corsOrigins: List<String>
 ) : Controller {
     override fun register() {
@@ -33,7 +33,7 @@ class ExceptionController(
                 res.status(status)
                 res.header("content-type", "application/json")
 
-                if (env == Env.DEV) {
+                if (env.isDev()) {
                     if (req.headers("Origin") in corsOrigins) {
                         res.header("Access-Control-Allow-Origin", req.headers("Origin"))
                     }
