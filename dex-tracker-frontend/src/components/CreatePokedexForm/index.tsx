@@ -101,7 +101,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                           You can give your Pokedex a name as well!
                         </div>
                         <div className={classes.namingSecondary}>
-                          Useful if you have multiple Pokedex for the same game
+                          You can edit it later, as well
                         </div>
                       </div>
                       <FormControl fullWidth>

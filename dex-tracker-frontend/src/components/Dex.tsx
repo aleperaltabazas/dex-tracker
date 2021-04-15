@@ -7,6 +7,7 @@ import {
   Hidden,
   Input,
   InputAdornment,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
@@ -18,6 +19,9 @@ import GridColumn from "./Column";
 import { applyChanges, Change } from "../functions/my-dex";
 import store from "../store";
 import { updatePokedex as updateUserDex } from "../actions/session";
+import EditIcon from "@material-ui/icons/Edit";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import { addToSyncQueue, syncName } from "../actions/syncQueue";
 
 type DexProps = {
   dex: UserDex;
@@ -33,6 +37,8 @@ const Dex = (props: DexProps) => {
   const classes = useStyles();
 
   const [search, setSearch] = useState<string | undefined>(undefined);
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(props.dex.name);
 
   const shouldRender = useCallback(
     (p: Pokemon) =>
@@ -91,7 +97,25 @@ const Dex = (props: DexProps) => {
             className={`pokemon pokesprite ${props.dex.game.spritePokemon} pt-1`}
           />
           <span style={{ paddingBottom: "3px" }}>
-            {props.dex.name || props.dex.game.fullTitle}
+            {!isEditing && (props.dex.name || props.dex.game.fullTitle)}
+            {isEditing && (
+              <TextField
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+              />
+            )}
+          </span>
+          <span className="pl-1 2 cursor-pointer">
+            {!isEditing && <EditIcon onClick={() => setIsEditing(true)} />}
+            {isEditing && (
+              <CheckCircleIcon
+                color="action"
+                onClick={() => {
+                  setIsEditing(false);
+                  store.dispatch(syncName(name!));
+                }}
+              />
+            )}
           </span>
         </div>
       </Typography>

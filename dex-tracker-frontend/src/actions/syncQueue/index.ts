@@ -5,6 +5,16 @@ import {
   SyncQueueAction,
 } from "../../store/syncQueue";
 
+export function syncName(name: string): SyncQueueAction {
+  return {
+    type: ADD_TO_SYNC_QUEUE,
+    payload: {
+      type: "CHANGE_DEX_NAME",
+      newName: name,
+    },
+  };
+}
+
 export function addToSyncQueue(
   dexNumber: number,
   caught: boolean,
@@ -16,6 +26,7 @@ export function addToSyncQueue(
       number: dexNumber,
       caught: caught,
       dexId: dexId,
+      type: "MARK_POKEMON",
     },
   };
 }

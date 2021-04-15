@@ -3,7 +3,7 @@ import { clearSynchronizeQueue, resetTimeout } from "../actions/syncQueue";
 import { host } from "../config";
 import store from "../store";
 import { GameTitle, PokedexType } from "../types/pokedex";
-import { Sync } from "../types/sync";
+import { Sync, MarkPokemon } from "../types/sync";
 import { Pokemon, UserDex } from "../types/user";
 
 type CreateDex = {
@@ -41,10 +41,22 @@ export async function synchronize(syncQueue: Sync[]) {
 
 export function fireSynchronize(syncQueue: Sync[]) {
   const curatedSyncQueue: Sync[] = [];
+  const markPokemon: MarkPokemon[] = [];
+  let newName: string | undefined;
 
   syncQueue.reverse().forEach((s) => {
-    if (!curatedSyncQueue.some((s2) => s2.number == s.number)) {
-      curatedSyncQueue.push(s);
+    if (s.type == "MARK_POKEMON") {
+      if (
+        !curatedSyncQueue.some(
+          (s2) => s2.type == "MARK_POKEMON" && s2.number == s.number
+        )
+      ) {
+        curatedSyncQueue.push(s);
+      }
+    }
+
+    if (s.type == "CHANGE_DEX_NAME" && newName == undefined) {
+      newName = s.newName;
     }
   });
 
@@ -52,11 +64,14 @@ export function fireSynchronize(syncQueue: Sync[]) {
     url: `${host}/api/v1/users/pokedex`,
     method: "PATCH",
     withCredentials: true,
-    data: curatedSyncQueue.map((s) => ({
-      pokedexId: s.dexId,
-      dexNumber: s.number,
-      caught: s.caught,
-    })),
+    data: {
+      pokemon: markPokemon.map((s) => ({
+        pokedexId: s.dexId,
+        dexNumber: s.number,
+        caught: s.caught,
+      })),
+      newName: newName,
+    },
   };
 
   return axios.request(config);
