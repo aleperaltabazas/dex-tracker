@@ -65,13 +65,9 @@ const HomePage = (props: HomePageProps) => {
               My games
             </Typography>
             {props.dex.map((p) => (
-              <DexSummary
-                dex={p}
-                gamePokedex={
-                  props.gamePokedex.find((d) => d.game.title == p.game.title)!
-                }
-                key={p.userDexId}
-              />
+              <div className="mt-3 mb-3">
+                <DexSummary dex={p} key={p.userDexId} />
+              </div>
             ))}
           </>
         )}

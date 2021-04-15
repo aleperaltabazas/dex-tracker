@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf build && NODE_ENV=production webpack",
-    "dev": "webpack-dev-server --inline --hot --open",
+    "dev": "cp environments/dev/config.ts src/config.ts && webpack-dev-server --inline --hot --open",
     "prod": "npm run build && http-server build -p 9290",
     "start": "webpack-dev-server -w --config webpack.config.js"
   },

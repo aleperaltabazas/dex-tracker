@@ -5,6 +5,8 @@ import { LoggedInState } from "../../store/session";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import classNames from "classnames";
 import { logout } from "../../functions/login";
+import { Link } from "react-router-dom";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 type UserProps = {
   session: LoggedInState;
@@ -44,13 +46,26 @@ const User = (props: UserProps) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
+        <MenuItem>
+          <Link
+            className="normalize-link center-v"
+            to={
+              props.session.user.username
+                ? `/users/${props.session.user.username}`
+                : "/me"
+            }
+          >
+            <AccountCircleIcon className="pr-1" />
+            Profile
+          </Link>
+        </MenuItem>
         <MenuItem
           onClick={() => {
             handleClose();
             logout(props.session.token);
           }}
         >
-          <ExitToAppIcon /> Log out
+          <ExitToAppIcon className="pr-1" /> Log out
         </MenuItem>
       </Menu>
     </div>

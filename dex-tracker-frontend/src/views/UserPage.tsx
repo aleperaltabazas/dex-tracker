@@ -7,6 +7,8 @@ import Row from "../components/Row";
 import Column from "../components/Column";
 import withFetch from "../hooks/withFetch";
 import { User } from "../types/user";
+import classNames from "classnames";
+import Summary from "../components/Dex/Summary";
 
 type MatchParams = {
   id: string;
@@ -16,9 +18,14 @@ interface UserPageProps extends RouteComponentProps<MatchParams> {}
 
 const useStyles = makeStyles(() => ({
   picture: {
-    height: "256px",
-    width: "256px",
+    height: "100%",
+    width: "100%",
     borderRadius: "50%",
+    backgroundColor: "white",
+  },
+  username: {
+    fontSize: "24px",
+    fontWeight: "bolder",
   },
 }));
 
@@ -43,20 +50,25 @@ const UserPage = (props: UserPageProps) => {
 
   return (
     <Container className="mt-3">
-      <Row>
-        <Column xs={12} md={3}>
+      <Row spacing={3}>
+        <Column xs={12} md={3} className="h-100">
           <img
             src={
               user.value.picture ||
-              "https://art.ngfiles.com/images/386000/386577_stardoge_8-bit-pokeball.png?f1446737358"
+              "https://art.pixilart.com/c437aec56759fc7.png"
             }
             className={classes.picture}
           />
-          <div>{user.value.username}</div>
+          <div className={classNames("center-h mt-1", classes.username)}>
+            {user.value.username}
+          </div>
         </Column>
-        <Column xs={12} md={9}>
+        <Column xs={12} md={9} container>
+          <Column xs={12}>{user.value.username}'s pokedex!</Column>
           {user.value.pokedex.map((d) => (
-            <div>{d.name || d.game.fullTitle} </div>
+            <Column xs={12}>
+              <Summary dex={d} />
+            </Column>
           ))}
         </Column>
       </Row>
