@@ -49,11 +49,7 @@ const User = (props: UserProps) => {
         <MenuItem>
           <Link
             className="normalize-link center-v"
-            to={
-              props.session.user.username
-                ? `/users/${props.session.user.username}`
-                : "/me"
-            }
+            to={`/users/${props.session.user.userId}`}
           >
             <AccountCircleIcon className="pr-1" />
             Profile

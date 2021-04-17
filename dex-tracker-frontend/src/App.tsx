@@ -44,7 +44,7 @@ const App = () => {
           key={window.location.pathname}
         />
         <Route
-          path="/users/:id"
+          path="/users/:userId"
           component={UserPage}
           key={window.location.pathname}
         />

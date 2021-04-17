@@ -11,7 +11,7 @@ import classNames from "classnames";
 import Summary from "../components/Dex/Summary";
 
 type MatchParams = {
-  id: string;
+  userId: string;
 };
 
 interface UserPageProps extends RouteComponentProps<MatchParams> {}
@@ -32,9 +32,12 @@ const useStyles = makeStyles(() => ({
 const UserPage = (props: UserPageProps) => {
   const classes = useStyles();
 
-  const [user] = withFetch<User>({
-    path: `api/v1/users/${props.match.params.id}`,
-  });
+  const [user] = withFetch<User>(
+    {
+      path: `api/v1/users/${props.match.params.userId}`,
+    },
+    [props.match.params.userId]
+  );
 
   if (user.type == "PENDING") {
     return (
