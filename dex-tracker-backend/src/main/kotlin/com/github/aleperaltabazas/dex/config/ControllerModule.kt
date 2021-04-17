@@ -2,7 +2,6 @@ package com.github.aleperaltabazas.dex.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.controller.*
-import com.github.aleperaltabazas.dex.mapper.ModelMapper
 import com.github.aleperaltabazas.dex.service.*
 import com.github.aleperaltabazas.dex.utils.Environment
 import com.google.inject.AbstractModule
@@ -19,11 +18,9 @@ class ControllerModule : AbstractModule() {
     fun pokedexController(
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
         @Named("pokedexService") pokedexService: PokedexService,
-        @Named("modelMapper") modelMapper: ModelMapper,
     ) = PokedexController(
         objectMapper = objectMapper,
         pokedexService = pokedexService,
-        modelMapper = modelMapper,
     )
 
     @Provides
@@ -32,13 +29,13 @@ class ControllerModule : AbstractModule() {
     fun usersController(
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
         @Named("usersService") usersService: UsersService,
-        @Named("modelMapper") modelMapper: ModelMapper,
-        @Named("pokedexService") pokedexService: PokedexService
+        @Named("pokedexService") pokedexService: PokedexService,
+        @Named("sessionService") sessionService: SessionService,
     ) = UsersController(
         objectMapper = objectMapper,
         usersService = usersService,
-        modelMapper = modelMapper,
         pokedexService = pokedexService,
+        sessionService = sessionService,
     )
 
     @Provides
@@ -93,10 +90,8 @@ class ControllerModule : AbstractModule() {
     fun loginController(
         @Named("loginService") loginService: LoginService,
         @Named("objectMapperCamelCase") objectMapper: ObjectMapper,
-        @Named("modelMapper") modelMapper: ModelMapper,
         @Named("sessionService") sessionService: SessionService,
     ) = LoginController(
-        modelMapper = modelMapper,
         loginService = loginService,
         objectMapper = objectMapper,
         sessionService = sessionService,

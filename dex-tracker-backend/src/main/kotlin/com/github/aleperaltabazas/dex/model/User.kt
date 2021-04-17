@@ -1,9 +1,6 @@
 package com.github.aleperaltabazas.dex.model
 
-import com.github.aleperaltabazas.dex.dto.dex.CaughtStatusDTO
 import com.github.aleperaltabazas.dex.dto.dex.UpdateUserDTO
-import com.github.aleperaltabazas.dex.dto.dex.UserDexDTO
-import com.github.aleperaltabazas.dex.extension.mapIf
 
 data class User(
     val userId: String,
@@ -13,10 +10,6 @@ data class User(
     val picture: String? = null,
 ) {
     fun owns(pokedexId: String) = pokedex.any { it.userDexId == pokedexId }
-
-    fun updatePokedex(userDexId: String, status: List<CaughtStatusDTO>) = this.copy(
-        pokedex = this.pokedex.mapIf({ it.userDexId == userDexId }) { it.updateStatus(status) }
-    )
 
     fun mergePokedex(pokedex: List<UserDex>): User {
         val old = this.pokedex.map { pokedex.find { dex -> dex.userDexId == it.userDexId } ?: it }
@@ -31,6 +24,10 @@ data class User(
         username = changes.username ?: this.username,
     )
 
+    fun addDex(dex: UserDex) = this.copy(
+        pokedex =  pokedex + dex,
+    )
+
     fun filterPublic(): User = this.copy(
         pokedex = this.pokedex.filter { it.public },
     )
@@ -38,32 +35,14 @@ data class User(
 
 data class UserDex(
     val userDexId: String,
-    val game: String,
+    val game: Game,
     val type: PokedexType,
     val region: String,
     val name: String? = null,
     val pokemon: List<UserDexPokemon>
 ) {
-    constructor(dto: UserDexDTO) : this(
-        userDexId = dto.userDexId,
-        game = dto.game.title,
-        type = dto.type,
-        region = dto.region,
-        name = dto.name,
-        pokemon = dto.pokemon,
-    )
-
     val public: Boolean
         get() = name != null
-
-    fun updateStatus(status: List<CaughtStatusDTO>) = this.copy(
-        pokemon = this.pokemon.map {
-            it.copy(
-                caught = status.find { s -> s.dexNumber == it.dexNumber }?.caught
-                    ?: it.caught
-            )
-        }
-    )
 
     fun caught(): Int = pokemon.count { it.caught }
 }

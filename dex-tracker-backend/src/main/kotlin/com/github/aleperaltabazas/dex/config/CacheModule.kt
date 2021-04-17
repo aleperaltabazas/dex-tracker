@@ -1,7 +1,7 @@
 package com.github.aleperaltabazas.dex.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.aleperaltabazas.dex.cache.pokedex.RegionalPokedexCache
+import com.github.aleperaltabazas.dex.cache.pokedex.PokedexCache
 import com.github.aleperaltabazas.dex.connector.RestConnector
 import com.github.aleperaltabazas.dex.service.GameService
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
@@ -19,7 +19,7 @@ open class CacheModule : AbstractModule() {
         @Named("fileSystemHelper") fileSystemHelper: FileSystemHelper,
         @Named("objectMapperSnakeCase") objectMapper: ObjectMapper,
         @Named("gameService") gameService: GameService,
-    ) = RegionalPokedexCache(
+    ) = PokedexCache(
         fileSystemHelper = fileSystemHelper,
         objectMapper = objectMapper,
         pokeapiConnector = pokeapiConnector,
