@@ -1,7 +1,9 @@
 package com.github.aleperaltabazas.dex.service
 
+import arrow.core.extensions.list.foldable.nonEmpty
 import com.fasterxml.jackson.core.type.TypeReference
-import com.github.aleperaltabazas.dex.model.Session
+import com.github.aleperaltabazas.dex.dto.dex.UpdateUserDTO
+import com.github.aleperaltabazas.dex.exception.ForbiddenException
 import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.model.UserDex
 import com.github.aleperaltabazas.dex.storage.Collection
@@ -11,8 +13,20 @@ import org.bson.Document
 
 open class UsersService(
     private val storage: Storage,
+    private val sessionService: SessionService,
     private val idGenerator: IdGenerator,
 ) {
+    open fun updateUser(userId: String, changes: UpdateUserDTO): User? = findUserById(userId)
+        ?.let { user ->
+            changes.dex?.keys
+                ?.filterNot { user.owns(it) }
+                ?.takeIf { it.nonEmpty() }
+                ?.let { throw ForbiddenException("User $userId is not allowed to edit dex ${it.joinToString(",")}") }
+
+            user.update(changes)
+                .also { updateUser(it) }
+        }
+
     open fun updateUser(user: User) {
         storage.replace(Collection.USERS)
             .where(Document("user_id", user.userId))
@@ -20,13 +34,11 @@ open class UsersService(
             .replaceOne()
     }
 
-    open fun createUserDex(token: String, userDex: UserDex): User? = findUserByToken(token)
+    open fun createUserDex(userId: String, userDex: UserDex): User? = findUserById(userId)
         ?.addDex(userDex)
         ?.also { updateUser(it) }
 
-    open fun findUserByToken(token: String) = storage.query(Collection.SESSIONS)
-        .where(Document("token", token))
-        .findOne(SESSION_REF)
+    open fun findUserByToken(token: String) = sessionService.findSession(token)
         ?.let {
             storage.query(Collection.USERS)
                 .where(Document("user_id", it.userId))
@@ -45,13 +57,12 @@ open class UsersService(
         userId = idGenerator.userId(),
         username = null,
         pokedex = pokedex,
-        mail = mail
+        mail = mail,
     ).also {
         storage.insert(Collection.USERS, it)
     }
 
     companion object {
-        private val SESSION_REF = object : TypeReference<Session>() {}
         private val USER_REF = object : TypeReference<User>() {}
     }
 }

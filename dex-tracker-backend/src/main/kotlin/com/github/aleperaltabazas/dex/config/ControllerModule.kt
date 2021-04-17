@@ -2,7 +2,10 @@ package com.github.aleperaltabazas.dex.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.controller.*
-import com.github.aleperaltabazas.dex.service.*
+import com.github.aleperaltabazas.dex.service.LoginService
+import com.github.aleperaltabazas.dex.service.PokedexService
+import com.github.aleperaltabazas.dex.service.SessionService
+import com.github.aleperaltabazas.dex.service.UsersService
 import com.github.aleperaltabazas.dex.utils.Environment
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
@@ -71,17 +74,6 @@ class ControllerModule : AbstractModule() {
     ) = MiscController(
         env = env,
         corsOrigins = config.getStringList("cors.origins")
-    )
-
-    @Provides
-    @Singleton
-    @Named("gameController")
-    fun gameController(
-        @Named("gameService") gameService: GameService,
-        @Named("objectMapperCamelCase") objectMapper: ObjectMapper
-    ) = GameController(
-        gameService = gameService,
-        objectMapper = objectMapper,
     )
 
     @Provides

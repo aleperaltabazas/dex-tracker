@@ -32,10 +32,12 @@ class ServiceModule : AbstractModule() {
     @Named("usersService")
     fun usersService(
         @Named("storage") storage: Storage,
+        @Named("sessionService") sessionService: SessionService,
         @Named("idGenerator") idGenerator: IdGenerator,
     ) = UsersService(
         storage = storage,
         idGenerator = idGenerator,
+        sessionService = sessionService,
     )
 
     @Provides

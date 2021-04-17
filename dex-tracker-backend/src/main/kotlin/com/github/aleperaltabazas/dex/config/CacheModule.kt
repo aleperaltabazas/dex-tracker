@@ -2,8 +2,7 @@ package com.github.aleperaltabazas.dex.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.cache.pokedex.PokedexCache
-import com.github.aleperaltabazas.dex.connector.RestConnector
-import com.github.aleperaltabazas.dex.service.GameService
+import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
@@ -15,14 +14,12 @@ open class CacheModule : AbstractModule() {
     @Singleton
     @Named("gamePokedexCache")
     fun gamePokedexCache(
-        @Named("pokeapiConnector") pokeapiConnector: RestConnector,
         @Named("fileSystemHelper") fileSystemHelper: FileSystemHelper,
         @Named("objectMapperSnakeCase") objectMapper: ObjectMapper,
-        @Named("gameService") gameService: GameService,
+        @Named("storage") storage: Storage,
     ) = PokedexCache(
         fileSystemHelper = fileSystemHelper,
         objectMapper = objectMapper,
-        pokeapiConnector = pokeapiConnector,
-        gameService = gameService
+        storage = storage,
     )
 }

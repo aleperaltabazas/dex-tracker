@@ -1,6 +1,8 @@
 package com.github.aleperaltabazas.dex.model
 
+import com.github.aleperaltabazas.dex.dto.dex.DexUpdateDTO
 import com.github.aleperaltabazas.dex.dto.dex.UpdateUserDTO
+import com.github.aleperaltabazas.dex.extension.find
 
 data class User(
     val userId: String,
@@ -22,14 +24,15 @@ data class User(
 
     fun update(changes: UpdateUserDTO): User = this.copy(
         username = changes.username ?: this.username,
+        pokedex = pokedex.map { dex ->
+            changes.dex
+                ?.find { dexId, _ -> dexId == dex.userDexId }
+                ?.let { (_, u) -> dex.update(u) } ?: dex
+        },
     )
 
     fun addDex(dex: UserDex) = this.copy(
-        pokedex =  pokedex + dex,
-    )
-
-    fun filterPublic(): User = this.copy(
-        pokedex = this.pokedex.filter { it.public },
+        pokedex = pokedex + dex,
     )
 }
 
@@ -41,10 +44,12 @@ data class UserDex(
     val name: String? = null,
     val pokemon: List<UserDexPokemon>
 ) {
-    val public: Boolean
-        get() = name != null
-
     fun caught(): Int = pokemon.count { it.caught }
+
+    fun update(changes: DexUpdateDTO) = this.copy(
+        name = changes.name ?: this.name,
+        pokemon = this.pokemon.map { p -> p.copy(caught = p.dexNumber in changes.caught) }
+    )
 }
 
 data class UserDexPokemon(

@@ -15,7 +15,7 @@ open class PokedexService(
     private val storage: Storage,
     private val idGenerator: IdGenerator,
 ) {
-    open fun createUserDex(type: PokedexType, gameKey: String, name: String?): UserDex {
+    open fun createUserDex(gameKey: String, name: String?): UserDex {
         val pokedex = pokedexCache.pokedexOf(gameKey)
 
         return UserDex(
