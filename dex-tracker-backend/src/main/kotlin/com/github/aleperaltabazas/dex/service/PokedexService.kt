@@ -4,7 +4,10 @@ import arrow.core.Either
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.cache.pokedex.PokedexCache
 import com.github.aleperaltabazas.dex.exception.NotFoundException
-import com.github.aleperaltabazas.dex.model.*
+import com.github.aleperaltabazas.dex.model.Game
+import com.github.aleperaltabazas.dex.model.Pokemon
+import com.github.aleperaltabazas.dex.model.UserDex
+import com.github.aleperaltabazas.dex.model.UserDexPokemon
 import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.IdGenerator
@@ -15,6 +18,8 @@ open class PokedexService(
     private val storage: Storage,
     private val idGenerator: IdGenerator,
 ) {
+    open fun allPokedex() = pokedexCache.get()
+
     open fun createUserDex(gameKey: String, name: String?): UserDex {
         val pokedex = pokedexCache.pokedexOf(gameKey)
 

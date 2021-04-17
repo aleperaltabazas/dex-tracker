@@ -12,9 +12,6 @@ const defaultRootState: RootState = {
   pokedex: {
     loaded: false,
   },
-  games: {
-    loaded: false,
-  },
   global: {
     menuOpen: false,
     createDexFormOpen: false,

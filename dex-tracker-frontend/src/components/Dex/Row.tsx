@@ -35,8 +35,6 @@ const Row = (props: RowProps) => {
       store.dispatch(
         addToSyncQueue(item.dexNumber, !item.caught, props.data.dexId)
       );
-    } else if (props.session.type == "NOT_LOGGED_IN") {
-      updateCaughtLocalPokedex(props.data.dexId, item.dexNumber, !item.caught);
     }
     togglePokemonCaught(item.dexNumber);
   };

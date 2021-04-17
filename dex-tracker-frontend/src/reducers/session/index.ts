@@ -5,7 +5,6 @@ import {
   LoggedInState,
   LOG_IN_ACTION,
   LOG_IN_ERROR,
-  NOT_LOGGED_IN,
   SessionAction,
   SessionState,
   UNINITIALIZE_SESSION,
@@ -24,8 +23,7 @@ function sessionReducer(
   switch (action.type) {
     case INVALIDATE_SESSION: {
       return {
-        type: "NOT_LOGGED_IN",
-        localDex: readLocalPokedex(),
+        type: "UNINITIALIZED",
       };
     }
     case LOG_IN_ACTION: {
@@ -48,12 +46,6 @@ function sessionReducer(
           };
 
           return newState;
-        }
-        case "NOT_LOGGED_IN": {
-          return {
-            ...state,
-            localDex: state.localDex.concat(action.payload),
-          };
         }
         default:
           return state;
@@ -79,14 +71,6 @@ function sessionReducer(
             },
           };
         }
-        case "NOT_LOGGED_IN": {
-          return {
-            ...state,
-            localDex: state.localDex.map((d) =>
-              d.userDexId == action.payload.dexId ? action.payload.update(d) : d
-            ),
-          };
-        }
         default:
           return state;
       }
@@ -100,12 +84,6 @@ function sessionReducer(
       }
 
       return state;
-    }
-    case NOT_LOGGED_IN: {
-      return {
-        type: NOT_LOGGED_IN,
-        localDex: readLocalPokedex(),
-      };
     }
     default: {
       return state;

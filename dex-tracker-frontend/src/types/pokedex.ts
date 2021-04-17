@@ -1,24 +1,20 @@
 export type Game = {
-  title: GameTitle;
-  fullTitle: string;
-  spritePokemon: string;
+  name: string;
+  displayName: string;
 };
 
 export type PokedexType = "NATIONAL" | "REGIONAL";
 
-export type GamePokedex = {
-  pokemon: string[];
+export type Pokedex = {
+  name: string;
+  displayName: string;
   region: string;
   type: PokedexType;
-  game: Game;
+  gen: number;
+  entries: Array<DexEntry>;
 };
 
-export type GameTitle =
-  | "rby"
-  | "gsc"
-  | "rse"
-  | "dp"
-  | "pt"
-  | "hgss"
-  | "bw"
-  | "b2w2";
+export type DexEntry = {
+  name: string;
+  number: number;
+};

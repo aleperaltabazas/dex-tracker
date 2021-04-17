@@ -11,8 +11,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import HomePage from "./views/HomePage";
 import DexPage from "./views/DexPage";
 import { openLocallyStoredSession } from "./functions/login";
-import { fetchGamesPokedex } from "./functions/pokedex";
-import { fetchGames } from "./functions/games";
+import { fetchPokedex } from "./functions/pokedex";
 import { fireSynchronize } from "./functions/my-dex";
 import store from "./store";
 import UserPage from "./views/UserPage";
@@ -20,8 +19,7 @@ import UserPage from "./views/UserPage";
 const App = () => {
   useEffect(() => {
     openLocallyStoredSession();
-    fetchGamesPokedex();
-    fetchGames();
+    fetchPokedex();
 
     window.addEventListener("beforeunload", (e) => {
       const sync = store.getState().syncQueue;

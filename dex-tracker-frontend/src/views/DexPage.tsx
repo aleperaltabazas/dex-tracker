@@ -10,9 +10,11 @@ import { Container, makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import { UserDex } from "../types/user";
 import Dex from "../components/Dex";
+import withUserDex from "../hooks/withUserDex";
 
 type MatchParams = {
-  id: string;
+  userId: string;
+  dexId: string;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -34,27 +36,16 @@ interface DexPageProps extends RouteComponentProps<MatchParams> {
 const DexPage = (props: DexPageProps) => {
   const classes = useStyles();
 
-  const [dex, setDex] = useState<UserDex | undefined>();
-
-  useEffect(() => {
-    setDex(undefined);
-    if (props.session.type == "LOGGED_IN") {
-      setDex(
-        props.session.user.pokedex.find(
-          (d) => d.userDexId == props.match.params.id
-        )
-      );
-    } else if (props.session.type == "NOT_LOGGED_IN") {
-      setDex(
-        props.session.localDex.find((d) => d.userDexId == props.match.params.id)
-      );
-    }
-  }, [props.match.params.id, props.session.type]);
+  const [dex] = withUserDex(
+    props.match.params.userId,
+    props.match.params.dexId,
+    [props.match.params.userId, props.match.params.dexId]
+  );
 
   if (
     !props.gamePokedex.loaded ||
     props.session.type == "UNINITIALIZED" ||
-    !dex
+    dex.type == "PENDING"
   ) {
     return (
       <div className="h-100 w-100 center">
@@ -67,13 +58,17 @@ const DexPage = (props: DexPageProps) => {
     return <Redirect to="/" />;
   }
 
+  if (dex.type == "ERROR") {
+    return <div>Se rompió algo perro</div>;
+  }
+
   return (
     <Container
       className={classNames(classes.noOverflow, "center")}
-      key={dex.userDexId}
+      key={dex.value.userDexId}
     >
       <div className={classNames(classes.container, "mt-3 mt-md-5")}>
-        <Dex dex={dex} />
+        <Dex dex={dex.value} />
       </div>
     </Container>
   );

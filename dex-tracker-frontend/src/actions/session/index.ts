@@ -5,7 +5,6 @@ import {
   LOG_IN_ERROR,
   UPDATE_USER_DEX,
   UPDATE_PICTURE,
-  NOT_LOGGED_IN,
   UNINITIALIZE_SESSION,
   ADD_USER_DEX,
 } from "../../store/session";
@@ -31,12 +30,6 @@ export function updateSessionState(token: string, user: User): SessionAction {
       user,
       type: "LOGGED_IN",
     },
-  };
-}
-
-export function notLoggedIn(): SessionAction {
-  return {
-    type: NOT_LOGGED_IN,
   };
 }
 

@@ -1,12 +1,4 @@
-import {
-  Box,
-  createStyles,
-  Hidden,
-  makeStyles,
-  Paper,
-  Typography,
-  withStyles,
-} from "@material-ui/core";
+import { makeStyles, Paper, Typography } from "@material-ui/core";
 import React from "react";
 import { hot } from "react-hot-loader";
 import DexLink from "../Links/Dex";
@@ -37,11 +29,9 @@ const Summary = (props: SummaryProps) => {
         <div className={classNames("center-v", classes.summary)}>
           <Typography variant="h4">
             <div className="center-v ellipsis">
-              <span
-                className={`pokesprite pokemon ${props.dex.game.spritePokemon} pt-1 pr-1`}
-              />
+              <span className={`pokesprite pokemon bulbasaur pt-1 pr-1`} />
               <span className={classNames(classes.title, "bold")}>
-                {props.dex.name || props.dex.game.fullTitle}
+                {props.dex.name || props.dex.game.displayName}
               </span>
             </div>
           </Typography>

@@ -15,7 +15,7 @@ import React, { useState } from "react";
 import { hot } from "react-hot-loader";
 import Column from "../../components/Column";
 import Row from "../../components/Row";
-import { Game, GamePokedex, GameTitle, PokedexType } from "../../types/pokedex";
+import { Game, Pokedex } from "../../types/pokedex";
 import classNames from "classnames";
 import { createPokedex } from "../../functions/my-dex";
 import { addUserDex } from "../../actions/session";
@@ -30,8 +30,7 @@ import { addLocalPokedex } from "../../functions/storage";
 import { SessionState } from "../../store/session";
 
 interface CreatePokedexFormProps extends RouteComponentProps {
-  pokedex: GamePokedex[];
-  games: Game[];
+  pokedex: Pokedex[];
   open: boolean;
   session: SessionState;
 }
@@ -39,8 +38,7 @@ interface CreatePokedexFormProps extends RouteComponentProps {
 const CreatePokedexForm = (props: CreatePokedexFormProps) => {
   const classes = useStyles();
 
-  const [game, setGame] = useState<GameTitle>("gsc");
-  const [type, setType] = useState<PokedexType>("REGIONAL");
+  const [game, setGame] = useState<string>("gsc-national");
   const [name, setName] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
@@ -66,32 +64,17 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                   <Row spacing={2}>
                     <Column md={6} xs={12}>
                       <FormControl fullWidth>
-                        <InputLabel>Game</InputLabel>
+                        <InputLabel>Pokedex</InputLabel>
                         <Select
                           fullWidth
-                          onChange={(e) => setGame(e.target.value as GameTitle)}
+                          onChange={(e) => setGame(e.target.value as string)}
                           value={game}
                         >
-                          {props.games.map((g, idx) => (
-                            <MenuItem key={idx} value={g.title}>
-                              {g.fullTitle}
+                          {props.pokedex.map((g, idx) => (
+                            <MenuItem key={idx} value={g.name}>
+                              {g.displayName}
                             </MenuItem>
                           ))}
-                        </Select>
-                      </FormControl>
-                    </Column>
-                    <Column md={6} xs={12}>
-                      <FormControl fullWidth>
-                        <InputLabel>Pokedex type</InputLabel>
-                        <Select
-                          fullWidth
-                          onChange={(e, t) =>
-                            setType(e.target.value as PokedexType)
-                          }
-                          value={type}
-                        >
-                          <MenuItem value={"NATIONAL"}>National</MenuItem>
-                          <MenuItem value={"REGIONAL"}>Regional</MenuItem>
                         </Select>
                       </FormControl>
                     </Column>
@@ -101,7 +84,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                           You can give your Pokedex a name as well!
                         </div>
                         <div className={classes.namingSecondary}>
-                          You can edit it later, as well
+                          You can change it later, as well
                         </div>
                       </div>
                       <FormControl fullWidth>
@@ -119,11 +102,11 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                   <div className={classes.pokemonColumn}>
                     <div className={classes.overflowScrollMd}>
                       {props.pokedex
-                        .find((p) => p.game.title == game && p.type == type)
-                        ?.pokemon.map((p, idx) => (
-                          <div key={idx}>
+                        .find((p) => p.name == game)
+                        ?.entries.map((p) => (
+                          <div key={p.number}>
                             <span className="pl-1 pl-md-3 pr-md-1">
-                              {idx + 1}
+                              {p.number}
                             </span>
                             <span className={`pokemon pokesprite ${p}`} />
                             <span className="capitalize">{p}</span>
@@ -148,16 +131,14 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
           <Button
             onClick={() => {
               setLoading(true);
-              createPokedex({ game, type, name })
+              createPokedex({ game, name }, props.session)
                 .then((dex) => {
-                  if (props.session.type == "NOT_LOGGED_IN") {
-                    addLocalPokedex(dex);
-                  }
                   props.history.push(`/dex/${dex.userDexId}`);
                   return dex;
                 })
                 .then(addUserDex)
                 .then(store.dispatch)
+
                 .then(() => {
                   setLoading(false);
                   store.dispatch(closeCreateDexForm());
@@ -179,7 +160,6 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
 };
 
 const mapStateToProps = (root: RootState) => ({
-  games: root.games.loaded ? root.games.games : [],
   pokedex: root.pokedex.loaded ? root.pokedex.pokedex : [],
   open: root.global.createDexFormOpen,
   session: root.session,

@@ -1,30 +1,42 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { clearSynchronizeQueue, resetTimeout } from "../actions/syncQueue";
 import { host } from "../config";
+import withFetch, { FetchStatus } from "../hooks/withFetch";
+import withUserDex from "../hooks/withUserDex";
 import store from "../store";
-import { GameTitle, PokedexType } from "../types/pokedex";
+import { LoggedInState, SessionState } from "../store/session";
 import { Sync, MarkPokemon } from "../types/sync";
 import { Pokemon, UserDex } from "../types/user";
+import { addLocalPokedex, readLocalPokedex } from "./storage";
 
 type CreateDex = {
-  game: GameTitle;
-  type: PokedexType;
+  game: string;
   name?: string;
 };
 
-export async function createPokedex({ game, type, name }: CreateDex) {
-  let config: AxiosRequestConfig = {
-    url: `${host}/api/v1/users/pokedex`,
-    method: "POST",
-    withCredentials: true,
-    data: {
-      game: game,
-      type: type,
-      name: name,
-    },
-  };
+export async function createPokedex(
+  { game, name }: CreateDex,
+  session: SessionState
+): Promise<UserDex> {
+  switch (session.type) {
+    case "LOGGED_IN": {
+      let config: AxiosRequestConfig = {
+        url: `${host}/api/v1/pokedex`,
+        method: "POST",
+        withCredentials: true,
+        data: {
+          game: game,
+          name: name,
+        },
+      };
 
-  return axios.request<UserDex>(config).then((res) => res.data);
+      return axios.request<UserDex>(config).then((res) => res.data);
+    }
+    default:
+      return Promise.reject(
+        new Error(`Illegal session state: ${session.type}`)
+      );
+  }
 }
 
 export async function synchronize(syncQueue: Sync[]) {

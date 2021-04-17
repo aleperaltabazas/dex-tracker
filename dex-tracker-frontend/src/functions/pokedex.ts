@@ -2,16 +2,16 @@ import axios, { AxiosRequestConfig } from "axios";
 import { loadPokedex } from "../actions/pokedex";
 import { host } from "../config";
 import store from "../store";
-import { GamePokedex } from "../types/pokedex";
+import { Pokedex } from "../types/pokedex";
 
-export function fetchGamesPokedex() {
+export function fetchPokedex() {
   const config: AxiosRequestConfig = {
     method: "GET",
     url: `${host}/api/v1/pokedex`,
   };
 
   axios
-    .request<GamePokedex[]>(config)
+    .request<Array<Pokedex>>(config)
     .then((res) => res.data)
     .then(loadPokedex)
     .then(store.dispatch)

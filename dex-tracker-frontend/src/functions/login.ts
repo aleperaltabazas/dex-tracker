@@ -6,7 +6,6 @@ import store from "../store";
 import {
   invalidateSession,
   loginError,
-  notLoggedIn,
   uninitialize,
   updatePicture,
   updateSessionState,
@@ -100,12 +99,12 @@ export function openLocallyStoredSession() {
 
         if (err.response?.status == 404) {
           Cookies.remove("dex-token");
-          store.dispatch(notLoggedIn());
+          store.dispatch(uninitialize());
         } else {
           store.dispatch(loginError());
         }
       });
   } else {
-    store.dispatch(notLoggedIn());
+    store.dispatch(uninitialize());
   }
 }

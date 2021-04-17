@@ -93,11 +93,9 @@ const Dex = (props: DexProps) => {
     <div className={classes.root}>
       <Typography variant="h5">
         <div className={classNames("bold", "center-v", "pb-1")}>
-          <span
-            className={`pokemon pokesprite ${props.dex.game.spritePokemon} pt-1`}
-          />
+          <span className={`pokemon pokesprite bulbasaur pt-1`} />
           <span style={{ paddingBottom: "3px" }}>
-            {!isEditing && (props.dex.name || props.dex.game.fullTitle)}
+            {!isEditing && (props.dex.name || props.dex.game.displayName)}
             {isEditing && (
               <TextField
                 onChange={(e) => setName(e.target.value)}

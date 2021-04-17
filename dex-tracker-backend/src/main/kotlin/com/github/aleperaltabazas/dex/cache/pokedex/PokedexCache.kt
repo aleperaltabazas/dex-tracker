@@ -16,7 +16,7 @@ open class PokedexCache(
     fileSystemHelper: FileSystemHelper,
     objectMapper: ObjectMapper,
 ) : Cache<List<Pokedex>>(
-    name = "regional-dex-cache",
+    name = "pokedex-cache",
     saveToDisk = true,
     fileSystemHelper = fileSystemHelper,
     objectMapper = objectMapper,

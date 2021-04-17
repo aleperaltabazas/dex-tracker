@@ -14,7 +14,6 @@ import store from "../../store";
 import classNames from "classnames";
 import CloseMenu from "./Close";
 import { UserDex } from "../../types/user";
-import { Game } from "../../types/pokedex";
 import { AddCircle } from "@material-ui/icons";
 import { RouteComponentProps, withRouter } from "react-router";
 import DexLink from "../Links/Dex";
@@ -41,7 +40,6 @@ type Anchor = "top" | "left" | "bottom" | "right";
 interface MenuProps extends RouteComponentProps {
   open: boolean;
   userDex: UserDex[];
-  games: Game[];
 }
 
 const Menu = (props: MenuProps) => {
@@ -104,12 +102,10 @@ const Menu = (props: MenuProps) => {
                       }}
                     >
                       <ListItemIcon>
-                        <span
-                          className={`pokesprite pokemon ${dex.game?.spritePokemon}`}
-                        />
+                        <span className={`pokesprite pokemon bulbasaur`} />
                       </ListItemIcon>
                       <ListItemText>
-                        <span>{dex.name || dex.game?.fullTitle}</span>
+                        <span>{dex.name || dex.game.displayName}</span>
                       </ListItemText>
                     </ListItem>
                   </DexLink>
@@ -147,9 +143,6 @@ const mapStateToProps = (root: RootState) => {
     case "LOGGED_IN":
       userDex = root.session.user.pokedex;
       break;
-    case "NOT_LOGGED_IN":
-      userDex = readLocalPokedex();
-      break;
     default:
       userDex = [];
       break;
@@ -158,7 +151,6 @@ const mapStateToProps = (root: RootState) => {
   return {
     open: root.global.menuOpen,
     userDex: userDex,
-    games: root.games.loaded ? root.games.games : [],
   };
 };
 

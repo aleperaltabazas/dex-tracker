@@ -1,10 +1,10 @@
-import { GamePokedex } from "../../types/pokedex";
+import { Pokedex } from "../../types/pokedex";
 
 export const UPDATE_POKEDEX = "UPDATE_POKEDEX";
 
 interface UpdatePokedexAction {
   type: typeof UPDATE_POKEDEX;
-  payload: GamePokedex[];
+  payload: Pokedex[];
 }
 
 export type PokedexAction = UpdatePokedexAction;
@@ -15,7 +15,7 @@ export type PokedexNotLoaded = {
 
 export type PokedexLoaded = {
   loaded: true;
-  pokedex: GamePokedex[];
+  pokedex: Pokedex[];
 };
 
 export type PokedexState = PokedexLoaded | PokedexNotLoaded;

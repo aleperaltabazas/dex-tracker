@@ -6,18 +6,16 @@ import { SessionState } from "../store/session";
 import { connect } from "react-redux";
 import classNames from "classnames";
 import { Container, makeStyles, Typography } from "@material-ui/core";
-import { GamesState } from "../store/games";
 import store from "../store";
 import { openCreateDexForm } from "../actions/global";
 import Loader from "../components/Loader";
 import DexSummary from "../components/Dex/Summary";
 import { UserDex } from "../types/user";
-import { GamePokedex } from "../types/pokedex";
+import { Pokedex } from "../types/pokedex";
 
 type HomePageProps = {
   pokedex: PokedexState;
   session: SessionState;
-  games: GamesState;
 };
 
 const useStyles = makeStyles({
@@ -37,11 +35,7 @@ const HomePage = (props: HomePageProps) => {
     return <div>se rompió algo perrito :(</div>;
   }
 
-  if (
-    props.session.type == "UNINITIALIZED" ||
-    !props.pokedex.loaded ||
-    !props.games.loaded
-  ) {
+  if (props.session.type == "UNINITIALIZED" || !props.pokedex.loaded) {
     return (
       <div className="center h-100 w-100">
         <Loader />
@@ -49,10 +43,7 @@ const HomePage = (props: HomePageProps) => {
     );
   }
 
-  const PokedexList = (props: {
-    gamePokedex: GamePokedex[];
-    dex: UserDex[];
-  }) => (
+  const PokedexList = (props: { gamePokedex: Pokedex[]; dex: UserDex[] }) => (
     <div className="mt-5 h-100">
       <Container>
         {props.dex.length > 0 && (
@@ -92,18 +83,9 @@ const HomePage = (props: HomePageProps) => {
     </div>
   );
 
-  if (props.session.type == "LOGGED_IN") {
-    return (
-      <PokedexList
-        dex={props.session.user.pokedex}
-        gamePokedex={props.pokedex.pokedex}
-      />
-    );
-  }
-
   return (
     <PokedexList
-      dex={props.session.localDex}
+      dex={props.session.user.pokedex}
       gamePokedex={props.pokedex.pokedex}
     />
   );
@@ -112,7 +94,6 @@ const HomePage = (props: HomePageProps) => {
 const mapStateToProps = (root: RootState) => ({
   session: root.session,
   pokedex: root.pokedex,
-  games: root.games,
 });
 
 export default hot(module)(connect(mapStateToProps)(HomePage));
