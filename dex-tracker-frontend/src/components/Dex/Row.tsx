@@ -10,7 +10,6 @@ import { RootState } from "../../reducers";
 import { connect } from "react-redux";
 import { SessionState } from "../../store/session";
 import store from "../../store";
-import { addToSyncQueue } from "../../actions/syncQueue";
 
 type RowProps = {
   style: React.CSSProperties;
@@ -29,14 +28,7 @@ const Row = (props: RowProps) => {
   const item = displayedItems[props.index];
   const classes = useStyles();
 
-  const handleOnClick = () => {
-    if (props.session.type == "LOGGED_IN") {
-      store.dispatch(
-        addToSyncQueue(item.dexNumber, !item.caught, props.data.dexId)
-      );
-    }
-    togglePokemonCaught(item.dexNumber);
-  };
+  const handleOnClick = () => togglePokemonCaught(item.dexNumber);
 
   return (
     <GridRow

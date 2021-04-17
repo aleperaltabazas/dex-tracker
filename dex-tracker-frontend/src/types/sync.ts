@@ -1,13 +1,10 @@
-export type MarkPokemon = {
-  number: number;
-  caught: boolean;
+export type Sync = {
   dexId: string;
-  type: "MARK_POKEMON";
+  name?: string;
+  caught?: Array<number>;
 };
 
-export type ChangeDexName = {
-  newName: string;
-  type: "CHANGE_DEX_NAME";
+export type DexUpdate = {
+  name?: string;
+  caught?: Array<number>;
 };
-
-export type Sync = MarkPokemon | ChangeDexName;

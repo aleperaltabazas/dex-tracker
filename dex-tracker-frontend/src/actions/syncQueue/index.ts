@@ -1,32 +1,35 @@
 import {
-  ADD_TO_SYNC_QUEUE,
+  UPDATE_DEX,
   CLEAR_SYNCHRONIZE_QUEUE,
   RESET_TIMEOUT,
   SyncQueueAction,
 } from "../../store/syncQueue";
 
-export function syncName(name: string): SyncQueueAction {
+export function updateDexName({
+  dexId,
+  name,
+}: {
+  dexId: string;
+  name: string;
+}): SyncQueueAction {
   return {
-    type: ADD_TO_SYNC_QUEUE,
+    type: UPDATE_DEX,
     payload: {
-      type: "CHANGE_DEX_NAME",
-      newName: name,
+      dexId,
+      name,
     },
   };
 }
 
-export function addToSyncQueue(
-  dexNumber: number,
-  caught: boolean,
-  dexId: string
+export function caughtPokemon(
+  dexId: string,
+  caught: Array<number>
 ): SyncQueueAction {
   return {
-    type: ADD_TO_SYNC_QUEUE,
+    type: UPDATE_DEX,
     payload: {
-      number: dexNumber,
-      caught: caught,
-      dexId: dexId,
-      type: "MARK_POKEMON",
+      dexId,
+      caught,
     },
   };
 }

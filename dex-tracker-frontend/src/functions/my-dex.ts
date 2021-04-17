@@ -3,7 +3,7 @@ import { clearSynchronizeQueue, resetTimeout } from "../actions/syncQueue";
 import { host } from "../config";
 import store from "../store";
 import { SessionState } from "../store/session";
-import { Sync, MarkPokemon } from "../types/sync";
+import { DexUpdate, Sync } from "../types/sync";
 import { Pokemon, UserDex } from "../types/user";
 
 type CreateDex = {
@@ -36,9 +36,9 @@ export async function createPokedex(
   }
 }
 
-export async function synchronize(syncQueue: Sync[]) {
+export async function synchronize(userId: string, syncQueue: Array<Sync>) {
   if (syncQueue.length > 0) {
-    fireSynchronize(syncQueue)
+    fireSynchronize(userId, syncQueue)
       .then(() => {
         store.dispatch(clearSynchronizeQueue());
       })
@@ -48,52 +48,25 @@ export async function synchronize(syncQueue: Sync[]) {
   }
 }
 
-export function fireSynchronize(syncQueue: Sync[]) {
-  const curatedSyncQueue: Sync[] = [];
-  const markPokemon: MarkPokemon[] = [];
-  let newName: string | undefined;
-
-  syncQueue.reverse().forEach((s) => {
-    if (s.type == "MARK_POKEMON") {
-      if (
-        !curatedSyncQueue.some(
-          (s2) => s2.type == "MARK_POKEMON" && s2.number == s.number
-        )
-      ) {
-        curatedSyncQueue.push(s);
-      }
-    }
-
-    if (s.type == "CHANGE_DEX_NAME" && newName == undefined) {
-      newName = s.newName;
-    }
+export function fireSynchronize(userId: string, syncQueue: Array<Sync>) {
+  const dex: any = {};
+  syncQueue.forEach((u) => {
+    dex[u.dexId] = {
+      caught: u.caught,
+      name: u.name,
+    };
   });
 
   let config: AxiosRequestConfig = {
-    url: `${host}/api/v1/users/pokedex`,
+    url: `${host}/api/v1/users/${userId}`,
     method: "PATCH",
     withCredentials: true,
     data: {
-      pokemon: markPokemon.map((s) => ({
-        pokedexId: s.dexId,
-        dexNumber: s.number,
-        caught: s.caught,
-      })),
-      newName: newName,
+      dex: dex,
     },
   };
 
   return axios.request(config);
-}
-
-export async function fetchAllUsersDex(token: string) {
-  let config: AxiosRequestConfig = {
-    method: "GET",
-    url: `${host}/api/v1/users/pokedex`,
-    withCredentials: true,
-  };
-
-  return axios.request<Array<UserDex>>(config).then((res) => res.data);
 }
 
 export type Change = {
@@ -101,22 +74,11 @@ export type Change = {
   caught: boolean;
 };
 
-export function applyChanges(changes: Change[]) {
-  const curatedChanges: Change[] = [];
-  changes.reverse().forEach((c) => {
-    if (!curatedChanges.some((cc) => cc.number == c.number)) {
-      curatedChanges.push(c);
-    }
-  });
-
+export function applyChanges(changes: Array<number>) {
   return (d: UserDex): UserDex => {
     const updatedMons: Pokemon[] = d.pokemon.map((p) => ({
       ...p,
-      caught:
-        curatedChanges.find((cc) => cc.number == p.dexNumber)?.caught !=
-        undefined
-          ? curatedChanges.find((cc) => cc.number == p.dexNumber)!.caught
-          : p.caught,
+      caught: changes.includes(p.dexNumber),
     }));
 
     return {

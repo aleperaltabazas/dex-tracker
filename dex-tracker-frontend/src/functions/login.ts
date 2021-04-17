@@ -15,7 +15,6 @@ import {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from "react-google-login";
-import { fetchAllUsersDex } from "./my-dex";
 
 export function oauthLogin(
   response: GoogleLoginResponse | GoogleLoginResponseOffline
@@ -61,8 +60,8 @@ export function logout(token: string) {
 
   store.dispatch(uninitialize());
 
-  return fetchAllUsersDex(token)
-    .then(() => axios.request(config))
+  return axios
+    .request(config)
     .catch(console.error)
     .then(invalidateSession)
     .then(store.dispatch);

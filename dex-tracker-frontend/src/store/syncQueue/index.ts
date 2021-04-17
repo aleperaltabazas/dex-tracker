@@ -1,11 +1,11 @@
 import { Sync } from "../../types/sync";
 
-export const ADD_TO_SYNC_QUEUE = "ADD_TO_SYNC_QUEUE";
+export const UPDATE_DEX = "UPDATE_DEX";
 export const CLEAR_SYNCHRONIZE_QUEUE = "CLEAR_SYNCHRONIZE_QUEUE";
 export const RESET_TIMEOUT = "RESET_TIMEOUT";
 
-interface AddToSyncQueueAction {
-  type: typeof ADD_TO_SYNC_QUEUE;
+interface UpdateDexAction {
+  type: typeof UPDATE_DEX;
   payload: Sync;
 }
 
@@ -18,11 +18,11 @@ interface ResetTimeoutAction {
 }
 
 export type SyncQueueAction =
-  | AddToSyncQueueAction
+  | UpdateDexAction
   | ClearSynchronzieQueueAction
   | ResetTimeoutAction;
 
 export type SyncQueueState = {
-  queue: Sync[];
+  queue: Array<Sync>;
   timeout: ReturnType<typeof setTimeout> | undefined;
 };

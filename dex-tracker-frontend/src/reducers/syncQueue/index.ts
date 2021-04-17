@@ -1,10 +1,12 @@
 import { synchronize } from "../../functions/my-dex";
+import store from "../../store";
+import { LoggedInState } from "../../store/session";
 import {
-  ADD_TO_SYNC_QUEUE,
   CLEAR_SYNCHRONIZE_QUEUE,
   RESET_TIMEOUT,
   SyncQueueAction,
   SyncQueueState,
+  UPDATE_DEX,
 } from "../../store/syncQueue";
 import { Sync } from "../../types/sync";
 
@@ -23,7 +25,7 @@ function addAndDelay(state: SyncQueueState, sync: Sync) {
 
 function delaySynchroniation(state: SyncQueueState) {
   const timeout = setTimeout(
-    () => synchronize(state.queue),
+    () => synchronize(unsafeGetUserId(), state.queue),
     syncTimeout * 1000
   );
 
@@ -33,12 +35,15 @@ function delaySynchroniation(state: SyncQueueState) {
   };
 }
 
+const unsafeGetUserId = () =>
+  (store.getState().session as LoggedInState).user.userId;
+
 function syncQueueReducer(
   state = defaultSyncQueueState,
   action: SyncQueueAction
 ): SyncQueueState {
   switch (action.type) {
-    case ADD_TO_SYNC_QUEUE: {
+    case UPDATE_DEX: {
       if (state.timeout != undefined) {
         clearTimeout(state.timeout);
         return addAndDelay(state, action.payload);

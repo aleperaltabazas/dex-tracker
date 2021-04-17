@@ -21,11 +21,15 @@ const App = () => {
     fetchPokedex();
 
     window.addEventListener("beforeunload", (e) => {
-      const sync = store.getState().syncQueue;
+      const session = store.getState().session;
 
-      if (sync.queue.length != 0 && sync.timeout != undefined) {
-        clearTimeout(sync.timeout);
-        fireSynchronize(sync.queue);
+      if (session.type == "LOGGED_IN") {
+        const sync = store.getState().syncQueue;
+
+        if (sync.queue.length != 0 && sync.timeout != undefined) {
+          clearTimeout(sync.timeout);
+          fireSynchronize(session.user.userId, sync.queue);
+        }
       }
     });
   }, []);

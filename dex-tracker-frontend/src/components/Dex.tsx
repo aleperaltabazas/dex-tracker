@@ -16,22 +16,28 @@ import useStyles from "./Dex/styles";
 import classNames from "classnames";
 import GridRow from "./Row";
 import GridColumn from "./Column";
-import { applyChanges, Change } from "../functions/my-dex";
+import { applyChanges } from "../functions/my-dex";
 import store from "../store";
 import { updatePokedex as updateUserDex } from "../actions/session";
 import EditIcon from "@material-ui/icons/Edit";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import { addToSyncQueue, syncName } from "../actions/syncQueue";
+import { caughtPokemon, updateDexName } from "../actions/syncQueue";
 
 type DexProps = {
   dex: UserDex;
 };
 
 const Dex = (props: DexProps) => {
-  const changes = useRef<Array<Change>>([]);
+  const changes = useRef<Array<number>>(
+    props.dex.pokemon.filter((p) => p.caught).map((p) => p.dexNumber)
+  );
 
   const handleChange = (b: boolean, n: number) => {
-    changes.current.push({ number: n, caught: b });
+    if (b && !changes.current.includes(n)) {
+      changes.current.push(n);
+    } else if (!b && changes.current.includes(n)) {
+      changes.current = changes.current.filter((n) => n != n);
+    }
   };
 
   const classes = useStyles();
@@ -76,16 +82,12 @@ const Dex = (props: DexProps) => {
 
   useEffect(() => {
     return () => {
-      const curatedChanges: Change[] = [];
-      changes.current.reverse().forEach((c) => {
-        if (!curatedChanges.some((cc) => cc.number == c.number)) {
-          curatedChanges.push(c);
-        }
-      });
-
       store.dispatch(
-        updateUserDex(props.dex.userDexId, applyChanges(curatedChanges))
+        updateUserDex(props.dex.userDexId, applyChanges(changes.current))
       );
+      if (changes.current.length > 0) {
+        store.dispatch(caughtPokemon(props.dex.userDexId, changes.current));
+      }
     };
   }, [props.dex.userDexId]);
 
@@ -110,7 +112,9 @@ const Dex = (props: DexProps) => {
                 color="action"
                 onClick={() => {
                   setIsEditing(false);
-                  store.dispatch(syncName(name!));
+                  store.dispatch(
+                    updateDexName({ name: name!, dexId: props.dex.userDexId })
+                  );
                 }}
               />
             )}
