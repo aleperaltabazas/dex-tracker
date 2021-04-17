@@ -59,6 +59,7 @@ class UserDexTest : WordSpec() {
                         ivysaur(true),
                         venusaur(true)
                     ),
+                    caught = 2,
                 )
                 val actual = dex.copy(pokemon = listOf(bulbasaur(false), ivysaur(false), venusaur(false)))
                     .update(DexUpdateDTO(caught = listOf(2, 3)))
@@ -73,6 +74,7 @@ class UserDexTest : WordSpec() {
                         ivysaur(true),
                         venusaur(false),
                     ),
+                    caught = 1,
                 )
 
                 val actual = dex.copy(pokemon = listOf(bulbasaur(true), ivysaur(false), venusaur(false)))

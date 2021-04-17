@@ -13,15 +13,6 @@ data class User(
 ) {
     fun owns(pokedexId: String) = pokedex.any { it.userDexId == pokedexId }
 
-    fun mergePokedex(pokedex: List<UserDex>): User {
-        val old = this.pokedex.map { pokedex.find { dex -> dex.userDexId == it.userDexId } ?: it }
-        val new = pokedex.filter { old.none { dex -> dex.userDexId == it.userDexId } }
-
-        return this.copy(
-            pokedex = old + new
-        )
-    }
-
     fun update(changes: UpdateUserDTO): User = this.copy(
         username = changes.username ?: this.username,
         pokedex = pokedex.map { dex ->
@@ -42,13 +33,13 @@ data class UserDex(
     val type: PokedexType,
     val region: String,
     val name: String? = null,
-    val pokemon: List<UserDexPokemon>
+    val pokemon: List<UserDexPokemon>,
+    val caught: Int = 0,
 ) {
-    fun caught(): Int = pokemon.count { it.caught }
-
     fun update(changes: DexUpdateDTO) = this.copy(
         name = changes.name ?: this.name,
-        pokemon = this.pokemon.map { p -> p.copy(caught = p.dexNumber in changes.caught) }
+        pokemon = this.pokemon.map { p -> p.copy(caught = p.dexNumber in changes.caught) },
+        caught = changes.caught.size,
     )
 }
 

@@ -17,7 +17,7 @@ import { UserDex } from "../../types/user";
 import { AddCircle } from "@material-ui/icons";
 import { RouteComponentProps, withRouter } from "react-router";
 import DexLink from "../Links/Dex";
-import { readLocalPokedex } from "../../functions/storage";
+import { LoggedInState, SessionState } from "../../store/session";
 
 const useStyles = makeStyles({
   list: {
@@ -40,6 +40,7 @@ type Anchor = "top" | "left" | "bottom" | "right";
 interface MenuProps extends RouteComponentProps {
   open: boolean;
   userDex: UserDex[];
+  session: SessionState;
 }
 
 const Menu = (props: MenuProps) => {
@@ -79,56 +80,64 @@ const Menu = (props: MenuProps) => {
             onClick={toggleDrawer("left", false)}
             onKeyDown={toggleDrawer("left", false)}
           >
-            <List>
-              <CloseMenu />
-              <Divider />
-              <div
-                className={classNames(
-                  classes.heading,
-                  "pl-1 pt-1",
-                  "uppercase"
-                )}
-              >
-                My Pokedex
-              </div>
-              {props.userDex.map((dex) => {
-                return (
-                  <DexLink dexId={dex.userDexId} key={dex.userDexId}>
-                    <ListItem
-                      disableGutters
-                      className="cursor-pointer"
-                      onClick={() => {
-                        store.dispatch(closeMenu());
-                      }}
+            {props.session.type == "LOGGED_IN" && (
+              <List>
+                <CloseMenu />
+                <Divider />
+                <div
+                  className={classNames(
+                    classes.heading,
+                    "pl-1 pt-1",
+                    "uppercase"
+                  )}
+                >
+                  My Pokedex
+                </div>
+                {props.userDex.map((dex) => {
+                  return (
+                    <DexLink
+                      userId={(props.session as LoggedInState).user.userId}
+                      dexId={dex.userDexId}
+                      key={dex.userDexId}
                     >
-                      <ListItemIcon>
-                        <span className={`pokesprite pokemon bulbasaur`} />
-                      </ListItemIcon>
-                      <ListItemText>
-                        <span>{dex.name || dex.game.displayName}</span>
-                      </ListItemText>
-                    </ListItem>
-                  </DexLink>
-                );
-              })}
-              <Divider />
-              <ListItem
-                button
-                onClick={() => {
-                  store.dispatch(closeMenu());
-                  store.dispatch(openCreateDexForm());
-                }}
-              >
-                <ListItemIcon>
-                  <AddCircle />
-                </ListItemIcon>
-                <ListItemText>
-                  <span className={classNames("uppercase", classes.newPokedex)}>
-                    New Pokedex
-                  </span>
-                </ListItemText>
-              </ListItem>
-            </List>
+                      <ListItem
+                        disableGutters
+                        className="cursor-pointer"
+                        onClick={() => {
+                          store.dispatch(closeMenu());
+                        }}
+                      >
+                        <ListItemIcon>
+                          <span className={`pokesprite pokemon bulbasaur`} />
+                        </ListItemIcon>
+                        <ListItemText>
+                          <span>{dex.name || dex.game.displayName}</span>
+                        </ListItemText>
+                      </ListItem>
+                    </DexLink>
+                  );
+                })}
+                <Divider />
+                <ListItem
+                  button
+                  onClick={() => {
+                    store.dispatch(closeMenu());
+                    store.dispatch(openCreateDexForm());
+                  }}
+                >
+                  <ListItemIcon>
+                    <AddCircle />
+                  </ListItemIcon>
+                  <ListItemText>
+                    <span
+                      className={classNames("uppercase", classes.newPokedex)}
+                    >
+                      New Pokedex
+                    </span>
+                  </ListItemText>
+                </ListItem>
+              </List>
+            )}
           </div>
         </Drawer>
       </React.Fragment>
@@ -151,6 +160,7 @@ const mapStateToProps = (root: RootState) => {
   return {
     open: root.global.menuOpen,
     userDex: userDex,
+    session: root.session,
   };
 };
 

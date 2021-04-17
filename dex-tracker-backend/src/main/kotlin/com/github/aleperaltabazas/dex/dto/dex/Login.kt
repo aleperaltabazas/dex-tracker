@@ -4,6 +4,5 @@ import com.github.aleperaltabazas.dex.model.UserDex
 
 data class LoginRequestDTO(
     val mail: String,
-    val localDex: List<UserDex>,
     val googleToken: String,
 )

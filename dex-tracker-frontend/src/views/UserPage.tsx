@@ -66,7 +66,7 @@ const UserPage = (props: UserPageProps) => {
         <Column xs={12} md={9} container>
           {user.value.pokedex.map((d) => (
             <Column xs={12}>
-              <Summary dex={d} />
+              <Summary userId={user.value.userId} dex={d} />
             </Column>
           ))}
         </Column>

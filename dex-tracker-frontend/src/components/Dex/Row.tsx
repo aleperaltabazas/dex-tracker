@@ -11,7 +11,6 @@ import { connect } from "react-redux";
 import { SessionState } from "../../store/session";
 import store from "../../store";
 import { addToSyncQueue } from "../../actions/syncQueue";
-import { updateCaughtLocalPokedex } from "../../functions/storage";
 
 type RowProps = {
   style: React.CSSProperties;

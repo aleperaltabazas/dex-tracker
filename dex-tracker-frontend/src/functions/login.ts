@@ -6,6 +6,7 @@ import store from "../store";
 import {
   invalidateSession,
   loginError,
+  noLogin,
   uninitialize,
   updatePicture,
   updateSessionState,
@@ -14,7 +15,6 @@ import {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from "react-google-login";
-import { readLocalPokedex, writeLocalPokedex } from "./storage";
 import { fetchAllUsersDex } from "./my-dex";
 
 export function oauthLogin(
@@ -27,7 +27,6 @@ export function oauthLogin(
     withCredentials: true,
     data: {
       mail: succ.profileObj.email,
-      localDex: readLocalPokedex(),
       googleToken: succ.tokenId,
     },
   };
@@ -42,7 +41,6 @@ export function oauthLogin(
         ...u,
         pokedex: u.pokedex,
       });
-      writeLocalPokedex(u.pokedex);
     })
     .then(() => {
       store.dispatch(updatePicture(succ.profileObj.imageUrl));
@@ -64,7 +62,6 @@ export function logout(token: string) {
   store.dispatch(uninitialize());
 
   return fetchAllUsersDex(token)
-    .then(writeLocalPokedex)
     .then(() => axios.request(config))
     .catch(console.error)
     .then(invalidateSession)
@@ -99,12 +96,12 @@ export function openLocallyStoredSession() {
 
         if (err.response?.status == 404) {
           Cookies.remove("dex-token");
-          store.dispatch(uninitialize());
+          store.dispatch(noLogin());
         } else {
           store.dispatch(loginError());
         }
       });
   } else {
-    store.dispatch(uninitialize());
+    store.dispatch(noLogin());
   }
 }

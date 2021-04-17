@@ -8,6 +8,7 @@ import { UserDex } from "../../types/user";
 
 type SummaryProps = {
   dex: UserDex;
+  userId: string;
 };
 
 const useStyles = makeStyles(() => ({
@@ -25,7 +26,7 @@ const Summary = (props: SummaryProps) => {
 
   return (
     <Paper className="p-1">
-      <DexLink dexId={props.dex.userDexId}>
+      <DexLink userId={props.userId} dexId={props.dex.userDexId}>
         <div className={classNames("center-v", classes.summary)}>
           <Typography variant="h4">
             <div className="center-v ellipsis">

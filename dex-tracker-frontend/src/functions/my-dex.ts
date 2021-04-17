@@ -1,13 +1,10 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { clearSynchronizeQueue, resetTimeout } from "../actions/syncQueue";
 import { host } from "../config";
-import withFetch, { FetchStatus } from "../hooks/withFetch";
-import withUserDex from "../hooks/withUserDex";
 import store from "../store";
-import { LoggedInState, SessionState } from "../store/session";
+import { SessionState } from "../store/session";
 import { Sync, MarkPokemon } from "../types/sync";
 import { Pokemon, UserDex } from "../types/user";
-import { addLocalPokedex, readLocalPokedex } from "./storage";
 
 type CreateDex = {
   game: string;
@@ -21,7 +18,7 @@ export async function createPokedex(
   switch (session.type) {
     case "LOGGED_IN": {
       let config: AxiosRequestConfig = {
-        url: `${host}/api/v1/pokedex`,
+        url: `${host}/api/v1/users/${session.user.userId}/pokedex`,
         method: "POST",
         withCredentials: true,
         data: {

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { hot } from "react-hot-loader";
-import Footer from "./components/Footer";
 import Header from "./components/Header";
 import "./styles.scss";
 import "pokesprite-spritesheet/assets/pokesprite-inventory.css";
@@ -36,7 +35,7 @@ const App = () => {
       <Menu />
       <Switch>
         <Route
-          path="/dex/:id"
+          path="/users/:userId/dex/:dexId"
           component={DexPage}
           key={window.location.pathname}
         />

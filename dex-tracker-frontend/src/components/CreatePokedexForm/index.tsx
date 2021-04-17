@@ -15,7 +15,7 @@ import React, { useState } from "react";
 import { hot } from "react-hot-loader";
 import Column from "../../components/Column";
 import Row from "../../components/Row";
-import { Game, Pokedex } from "../../types/pokedex";
+import { Pokedex } from "../../types/pokedex";
 import classNames from "classnames";
 import { createPokedex } from "../../functions/my-dex";
 import { addUserDex } from "../../actions/session";
@@ -26,8 +26,7 @@ import { closeCreateDexForm } from "../../actions/global";
 import { RouteComponentProps, withRouter } from "react-router";
 import Loader from "../Loader";
 import useStyles from "./styles";
-import { addLocalPokedex } from "../../functions/storage";
-import { SessionState } from "../../store/session";
+import { LoggedInState, SessionState } from "../../store/session";
 
 interface CreatePokedexFormProps extends RouteComponentProps {
   pokedex: Pokedex[];
@@ -62,7 +61,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
               <Row spacing={2}>
                 <Column md={6} xs={12} className="center-v">
                   <Row spacing={2}>
-                    <Column md={6} xs={12}>
+                    <Column xs={12}>
                       <FormControl fullWidth>
                         <InputLabel>Pokedex</InputLabel>
                         <Select
@@ -81,10 +80,10 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                     <Column xs={12}>
                       <div className="mt-1 mt-md-2">
                         <div className={classes.namingPrimary}>
-                          You can give your Pokedex a name as well!
+                          Give a name to your dex for easier identification
                         </div>
                         <div className={classes.namingSecondary}>
-                          You can change it later, as well
+                          You can change it later, if you want to
                         </div>
                       </div>
                       <FormControl fullWidth>
@@ -108,8 +107,8 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                             <span className="pl-1 pl-md-3 pr-md-1">
                               {p.number}
                             </span>
-                            <span className={`pokemon pokesprite ${p}`} />
-                            <span className="capitalize">{p}</span>
+                            <span className={`pokemon pokesprite ${p.name}`} />
+                            <span className="capitalize">{p.name}</span>
                           </div>
                         ))}
                     </div>
@@ -133,7 +132,11 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
               setLoading(true);
               createPokedex({ game, name }, props.session)
                 .then((dex) => {
-                  props.history.push(`/dex/${dex.userDexId}`);
+                  props.history.push(
+                    `/users/${
+                      (props.session as LoggedInState).user.userId
+                    }/dex/${dex.userDexId}`
+                  );
                   return dex;
                 })
                 .then(addUserDex)

@@ -7,6 +7,7 @@ export const ADD_USER_DEX = "ADD_USER_DEX";
 export const UPDATE_USER_DEX = "UPDATE_USER_DEX";
 export const UPDATE_PICTURE = "UPDATE_PICTURE";
 export const UNINITIALIZE_SESSION = "UNINITIALIZE_SESSION";
+export const NO_LOG_IN = "NO_LOG_IN";
 
 interface UninitializeSessionAction {
   type: typeof UNINITIALIZE_SESSION;
@@ -43,6 +44,10 @@ interface UpdatePictureAction {
   payload: string;
 }
 
+interface NoLoginAction {
+  type: typeof NO_LOG_IN;
+}
+
 export type SessionAction =
   | InvalidateSessionAction
   | LogInAction
@@ -50,13 +55,18 @@ export type SessionAction =
   | AddUserDexAction
   | UpdateUserDexAction
   | UpdatePictureAction
-  | UninitializeSessionAction;
+  | UninitializeSessionAction
+  | NoLoginAction;
 
 export interface LoggedInState {
   token: string;
   user: User;
   picture?: string;
   type: "LOGGED_IN";
+}
+
+export interface NoLoginState {
+  type: "NONE";
 }
 
 export interface UninitializedState {
@@ -67,4 +77,8 @@ export interface LoginErrorState {
   type: "ERROR";
 }
 
-export type SessionState = LoggedInState | UninitializedState | LoginErrorState;
+export type SessionState =
+  | LoggedInState
+  | UninitializedState
+  | LoginErrorState
+  | NoLoginState;

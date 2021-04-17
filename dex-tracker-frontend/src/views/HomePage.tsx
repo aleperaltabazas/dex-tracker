@@ -43,7 +43,11 @@ const HomePage = (props: HomePageProps) => {
     );
   }
 
-  const PokedexList = (props: { gamePokedex: Pokedex[]; dex: UserDex[] }) => (
+  const PokedexList = (props: {
+    gamePokedex: Pokedex[];
+    dex: UserDex[];
+    userId: string;
+  }) => (
     <div className="mt-5 h-100">
       <Container>
         {props.dex.length > 0 && (
@@ -57,7 +61,7 @@ const HomePage = (props: HomePageProps) => {
             </Typography>
             {props.dex.map((p) => (
               <div className="mt-3 mb-3">
-                <DexSummary dex={p} key={p.userDexId} />
+                <DexSummary userId={props.userId} dex={p} key={p.userDexId} />
               </div>
             ))}
           </>
@@ -83,8 +87,13 @@ const HomePage = (props: HomePageProps) => {
     </div>
   );
 
+  if (props.session.type == "NONE") {
+    return <div>Logeate pa</div>;
+  }
+
   return (
     <PokedexList
+      userId={props.session.user.userId}
       dex={props.session.user.pokedex}
       gamePokedex={props.pokedex.pokedex}
     />

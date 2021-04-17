@@ -1,4 +1,3 @@
-import { readLocalPokedex } from "../../functions/storage";
 import {
   ADD_USER_DEX,
   INVALIDATE_SESSION,
@@ -10,6 +9,7 @@ import {
   UNINITIALIZE_SESSION,
   UPDATE_USER_DEX,
   UPDATE_PICTURE,
+  NO_LOG_IN,
 } from "../../store/session";
 
 const defaultSessionState: SessionState = {
@@ -84,6 +84,11 @@ function sessionReducer(
       }
 
       return state;
+    }
+    case NO_LOG_IN: {
+      return {
+        type: "NONE",
+      };
     }
     default: {
       return state;

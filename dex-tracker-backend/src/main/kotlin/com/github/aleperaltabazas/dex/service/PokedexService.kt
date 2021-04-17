@@ -36,6 +36,7 @@ open class PokedexService(
                 )
             },
             name = name,
+            caught = 0,
         )
     }
 

@@ -7,12 +7,19 @@ import {
   UPDATE_PICTURE,
   UNINITIALIZE_SESSION,
   ADD_USER_DEX,
+  NO_LOG_IN,
 } from "../../store/session";
 import { User, UserDex } from "../../types/user";
 
 export function uninitialize(): SessionAction {
   return {
     type: UNINITIALIZE_SESSION,
+  };
+}
+
+export function noLogin(): SessionAction {
+  return {
+    type: NO_LOG_IN,
   };
 }
 
