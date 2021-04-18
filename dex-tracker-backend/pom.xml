@@ -6,7 +6,7 @@
 
     <groupId>com.github.aleperaltabazas</groupId>
     <artifactId>dex</artifactId>
-    <version>DEX-BETA.5-SNAPSHOT</version>
+    <version>DEX-BETA.6-SNAPSHOT</version>
 
     <properties>
         <kotlin.version>1.4.10</kotlin.version>
