@@ -31,7 +31,7 @@ mkdir $BACKEND_RESOURCES/assets
 mkdir $BACKEND_RESOURCES/assets/templates
 mkdir $BACKEND_RESOURCES/assets/static
 
-cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/assets/templates/index.hbs
+cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/assets/templates/index.ftl
 cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/assets/static
 
 #mvn -f $BACKEND/pom.xml heroku:deploy -Dmaven.test.skip=true

@@ -54,6 +54,8 @@ class UsersController(
         val userId = req.paramNotNull(":userId")
         val dexId = req.paramNotNull(":dexId")
 
+        res.header("Cache-Control", "no-cache")
+
         return usersService.findUserById(userId)
             .orNotFound(userId)
             .pokedex

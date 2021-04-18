@@ -4,6 +4,8 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const Utils = require("./webpack.utils");
+const version = Utils.getPomVersion();
 
 const assetsPublicPath = "/";
 const staticPath = "static";
@@ -86,13 +88,23 @@ module.exports = {
     ].filter(Boolean),
     vendor: ["react", "react-dom", "prop-types"],
   },
-  output: {
-    publicPath: assetsPublicPath,
-    path: outputPath,
-    filename: environment.isProduction
-      ? file("[name].[contenthash].js")
-      : file("[name].js"),
-  },
+  output: environment.isProduction
+    ? {
+        path: path.resolve(
+          __dirname,
+          `../dex-tracker-backend/src/main/resources/assets/static/dex-tracker/versions/${version}`
+        ),
+        filename: "[name].js",
+        chunkFilename: "[name].chunk.bundle.js",
+        publicPath: `/dex-tracker/versions/${version}`,
+      }
+    : {
+        publicPath: assetsPublicPath,
+        path: outputPath,
+        filename: environment.isProduction
+          ? file("[name].[contenthash].js")
+          : file("[name].js"),
+      },
   module: {
     rules: [
       {

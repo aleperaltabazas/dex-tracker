@@ -4,8 +4,8 @@
   "description": "Online Pokedex tracker",
   "main": "index.js",
   "scripts": {
-    "build": "cp environments/local/config.ts src/config.ts && rimraf build && NODE_ENV=production webpack",
-    "dev": "cp environments/dev/config.ts src/config.ts && webpack-dev-server --inline --hot --open",
+    "build": "rimraf build && NODE_ENV=production webpack",
+    "dev": "webpack-dev-server --inline --hot --open",
     "prod": "npm run build && http-server build -p 9290",
     "start": "webpack-dev-server -w --config webpack.config.js"
   },

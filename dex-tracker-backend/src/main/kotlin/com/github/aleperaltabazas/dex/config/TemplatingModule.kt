@@ -36,7 +36,7 @@ class TemplatingModule : AbstractModule() {
 
     private fun defaultConfiguration(): Configuration {
         val config = Configuration(Version("2.3.0"))
-        config.templateLoader = ClassTemplateLoader(this.javaClass, "assets/templates")
+        config.templateLoader = ClassTemplateLoader(this.javaClass, "/assets/templates")
 
         return config
     }
