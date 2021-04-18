@@ -68,7 +68,6 @@ class DexTracker {
             val injector = Guice.createInjector(
                 CacheModule(),
                 ConfigModule(),
-                ConnectionModule(),
                 ControllerModule(),
                 DatabaseModule(),
                 EnvironmentModule(),
