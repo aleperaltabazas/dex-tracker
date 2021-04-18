@@ -6,6 +6,7 @@ import { SessionState } from "../store/session";
 import { connect } from "react-redux";
 import classNames from "classnames";
 import {
+  Button,
   Container,
   InputLabel,
   makeStyles,
@@ -22,6 +23,7 @@ import { Pokedex } from "../types/pokedex";
 import Row from "../components/Row";
 import Column from "../components/Column";
 import DexGrid from "../components/Dex/DexGrid";
+import GitHubIcon from "@material-ui/icons/GitHub";
 
 type HomePageProps = {
   pokedex: PokedexState;
@@ -44,6 +46,21 @@ const useStyles = makeStyles((theme) => ({
       fontSize: "20px",
     },
     color: "#787878",
+  },
+  github: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "16px",
+      fontWeight: "400",
+    },
+  },
+  githubIcon: {
+    [theme.breakpoints.up("md")]: {
+      fontSize: "120px",
+    },
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "80px",
+    },
+    color: "black",
   },
 }));
 
@@ -71,39 +88,44 @@ const HomePage = (props: HomePageProps) => {
   }) => (
     <div className="mt-5 h-100">
       <Container>
-        {props.dex.length > 0 && (
-          <>
-            <Typography
-              variant="h3"
-              className="center-h"
-              style={{ fontWeight: 500 }}
-            >
-              My games
-            </Typography>
-            {props.dex.map((p) => (
+        <>
+          <Typography
+            variant="h3"
+            className="center-h"
+            style={{ fontWeight: 500 }}
+          >
+            My games
+          </Typography>
+          {props.dex.length > 0 ? (
+            props.dex.map((p) => (
               <div className="mt-3 mb-3">
                 <DexSummary userId={props.userId} dex={p} key={p.userDexId} />
               </div>
-            ))}
-          </>
-        )}
-        {props.dex.length == 0 && (
-          <div>
-            <div className={classNames("center-h", classes.noPokedexHeading)}>
-              It seems like you don't have a Pokedex yet
-            </div>
-            <div className={classNames("center-h", classes.noPokedexSubtitle)}>
-              Click on the pokedex below to create one!
-            </div>
-            <div className="w-100 center-h">
-              <img
-                className="p-1 cursor-pointer center-h"
-                src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
-                onClick={() => store.dispatch(openCreateDexForm())}
-              />
-            </div>
-          </div>
-        )}
+            ))
+          ) : (
+            <>
+              <div
+                className={classNames(
+                  "center-h",
+                  classes.noPokedexSubtitle,
+                  "mt-3"
+                )}
+              >
+                Not even a nibble...
+              </div>
+
+              <div className="center-h mt-1">
+                <Button
+                  color="primary"
+                  onClick={() => store.dispatch(openCreateDexForm())}
+                  variant="contained"
+                >
+                  Create your first Pokedex
+                </Button>
+              </div>
+            </>
+          )}
+        </>
       </Container>
     </div>
   );
@@ -120,20 +142,9 @@ const HomePage = (props: HomePageProps) => {
     return (
       <div className="mt-5 text-align-center">
         <Container>
-          <div className="center">
-            <img
-              src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
-              style={{
-                borderRadius: "50%",
-                height: "128px",
-                width: "128px",
-                background: "white",
-              }}
-            />
-          </div>
           <div className="mt-3">
             <Typography variant="h4">
-              <div className="bold">Dex Tracker</div>
+              <div className="bold uppercase">Dex Tracker</div>
             </Typography>
           </div>
           <div className="mt-1">
@@ -141,20 +152,18 @@ const HomePage = (props: HomePageProps) => {
               variant="h4"
               className={classNames(classes.subtitle, "mt-3")}
             >
-              <div className="text-align-center">
-                Record your progress across the different regions and
-                generations in one place!
-              </div>
+              <div className="text-align-center">An online Pokedex tracker</div>
             </Typography>
           </div>
         </Container>
         <div className="bg-white pt-3 pb-3 mt-3">
           <Container maxWidth="xl">
-            <Row>
+            <Row spacing={5}>
               <Column xs={12} md={4}>
-                <div className="pl-md-5 pr-md-5">
-                  <Typography variant="h5">
-                    Track your captures from different games
+                <div className="pl-lg-5">
+                  <Typography variant="h6">
+                    Record your progress across the different regions and
+                    generations in one place
                   </Typography>
                   <div className="text-align-left mt-3">
                     <ul>
@@ -162,21 +171,26 @@ const HomePage = (props: HomePageProps) => {
                         Choose a Pokedex from gen 1 to gen 5, both national and
                         regional
                       </li>
-                      <li>
+                      <li className="mt-1">
                         Or choose a form-dex, if you are collecting pokemon like
                         Unown, or Alcremie
                       </li>
-                      <li>
+                      <li className="mt-1">
                         Quickly find the Pokemon you have (and those you don't)
                       </li>
-                      <li>Check more info about those you're missing</li>
-                      <li>Share it online to ease your trades!</li>
+                      <li className="mt-1">
+                        Check where to find or how to evolve the ones you're
+                        missing
+                      </li>
+                      <li className="mt-1">
+                        Share it online to ease your trades
+                      </li>
                     </ul>
                   </div>
                 </div>
               </Column>
               <Column xs={12} md={8}>
-                <div className="pl-md-5 pr-md-5">
+                <div className="pr-md-5">
                   <div className="center">
                     <Select
                       value={previewDex}
@@ -190,12 +204,36 @@ const HomePage = (props: HomePageProps) => {
                     </Select>
                   </div>
                   <DexGrid
-                    desktopHeight={360}
-                    mobileHeight={160}
+                    desktopHeight={240}
+                    mobileHeight={240}
                     handleChange={() => {}}
                     pokemon={pokemon}
                   />
                 </div>
+              </Column>
+            </Row>
+          </Container>
+        </div>
+        <div className="mt-3">
+          <Container maxWidth="lg">
+            <Row spacing={2}>
+              <Column xs={12} md={1}>
+                <a
+                  href="https://github.com/aleperaltabazas/dex-tracker"
+                  target="_blank"
+                >
+                  <GitHubIcon className={classNames(classes.githubIcon)} />
+                </a>
+              </Column>
+              <Column xs={12} md={10}>
+                <Typography
+                  variant="h6"
+                  className={classNames(classes.github, "center-v", "h-100")}
+                >
+                  Dex Tracker is an open source project. Feel free to report any
+                  issue you come across when using the website, requesting a
+                  missing feature, or contributing to the project
+                </Typography>
               </Column>
             </Row>
           </Container>

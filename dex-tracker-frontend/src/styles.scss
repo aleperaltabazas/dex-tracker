@@ -101,6 +101,36 @@ html {
     }
   }
 
+  .m-lg-#{$i} {
+    @media screen and (min-width: 1280px) {
+      margin: #{$i * 15}px;
+    }
+  }
+
+  .ml-lg-#{$i} {
+    @media screen and (min-width: 1280px) {
+      margin-left: #{$i * 15}px;
+    }
+  }
+
+  .mr-lg-#{$i} {
+    @media screen and (min-width: 1280px) {
+      margin-right: #{$i * 15}px;
+    }
+  }
+
+  .mt-lg-#{$i} {
+    @media screen and (min-width: 1280px) {
+      margin-top: #{$i * 15}px;
+    }
+  }
+
+  .mb-lg-#{$i} {
+    @media screen and (min-width: 1280px) {
+      margin-bottom: #{$i * 15}px;
+    }
+  }
+
   .p-#{$i} {
     padding: #{$i * 15}px;
   }
@@ -147,6 +177,36 @@ html {
 
   .pb-md-#{$i} {
     @media screen and (min-width: 960px) {
+      padding-bottom: #{$i * 15}px;
+    }
+  }
+
+  .p-lg-#{$i} {
+    @media screen and (min-width: 1280px) {
+      padding: #{$i * 15}px;
+    }
+  }
+
+  .pl-lg-#{$i} {
+    @media screen and (min-width: 1280px) {
+      padding-left: #{$i * 15}px;
+    }
+  }
+
+  .pr-lg-#{$i} {
+    @media screen and (min-width: 1280px) {
+      padding-right: #{$i * 15}px;
+    }
+  }
+
+  .pt-lg-#{$i} {
+    @media screen and (min-width: 1280px) {
+      padding-top: #{$i * 15}px;
+    }
+  }
+
+  .pb-lg-#{$i} {
+    @media screen and (min-width: 1280px) {
       padding-bottom: #{$i * 15}px;
     }
   }

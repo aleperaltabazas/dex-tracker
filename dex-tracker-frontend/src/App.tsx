@@ -14,6 +14,7 @@ import { fetchPokedex } from "./functions/pokedex";
 import { fireSynchronize } from "./functions/my-dex";
 import store from "./store";
 import UserPage from "./views/UserPage";
+import Footer from "./components/Footer";
 
 const App = () => {
   useEffect(() => {
@@ -51,7 +52,7 @@ const App = () => {
         <Route path="/" exact component={HomePage} />
       </Switch>
       <CreatePokedexForm />
-      {/* <Footer /> */}
+      <Footer />
     </Router>
   );
 };

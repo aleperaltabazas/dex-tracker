@@ -15,9 +15,8 @@ class FrontendController(
         get("/", this::home, engine)
         get("/dex/:id", this::home, engine)
         get("/users/:id", this::home, engine)
-        notFound { _, _ ->
-            engine.render(ModelAndView(null, "index.ftl"))
-        }
+        get("/users/:userId/dex/:dexId", this::home, engine)
+        notFound { _, _ -> engine.render(ModelAndView(null, "index.ftl")) }
     }
 
     private fun home(req: Request, res: Response) = ModelAndView(emptyMap<String, Any?>(), "index.ftl")
