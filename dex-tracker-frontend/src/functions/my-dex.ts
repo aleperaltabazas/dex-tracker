@@ -3,7 +3,7 @@ import { clearSynchronizeQueue, resetTimeout } from "../actions/syncQueue";
 import { host } from "../config";
 import store from "../store";
 import { SessionState } from "../store/session";
-import { DexUpdate, Sync } from "../types/sync";
+import { Sync } from "../types/sync";
 import { Pokemon, UserDex } from "../types/user";
 
 type CreateDex = {

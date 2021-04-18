@@ -1,27 +1,19 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { hot } from "react-hot-loader";
 import { Pokemon, UserDex } from "../types/user";
-import { FixedSizeList as List } from "react-window";
-import {
-  Divider,
-  Hidden,
-  Input,
-  InputAdornment,
-  TextField,
-  Typography,
-} from "@material-ui/core";
-import { Search } from "@material-ui/icons";
-import Row from "./Dex/Row";
+import { TextField, Typography } from "@material-ui/core";
 import useStyles from "./Dex/styles";
 import classNames from "classnames";
-import GridRow from "./Row";
-import GridColumn from "./Column";
-import { applyChanges } from "../functions/my-dex";
+import { applyChanges, fireSynchronize } from "../functions/my-dex";
 import store from "../store";
 import { updatePokedex as updateUserDex } from "../actions/session";
 import EditIcon from "@material-ui/icons/Edit";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import { caughtPokemon, updateDexName } from "../actions/syncQueue";
+import {
+  caughtPokemon,
+  clearSynchronizeQueue,
+  updateDexName,
+} from "../actions/syncQueue";
 import DexGrid from "./Dex/DexGrid";
 
 type DexProps = {
@@ -39,50 +31,53 @@ const Dex = (props: DexProps) => {
     } else if (!b && changes.current.includes(n)) {
       changes.current = changes.current.filter((n) => n != n);
     }
+
+    console.log(changes);
   };
 
   const classes = useStyles();
 
-  const [search, setSearch] = useState<string | undefined>(undefined);
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(props.dex.name);
 
-  const shouldRender = useCallback(
-    (p: Pokemon) =>
-      search == undefined ||
-      search == "" ||
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.dexNumber.toString().includes(search),
-    [search]
-  );
+  const forceSynchronize = () => {
+    const session = store.getState().session;
 
-  const togglePokemonCaught = (index: number) => {
-    const item = items[index - 1]; // -1 because we are indexing by pokedex id, which starts at 1
-    const newItems = items.concat();
-    newItems[index - 1] = {
-      ...item,
-      caught: !item.caught,
-    };
+    if (session.type == "LOGGED_IN") {
+      const sync = store.getState().syncQueue;
 
-    setItems(newItems);
-    handleChange(!item.caught, index);
+      if (sync.timeout) {
+        clearTimeout(sync.timeout);
+      }
+
+      fireSynchronize(
+        session.user.userId,
+        sync.queue.some((u) => u.dexId == props.dex.userDexId)
+          ? sync.queue.map((u) =>
+              u.dexId == props.dex.userDexId
+                ? {
+                    ...u,
+                    caught: changes.current,
+                    name: name,
+                  }
+                : u
+            )
+          : [
+              {
+                dexId: props.dex.userDexId,
+                name: name,
+                caught: changes.current,
+              },
+            ]
+      );
+      store.dispatch(clearSynchronizeQueue());
+    }
   };
-  const [items, setItems] = useState(props.dex.pokemon);
-  const itemData = {
-    items,
-    togglePokemonCaught,
-    displayedItems: items.filter(shouldRender),
-    dexId: props.dex.userDexId,
-  };
-
-  const handleSearchChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setSearch(event.currentTarget.value),
-    []
-  );
 
   useEffect(() => {
+    window.addEventListener("beforeunload", forceSynchronize);
     return () => {
+      window.removeEventListener("beforeunload", forceSynchronize);
       store.dispatch(
         updateUserDex(props.dex.userDexId, applyChanges(changes.current))
       );
