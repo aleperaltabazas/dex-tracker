@@ -4,41 +4,40 @@ set -e
 
 if [ "$#" -ne 1 ]; then
     echo "Error: Illegal number of parameters"
-    echo "Run like ./build <env>"
+    echo "Run like ./deploy <version>"
     exit 1
 fi
 
-ENV=$1
+ENV=prod
+VERSION=$1
 FRONTEND="dex-tracker-frontend"
 BACKEND="dex-tracker-backend"
 BACKEND_RESOURCES=$BACKEND/src/main/resources
-ARTIFACT="escuelita"
 
-mv $BACKEND_RESOURCES/application.conf application.conf.original
-mv $BACKEND_RESOURCES/sensitive.conf sensitive.conf.original
-mv $FRONTEND/src/config.ts config.ts.original
+mkdir bk
+mv $BACKEND_RESOURCES/application.conf bk/application.conf
+mv $BACKEND_RESOURCES/sensitive.conf bk/sensitive.conf
+mv $BACKEND_RESOURCES/logback.xml bk/logback.xml
+mv $FRONTEND/src/config.ts bk/config.ts
 
-cp $BACKEND/environments/$ENV/application.conf $BACKEND_RESOURCES/application.conf
-cp $BACKEND/environments/$ENV/sensitive.conf $BACKEND_RESOURCES/sensitive.conf
-cp $FRONTEND/environments/$ENV/config.ts $FRONTEND/src/config.ts
+mvn --batch-mode -f $BACKEND/pom.xml clean test
+mvn --batch-mode -f $BACKEND/pom.xml versions:set -DnewVersion="$VERSION-SNAPSHOT" -Dmaven.test.skip=true -DgenerateBackupPoms=false
 
-npm install --prefix $FRONTEND
-npm run build --prefix $FRONTEND
+git add .
+git commit -m "[RELEASE] Version $VERSION"
+git tag $VERSION
+git push origin HEAD
+git push --tags
 
-rm -rf $BACKEND_RESOURCES/assets
-
-mkdir $BACKEND_RESOURCES/assets
-mkdir $BACKEND_RESOURCES/assets/templates
-mkdir $BACKEND_RESOURCES/assets/static
-
-cp -r $FRONTEND/build/index.html $BACKEND_RESOURCES/assets/templates/index.ftl
-cp -r $FRONTEND/build/static/* $BACKEND_RESOURCES/assets/static
+./build $ENV
 
 mvn -f $BACKEND/pom.xml heroku:deploy -Dmaven.test.skip=true
 
-mv application.conf.original $BACKEND_RESOURCES/application.conf
-mv sensitive.conf.original $BACKEND_RESOURCES/sensitive.conf
-mv config.ts.original $FRONTEND/src/config.ts
+mv bk/application.conf $BACKEND_RESOURCES/application.conf
+mv bk/sensitive.conf $BACKEND_RESOURCES/sensitive.conf
+mv bk/logback.xml $BACKEND_RESOURCES/logback.xml
+mv bk/config.ts $FRONTEND/src/config.ts
+rmdir bk
 
-mvn clean -f $BACKEND/pom.xml
+mvn --batch-mode -f $BACKEND/pom.xml clean
 
