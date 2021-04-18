@@ -23,7 +23,7 @@ function sessionReducer(
   switch (action.type) {
     case INVALIDATE_SESSION: {
       return {
-        type: "UNINITIALIZED",
+        type: "NONE",
       };
     }
     case LOG_IN_ACTION: {
