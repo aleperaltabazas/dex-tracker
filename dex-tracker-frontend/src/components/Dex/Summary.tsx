@@ -1,23 +1,30 @@
-import { makeStyles, Paper, Typography } from "@material-ui/core";
+import { makeStyles, Paper, Theme, Typography } from "@material-ui/core";
 import React from "react";
 import { hot } from "react-hot-loader";
 import DexLink from "../Links/Dex";
 import classNames from "classnames";
 import LinearProgress from "../Progress/Linear";
 import { UserDex } from "../../types/user";
+import Row from "../Row";
+import Column from "../Column";
 
 type SummaryProps = {
   dex: UserDex;
   userId: string;
 };
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   summary: {
     display: "flex",
     justifyContent: "space-between",
   },
   title: {
-    fontSize: "24px",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "18px",
+    },
+    [theme.breakpoints.up("md")]: {
+      fontSize: "24px",
+    },
   },
 }));
 
@@ -27,19 +34,23 @@ const Summary = (props: SummaryProps) => {
   return (
     <Paper className="p-1">
       <DexLink userId={props.userId} dexId={props.dex.userDexId}>
-        <div className={classNames("center-v", classes.summary)}>
-          <Typography variant="h4">
-            <div className="center-v ellipsis">
-              <span className={`pokesprite pokemon bulbasaur pt-1 pr-1`} />
+        <Row spacing={2}>
+          <Column xs={3} md={1}>
+            <span
+              className={`pokesprite pokemon bulbasaur pt-1 pr-1 center-v`}
+            />
+          </Column>
+          <Column xs={7} md={9}>
+            <Typography noWrap variant="h4" className="h-100 center-v">
               <span className={classNames(classes.title, "bold")}>
                 {props.dex.name || props.dex.game.displayName}
               </span>
-            </div>
-          </Typography>
-          <div className="pr-1">
+            </Typography>
+          </Column>
+          <Column xs={2} className="pr-1 center-v">
             {props.dex.caught}/{props.dex.pokemon.length}
-          </div>
-        </div>
+          </Column>
+        </Row>
       </DexLink>
       <div className="mt-1">
         <LinearProgress

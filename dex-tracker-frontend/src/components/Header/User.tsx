@@ -50,6 +50,7 @@ const User = (props: UserProps) => {
           <Link
             className="normalize-link center-v"
             to={`/users/${props.session.user.userId}`}
+            onClick={handleClose}
           >
             <AccountCircleIcon className="pr-1" />
             Profile

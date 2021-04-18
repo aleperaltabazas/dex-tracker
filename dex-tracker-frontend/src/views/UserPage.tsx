@@ -54,7 +54,7 @@ const UserPage = (props: UserPageProps) => {
   return (
     <Container className="mt-3">
       <Row spacing={3}>
-        <Column xs={12} md={3} className="h-100">
+        <Column xs={12} md={3}>
           <img
             src={
               user.value.picture ||
@@ -66,12 +66,14 @@ const UserPage = (props: UserPageProps) => {
             {user.value.username}
           </div>
         </Column>
-        <Column xs={12} md={9} container>
-          {user.value.pokedex.map((d) => (
-            <Column xs={12}>
-              <Summary userId={user.value.userId} dex={d} />
-            </Column>
-          ))}
+        <Column xs={12} md={9}>
+          <Row spacing={3}>
+            {user.value.pokedex.map((d) => (
+              <Column xs={12} key={d.name || d.game.name}>
+                <Summary userId={user.value.userId} dex={d} />
+              </Column>
+            ))}
+          </Row>
         </Column>
       </Row>
     </Container>

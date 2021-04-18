@@ -18,6 +18,7 @@ import { AddCircle } from "@material-ui/icons";
 import { RouteComponentProps, withRouter } from "react-router";
 import DexLink from "../Links/Dex";
 import { LoggedInState, SessionState } from "../../store/session";
+import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles({
   list: {
@@ -106,12 +107,17 @@ const Menu = (props: MenuProps) => {
                         onClick={() => {
                           store.dispatch(closeMenu());
                         }}
+                        style={{
+                          height: "72px",
+                        }}
                       >
                         <ListItemIcon>
                           <span className={`pokesprite pokemon bulbasaur`} />
                         </ListItemIcon>
-                        <ListItemText>
-                          <span>{dex.name || dex.game.displayName}</span>
+                        <ListItemText className="h-100 center">
+                          <Typography noWrap>
+                            {dex.name || dex.game.displayName}
+                          </Typography>
                         </ListItemText>
                       </ListItem>
                     </DexLink>
