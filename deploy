@@ -14,12 +14,6 @@ FRONTEND="dex-tracker-frontend"
 BACKEND="dex-tracker-backend"
 BACKEND_RESOURCES=$BACKEND/src/main/resources
 
-mkdir bk
-mv $BACKEND_RESOURCES/application.conf bk/application.conf
-mv $BACKEND_RESOURCES/sensitive.conf bk/sensitive.conf
-mv $BACKEND_RESOURCES/logback.xml bk/logback.xml
-mv $FRONTEND/src/config.ts bk/config.ts
-
 mvn --batch-mode -f $BACKEND/pom.xml clean test
 mvn --batch-mode -f $BACKEND/pom.xml versions:set -DnewVersion="$VERSION-SNAPSHOT" -Dmaven.test.skip=true -DgenerateBackupPoms=false
 
@@ -28,6 +22,12 @@ git commit -m "[RELEASE] Version $VERSION"
 git tag $VERSION
 git push origin HEAD
 git push --tags
+
+mkdir bk
+mv $BACKEND_RESOURCES/application.conf bk/application.conf
+mv $BACKEND_RESOURCES/sensitive.conf bk/sensitive.conf
+mv $BACKEND_RESOURCES/logback.xml bk/logback.xml
+mv $FRONTEND/src/config.ts bk/config.ts
 
 ./build $ENV
 
