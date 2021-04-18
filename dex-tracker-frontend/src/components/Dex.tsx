@@ -22,6 +22,7 @@ import { updatePokedex as updateUserDex } from "../actions/session";
 import EditIcon from "@material-ui/icons/Edit";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { caughtPokemon, updateDexName } from "../actions/syncQueue";
+import DexGrid from "./Dex/DexGrid";
 
 type DexProps = {
   dex: UserDex;
@@ -121,97 +122,7 @@ const Dex = (props: DexProps) => {
           </span>
         </div>
       </Typography>
-      <GridRow className={classNames("ml-2", "mr-2")}>
-        <GridColumn xs={7} md={8}>
-          <div>
-            <Typography
-              variant="h6"
-              color="textSecondary"
-              className={classNames("capitalize")}
-            >
-              {props.dex.type.toLowerCase()}
-            </Typography>
-          </div>
-        </GridColumn>
-        <GridColumn xs={5} md={4} className="center">
-          <Typography
-            className={classNames(classes.secondaryHeading, "pr-1 pr-md-0")}
-          >
-            <span id="counter">{items.filter((p) => p.caught).length}</span>/
-            {items.length}
-          </Typography>
-        </GridColumn>
-      </GridRow>
-      <GridRow style={{ height: "72px" }}>
-        <Hidden smDown>
-          <GridColumn xs={3} md={1} className="center" />
-        </Hidden>
-        <Hidden smDown>
-          <GridColumn
-            md={1}
-            className={classNames("center", "bold", classes.listItem)}
-          >
-            <Typography variant="button" style={{ fontSize: "14px" }}>
-              Number
-            </Typography>
-          </GridColumn>
-        </Hidden>
-        <GridColumn
-          xs={9}
-          md={8}
-          className={classNames(
-            "center-v",
-            "bold",
-            "pl-3",
-            "pl-md-0",
-            classes.listItem
-          )}
-        >
-          <Input
-            fullWidth
-            placeholder="Bulbasaur"
-            value={search}
-            onChange={handleSearchChange}
-            endAdornment={
-              <InputAdornment position="end">
-                <Search />
-              </InputAdornment>
-            }
-          />
-        </GridColumn>
-        <GridColumn
-          xs={3}
-          md={1}
-          className={classNames("center", "bold", classes.listItem)}
-        >
-          <Typography variant="button" style={{ fontSize: "14px" }}>
-            Caught
-          </Typography>
-        </GridColumn>
-      </GridRow>
-      <Divider />
-      <Hidden smDown>
-        <List
-          height={720}
-          itemCount={items.filter(shouldRender).length}
-          itemData={itemData}
-          itemSize={72}
-          width={"100%"}
-        >
-          {Row}
-        </List>
-      </Hidden>
-      <Hidden mdUp>
-        <List
-          height={320}
-          itemCount={items.filter(shouldRender).length}
-          itemData={itemData}
-          itemSize={72}
-          width={"100%"}
-        >
-          {Row}
-        </List>
-      </Hidden>
+      <DexGrid pokemon={props.dex.pokemon} handleChange={handleChange} />
     </div>
   );
 };

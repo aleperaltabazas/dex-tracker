@@ -33,7 +33,7 @@ const Header = (props: HeaderProps) => {
   return (
     <header className={classNames(classes.header, "center-v")}>
       <div className="center-v p-1">
-        <OpenMenu />
+        {props.session.type == "LOGGED_IN" && <OpenMenu />}
         <LinkHome>
           <img
             src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"

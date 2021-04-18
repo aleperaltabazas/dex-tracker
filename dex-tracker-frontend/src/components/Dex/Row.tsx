@@ -9,7 +9,6 @@ import useStyles from "./styles";
 import { RootState } from "../../reducers";
 import { connect } from "react-redux";
 import { SessionState } from "../../store/session";
-import store from "../../store";
 
 type RowProps = {
   style: React.CSSProperties;
@@ -18,7 +17,6 @@ type RowProps = {
     items: Pokemon[];
     togglePokemonCaught: (n: number) => void;
     displayedItems: Pokemon[];
-    dexId: string;
   };
   session: SessionState;
 };

@@ -1,24 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { hot } from "react-hot-loader";
 import { RootState } from "../reducers";
 import { PokedexState } from "../store/pokedex";
 import { SessionState } from "../store/session";
 import { connect } from "react-redux";
 import classNames from "classnames";
-import { Container, makeStyles, Typography } from "@material-ui/core";
+import {
+  Container,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  Select,
+  Typography,
+} from "@material-ui/core";
 import store from "../store";
 import { openCreateDexForm } from "../actions/global";
 import Loader from "../components/Loader";
 import DexSummary from "../components/Dex/Summary";
 import { UserDex } from "../types/user";
 import { Pokedex } from "../types/pokedex";
+import Row from "../components/Row";
+import Column from "../components/Column";
+import DexGrid from "../components/Dex/DexGrid";
 
 type HomePageProps = {
   pokedex: PokedexState;
   session: SessionState;
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   noPokedexHeading: {
     fontSize: "24px",
     fontWeight: "bolder",
@@ -26,10 +36,21 @@ const useStyles = makeStyles({
   noPokedexSubtitle: {
     fontSize: "20px",
   },
-});
+  subtitle: {
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "14px",
+    },
+    [theme.breakpoints.up("md")]: {
+      fontSize: "20px",
+    },
+    color: "#787878",
+  },
+}));
 
 const HomePage = (props: HomePageProps) => {
   const classes = useStyles();
+
+  const [previewDex, setPreviewDex] = useState("gsc-regional");
 
   if (props.session.type == "ERROR") {
     return <div>se rompió algo perrito :(</div>;
@@ -88,7 +109,99 @@ const HomePage = (props: HomePageProps) => {
   );
 
   if (props.session.type == "NONE") {
-    return <div>Logeate pa</div>;
+    const pokemon = props.pokedex.pokedex
+      .find((d) => d.name == previewDex)!
+      .entries.map((p) => ({
+        dexNumber: p.number,
+        name: p.name,
+        caught: false,
+      }));
+
+    return (
+      <div className="mt-5 text-align-center">
+        <Container>
+          <div className="center">
+            <img
+              src="https://cdn.bulbagarden.net/upload/9/9f/Key_Pok%C3%A9dex_m_Sprite.png"
+              style={{
+                borderRadius: "50%",
+                height: "128px",
+                width: "128px",
+                background: "white",
+              }}
+            />
+          </div>
+          <div className="mt-3">
+            <Typography variant="h4">
+              <div className="bold">Dex Tracker</div>
+            </Typography>
+          </div>
+          <div className="mt-1">
+            <Typography
+              variant="h4"
+              className={classNames(classes.subtitle, "mt-3")}
+            >
+              <div className="text-align-center">
+                Record your progress across the different regions and
+                generations in one place!
+              </div>
+            </Typography>
+          </div>
+        </Container>
+        <div className="bg-white pt-3 pb-3 mt-3">
+          <Container maxWidth="xl">
+            <Row>
+              <Column xs={12} md={4}>
+                <div className="pl-md-5 pr-md-5">
+                  <Typography variant="h5">
+                    Track your captures from different games
+                  </Typography>
+                  <div className="text-align-left mt-3">
+                    <ul>
+                      <li>
+                        Choose a Pokedex from gen 1 to gen 5, both national and
+                        regional
+                      </li>
+                      <li>
+                        Or choose a form-dex, if you are collecting pokemon like
+                        Unown, or Alcremie
+                      </li>
+                      <li>
+                        Quickly find the Pokemon you have (and those you don't)
+                      </li>
+                      <li>Check more info about those you're missing</li>
+                      <li>Share it online to ease your trades!</li>
+                    </ul>
+                  </div>
+                </div>
+              </Column>
+              <Column xs={12} md={8}>
+                <div className="pl-md-5 pr-md-5">
+                  <div className="center">
+                    <Select
+                      value={previewDex}
+                      onChange={(e) => setPreviewDex(e.target.value as string)}
+                    >
+                      {props.pokedex.pokedex.map((d) => (
+                        <MenuItem key={d.name} value={d.name}>
+                          {d.displayName}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </div>
+                  <DexGrid
+                    desktopHeight={360}
+                    mobileHeight={160}
+                    handleChange={() => {}}
+                    pokemon={pokemon}
+                  />
+                </div>
+              </Column>
+            </Row>
+          </Container>
+        </div>
+      </div>
+    );
   }
 
   return (

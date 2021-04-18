@@ -67,6 +67,12 @@ const Menu = (props: MenuProps) => {
     setState({ ...state, [anchor]: open });
   };
 
+  if (props.session.type != "LOGGED_IN") {
+    return null;
+  }
+
+  const session = props.session;
+
   return (
     <div>
       <React.Fragment key={"left"}>
@@ -81,69 +87,65 @@ const Menu = (props: MenuProps) => {
             onClick={toggleDrawer("left", false)}
             onKeyDown={toggleDrawer("left", false)}
           >
-            {props.session.type == "LOGGED_IN" && (
-              <List>
-                <CloseMenu />
-                <Divider />
-                <div
-                  className={classNames(
-                    classes.heading,
-                    "pl-1 pt-1",
-                    "uppercase"
-                  )}
-                >
-                  My Pokedex
-                </div>
-                {props.userDex.map((dex) => {
-                  return (
-                    <DexLink
-                      userId={(props.session as LoggedInState).user.userId}
-                      dexId={dex.userDexId}
-                      key={dex.userDexId}
+            <List>
+              <CloseMenu />
+              <Divider />
+              <div
+                className={classNames(
+                  classes.heading,
+                  "pl-1 pt-1",
+                  "uppercase"
+                )}
+              >
+                My Pokedex
+              </div>
+              {props.userDex.map((dex) => {
+                return (
+                  <DexLink
+                    userId={session.user.userId}
+                    dexId={dex.userDexId}
+                    key={dex.userDexId}
+                  >
+                    <ListItem
+                      disableGutters
+                      className="cursor-pointer"
+                      onClick={() => {
+                        store.dispatch(closeMenu());
+                      }}
+                      style={{
+                        height: "72px",
+                      }}
                     >
-                      <ListItem
-                        disableGutters
-                        className="cursor-pointer"
-                        onClick={() => {
-                          store.dispatch(closeMenu());
-                        }}
-                        style={{
-                          height: "72px",
-                        }}
-                      >
-                        <ListItemIcon>
-                          <span className={`pokesprite pokemon bulbasaur`} />
-                        </ListItemIcon>
-                        <ListItemText className="h-100 center">
-                          <Typography noWrap>
-                            {dex.name || dex.game.displayName}
-                          </Typography>
-                        </ListItemText>
-                      </ListItem>
-                    </DexLink>
-                  );
-                })}
-                <Divider />
-                <ListItem
-                  button
-                  onClick={() => {
-                    store.dispatch(closeMenu());
-                    store.dispatch(openCreateDexForm());
-                  }}
-                >
-                  <ListItemIcon>
-                    <AddCircle />
-                  </ListItemIcon>
-                  <ListItemText>
-                    <span
-                      className={classNames("uppercase", classes.newPokedex)}
-                    >
-                      New Pokedex
-                    </span>
-                  </ListItemText>
-                </ListItem>
-              </List>
-            )}
+                      <ListItemIcon>
+                        <span className={`pokesprite pokemon bulbasaur`} />
+                      </ListItemIcon>
+                      <ListItemText className="h-100 center">
+                        <Typography noWrap>
+                          {dex.name || dex.game.displayName}
+                        </Typography>
+                      </ListItemText>
+                    </ListItem>
+                  </DexLink>
+                );
+              })}
+              <Divider />
+              <ListItem
+                button
+                onClick={() => {
+                  store.dispatch(closeMenu());
+                  store.dispatch(openCreateDexForm());
+                }}
+              >
+                <ListItemIcon>
+                  <AddCircle />
+                </ListItemIcon>
+                <ListItemText>
+                  <span className={classNames("uppercase", classes.newPokedex)}>
+                    New Pokedex
+                  </span>
+                </ListItemText>
+              </ListItem>
+            </List>
           </div>
         </Drawer>
       </React.Fragment>
