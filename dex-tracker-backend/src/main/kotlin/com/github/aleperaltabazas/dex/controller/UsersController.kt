@@ -61,11 +61,13 @@ class UsersController(
             ?: throw NotFoundException("No dex with id $dexId found on user $userId")
     }
 
-    private fun createUserDex(req: Request, res: Response, session: Session): User {
+    private fun createUserDex(req: Request, res: Response, session: Session): UserDex {
         val creation: CreateDexDTO = objectMapper.readValue(req.body())
         val userDex = pokedexService.createUserDex(gameKey = creation.game, name = creation.name)
 
-        return usersService.createUserDex(userId = session.userId, userDex = userDex).orNotFound(session.userId)
+        usersService.createUserDex(userId = session.userId, userDex = userDex).orNotFound(session.userId)
+
+        return userDex
     }
 
     private fun updateUser(req: Request, res: Response, session: Session): User {

@@ -4,7 +4,7 @@
   "description": "Online Pokedex tracker",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf build && NODE_ENV=production webpack",
+    "build": "cp environments/local/config.ts src/config.ts && rimraf build && NODE_ENV=production webpack",
     "dev": "cp environments/dev/config.ts src/config.ts && webpack-dev-server --inline --hot --open",
     "prod": "npm run build && http-server build -p 9290",
     "start": "webpack-dev-server -w --config webpack.config.js"
@@ -34,6 +34,7 @@
     "js-cookie": "^2.2.1",
     "material-ui": "^0.20.2",
     "mini-css-extract-plugin": "^0.4.4",
+    "node-pom-parser": "^0.1.1",
     "node-sass": "^4.14.1",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "pokesprite-spritesheet": "^0.1.0",
