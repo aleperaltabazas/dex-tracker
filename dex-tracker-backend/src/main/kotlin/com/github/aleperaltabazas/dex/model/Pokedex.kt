@@ -22,9 +22,11 @@ data class Entry(
 data class Game(
     val name: String,
     val displayName: String,
+    val gen: Int,
 ) {
     constructor(pokedex: Pokedex) : this(
         name = pokedex.name,
         displayName = pokedex.displayName,
+        gen = pokedex.gen,
     )
 }

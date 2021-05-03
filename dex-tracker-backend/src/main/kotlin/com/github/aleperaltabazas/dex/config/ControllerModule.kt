@@ -2,10 +2,7 @@ package com.github.aleperaltabazas.dex.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.controller.*
-import com.github.aleperaltabazas.dex.service.LoginService
-import com.github.aleperaltabazas.dex.service.PokedexService
-import com.github.aleperaltabazas.dex.service.SessionService
-import com.github.aleperaltabazas.dex.service.UsersService
+import com.github.aleperaltabazas.dex.service.*
 import com.github.aleperaltabazas.dex.utils.Environment
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
@@ -87,5 +84,16 @@ class ControllerModule : AbstractModule() {
         loginService = loginService,
         objectMapper = objectMapper,
         sessionService = sessionService,
+    )
+
+    @Provides
+    @Singleton
+    @Named("pokemonController")
+    fun pokemonController(
+        @Named("objectMapperCamelCase") objectMapperCamelCase: ObjectMapper,
+        @Named("pokemonService") pokemonService: PokemonService,
+    ) = PokemonController(
+        pokemonService = pokemonService,
+        objectMapper = objectMapperCamelCase,
     )
 }
