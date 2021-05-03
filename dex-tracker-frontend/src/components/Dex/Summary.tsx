@@ -7,6 +7,7 @@ import LinearProgress from "../Progress/Linear";
 import { UserDex } from "../../types/user";
 import Row from "../Row";
 import Column from "../Column";
+import sprite from "../Sprite";
 
 type SummaryProps = {
   dex: UserDex;
@@ -36,9 +37,7 @@ const Summary = (props: SummaryProps) => {
       <DexLink userId={props.userId} dexId={props.dex.userDexId}>
         <Row spacing={2}>
           <Column xs={3} md={1}>
-            <span
-              className={`pokesprite pokemon bulbasaur pt-1 pr-1 center-v`}
-            />
+            <sprite.icon gen={props.dex.game.gen} pokemon={"yanma"} />
           </Column>
           <Column xs={7} md={9}>
             <Typography noWrap variant="h4" className="h-100 center-v">

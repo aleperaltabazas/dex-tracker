@@ -131,13 +131,14 @@ const HomePage = (props: HomePageProps) => {
   );
 
   if (props.session.type == "NONE") {
-    const pokemon = props.pokedex.pokedex
-      .find((d) => d.name == previewDex)!
-      .entries.map((p) => ({
-        dexNumber: p.number,
-        name: p.name,
-        caught: false,
-      }));
+    const selectedPreviewPokedex = props.pokedex.pokedex.find(
+      (d) => d.name == previewDex
+    )!;
+    const pokemon = selectedPreviewPokedex.entries.map((p) => ({
+      dexNumber: p.number,
+      name: p.name,
+      caught: false,
+    }));
 
     return (
       <div className="mt-5 text-align-center">
@@ -204,6 +205,7 @@ const HomePage = (props: HomePageProps) => {
                     </Select>
                   </div>
                   <DexGrid
+                    gen={selectedPreviewPokedex.gen}
                     desktopHeight={240}
                     mobileHeight={240}
                     handleChange={() => {}}

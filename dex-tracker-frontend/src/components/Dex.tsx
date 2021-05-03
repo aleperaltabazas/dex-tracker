@@ -15,6 +15,7 @@ import {
   updateDexName,
 } from "../actions/syncQueue";
 import DexGrid from "./Dex/DexGrid";
+import sprite from "./Sprite";
 
 type DexProps = {
   dex: UserDex;
@@ -91,7 +92,7 @@ const Dex = (props: DexProps) => {
     <div className={classes.root}>
       <Typography variant="h5">
         <div className={classNames("bold", "center-v", "pb-1")}>
-          <span className={`pokemon pokesprite bulbasaur pt-1`} />
+          <sprite.icon pokemon="bulbasaur" gen={props.dex.game.gen} />
           <span style={{ paddingBottom: "3px" }}>
             {!isEditing && (props.dex.name || props.dex.game.displayName)}
             {isEditing && (
@@ -117,7 +118,11 @@ const Dex = (props: DexProps) => {
           </span>
         </div>
       </Typography>
-      <DexGrid pokemon={props.dex.pokemon} handleChange={handleChange} />
+      <DexGrid
+        gen={props.dex.game.gen}
+        pokemon={props.dex.pokemon}
+        handleChange={handleChange}
+      />
     </div>
   );
 };

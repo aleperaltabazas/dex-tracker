@@ -154,4 +154,6 @@ sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,node,linux,react
 build/
-
+public/assets/sprites/
+pokencyclopedia-icons/
+src/icons/

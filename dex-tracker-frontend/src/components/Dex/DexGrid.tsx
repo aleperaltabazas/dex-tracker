@@ -21,6 +21,7 @@ type DexGridProps = {
   desktopHeight?: number;
   mobileHeight?: number;
   handleChange: (caught: boolean, index: number) => void;
+  gen: number;
 };
 
 const DexGrid = (props: DexGridProps) => {
@@ -63,6 +64,7 @@ const DexGrid = (props: DexGridProps) => {
     items,
     togglePokemonCaught,
     displayedItems: items.filter(shouldRender),
+    gen: props.gen,
   };
 
   return (

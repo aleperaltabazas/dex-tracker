@@ -27,6 +27,7 @@ import { RouteComponentProps, withRouter } from "react-router";
 import Loader from "../Loader";
 import useStyles from "./styles";
 import { LoggedInState, SessionState } from "../../store/session";
+import sprite from "../Sprite";
 
 interface CreatePokedexFormProps extends RouteComponentProps {
   pokedex: Pokedex[];
@@ -40,6 +41,8 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
   const [game, setGame] = useState<string>("gsc-national");
   const [name, setName] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+
+  const dex = props.pokedex.find((p) => p.name == game);
 
   return (
     <React.Fragment>
@@ -100,17 +103,15 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                 <Column md={6} xs={12} className={classes.overflowAuto}>
                   <div className={classes.pokemonColumn}>
                     <div className={classes.overflowScrollMd}>
-                      {props.pokedex
-                        .find((p) => p.name == game)
-                        ?.entries.map((p) => (
-                          <div key={p.number}>
-                            <span className="pl-1 pl-md-3 pr-md-1">
-                              {p.number}
-                            </span>
-                            <span className={`pokemon pokesprite ${p.name}`} />
-                            <span className="capitalize">{p.name}</span>
-                          </div>
-                        ))}
+                      {dex?.entries.map((p) => (
+                        <div key={p.number}>
+                          <span className="pl-1 pl-md-3 pr-md-1">
+                            {p.number}
+                          </span>
+                          <sprite.icon pokemon={p.name} gen={dex?.gen} />
+                          <span className="capitalize">{p.name}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </Column>

@@ -9,6 +9,7 @@ import useStyles from "./styles";
 import { RootState } from "../../reducers";
 import { connect } from "react-redux";
 import { SessionState } from "../../store/session";
+import sprite from "../Sprite";
 
 type RowProps = {
   style: React.CSSProperties;
@@ -17,12 +18,13 @@ type RowProps = {
     items: Pokemon[];
     togglePokemonCaught: (n: number) => void;
     displayedItems: Pokemon[];
+    gen: number;
   };
   session: SessionState;
 };
 
 const Row = (props: RowProps) => {
-  const { displayedItems, togglePokemonCaught } = props.data;
+  const { displayedItems, togglePokemonCaught, gen } = props.data;
   const item = displayedItems[props.index];
   const classes = useStyles();
 
@@ -35,12 +37,7 @@ const Row = (props: RowProps) => {
       className={props.index == 0 ? "" : classes.rowLine}
     >
       <GridColumn xs={3} md={1} className="center-h">
-        <span
-          className={classNames(
-            classes.listItem,
-            `pokesprite pokemon ${item.name}`
-          )}
-        />
+        <sprite.icon pokemon={item.name} gen={gen} />
       </GridColumn>
       <Hidden smDown>
         <GridColumn
