@@ -16,18 +16,5 @@ npm run build --prefix $FRONTEND
 
 find "$BACKEND_RESOURCES/assets/static/dex-tracker" -name 'index.html' -exec mv {} $BACKEND_RESOURCES/assets/templates/index.ftl \;
 
-if [ ! -d "assets/" ]; then
-    mkdir "assets"
-fi
+dex-assets-exe --only-sprites -s assets/ -d $BACKEND_RESOURCES/assets
 
-if [ ! -d "assets/sprites/" ]; then
-    mkdir "sprites"
-    echo "Downloading sprites..."
-    dex-sprites-dump 1 "assets/sprites"
-    dex-sprites-dump 2 "assets/sprites"
-    dex-sprites-dump 3 "assets/sprites"
-    dex-sprites-dump 4 "assets/sprites"
-    dex-sprites-dump 5 "assets/sprites"
-fi
-
-cp -r "assets/sprites" "$BACKEND_RESOURCES/assets/static/dex-tracker"
