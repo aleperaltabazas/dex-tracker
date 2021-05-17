@@ -16,5 +16,5 @@ npm run build --prefix $FRONTEND
 
 find "$BACKEND_RESOURCES/assets/static/dex-tracker" -name 'index.html' -exec mv {} $BACKEND_RESOURCES/assets/templates/index.ftl \;
 
-dex-assets-exe --only-sprites -s assets/ -d $BACKEND_RESOURCES/assets
+dex-assets-exe --only-sprites -s assets/ -d $BACKEND_RESOURCES/assets/static
 
