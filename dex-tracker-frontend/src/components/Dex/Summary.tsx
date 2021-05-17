@@ -37,7 +37,7 @@ const Summary = (props: SummaryProps) => {
       <DexLink userId={props.userId} dexId={props.dex.userDexId}>
         <Row spacing={2}>
           <Column xs={3} md={1}>
-            <sprite.icon gen={props.dex.game.gen} pokemon={"yanma"} />
+            <sprite.icon gen={props.dex.game.gen} pokemon={"pikachu"} />
           </Column>
           <Column xs={7} md={9}>
             <Typography noWrap variant="h4" className="h-100 center-v">

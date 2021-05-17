@@ -53,7 +53,6 @@ const App = () => {
         <Route path="/" exact component={HomePage} />
       </Switch>
       <CreatePokedexForm />
-      <Footer />
     </Router>
   );
 };

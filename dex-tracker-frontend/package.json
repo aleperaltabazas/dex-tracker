@@ -9,7 +9,7 @@
     "prod": "npm run build && http-server build -p 9290",
     "start": "webpack-dev-server -w --config webpack.config.js",
     "build-dev": "rimraf build && NODE_ENV=dev webpack",
-    "postinstall": "dex-assets-exe --directory src/ --only-icons"
+    "postinstall": "dex-assets-exe --source ../assets/ --directory src/ --only-icons"
   },
   "author": "Alejandro Peralta Bazas",
   "license": "ISC",

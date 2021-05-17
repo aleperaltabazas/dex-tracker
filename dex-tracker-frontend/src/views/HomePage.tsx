@@ -24,6 +24,7 @@ import Row from "../components/Row";
 import Column from "../components/Column";
 import DexGrid from "../components/Dex/DexGrid";
 import GitHubIcon from "@material-ui/icons/GitHub";
+import sprite from "../components/Sprite";
 
 type HomePageProps = {
   pokedex: PokedexState;
@@ -245,12 +246,95 @@ const HomePage = (props: HomePageProps) => {
   }
 
   return (
-    <PokedexList
-      userId={props.session.user.userId}
-      dex={props.session.user.pokedex}
-      gamePokedex={props.pokedex.pokedex}
-    />
+    <div className="text-align-center pl-1 pr-1">
+      <Typography
+        variant="h5"
+        className="center pt-3 pb-3"
+        style={{ fontWeight: "bold" }}
+      >
+        FireRead and LeafGreen
+      </Typography>
+      <Row spacing={1}>
+        <Column xs={6}>
+          <Typography variant="h6">My Pokedex</Typography>
+          <Row spacing={1}>
+            <Column xs={12}>
+              <div style={{ backgroundColor: "#14d92b" }} className="center-h">
+                <sprite.icon gen={3} pokemon="bulbasaur" />
+                <span className="center">Bulbasaur</span>
+              </div>
+            </Column>
+            <Column xs={12}>
+              <div style={{ backgroundColor: "#14d92b" }} className="center-h">
+                <sprite.icon gen={3} pokemon="ivysaur" />
+                <span className="center">Ivysaur</span>
+              </div>
+            </Column>
+            <Column xs={12}>
+              <div style={{ backgroundColor: "white" }} className="center-h">
+                <sprite.icon gen={3} pokemon="venusaur" />
+                <span className="center">Venusaur</span>
+              </div>
+            </Column>
+            <Column xs={12}>
+              <div style={{ backgroundColor: "#14d92b" }} className="center-h">
+                <sprite.icon gen={3} pokemon="charmander" />
+                <span className="center">Charmander</span>
+              </div>
+            </Column>
+            <Column xs={12}>
+              <div style={{ backgroundColor: "white" }} className="center-h">
+                <sprite.icon gen={3} pokemon="charmeleon" />
+                <span className="center">Charmeleon</span>
+              </div>
+            </Column>
+          </Row>
+        </Column>
+        <Column xs={6}>
+          <Typography variant="h6">Ulises's pokedex</Typography>
+          <Row spacing={1}>
+            <Column xs={12}>
+              <div style={{ backgroundColor: "#14d92b" }} className="center-h">
+                <sprite.icon gen={3} pokemon="bulbasaur" />
+                <span className="center">Bulbasaur</span>
+              </div>
+            </Column>
+            <Column xs={12}>
+              <div style={{ backgroundColor: "white" }} className="center-h">
+                <sprite.icon gen={3} pokemon="ivysaur" />
+                <span className="center">Ivysaur</span>
+              </div>
+            </Column>
+            <Column xs={12}>
+              <div style={{ backgroundColor: "#14d92b" }} className="center-h">
+                <sprite.icon gen={3} pokemon="venusaur" />
+                <span className="center">Venusaur</span>
+              </div>
+            </Column>
+            <Column xs={12}>
+              <div style={{ backgroundColor: "#14d92b" }} className="center-h">
+                <sprite.icon gen={3} pokemon="charmander" />
+                <span className="center">Charmander</span>
+              </div>
+            </Column>
+            <Column xs={12}>
+              <div style={{ backgroundColor: "white" }} className="center-h">
+                <sprite.icon gen={3} pokemon="charmeleon" />
+                <span className="center">Charmeleon</span>
+              </div>
+            </Column>
+          </Row>
+        </Column>
+      </Row>
+    </div>
   );
+  // return (
+  //   <PokedexList
+  //     userId={props.session.user.userId}
+  //     dex={props.session.user.pokedex}
+  //     gamePokedex={props.pokedex.pokedex}
+  //   />
+  // );
 };
 
 const mapStateToProps = (root: RootState) => ({
