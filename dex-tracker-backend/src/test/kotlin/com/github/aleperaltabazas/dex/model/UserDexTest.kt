@@ -11,6 +11,7 @@ class UserDexTest : WordSpec() {
             game = Game(
                 name = "rby-national",
                 displayName = "Red, Blue and Yellow - National Pokedex",
+                gen = 1,
             ),
             type = PokedexType.NATIONAL,
             region = "kanto",

@@ -2,8 +2,6 @@ import React, { useEffect } from "react";
 import { hot } from "react-hot-loader";
 import Header from "./components/Header";
 import "./styles.scss";
-import "pokesprite-spritesheet/assets/pokesprite-inventory.css";
-import "pokesprite-spritesheet/assets/pokesprite-pokemon-gen8.css";
 import Menu from "./components/Menu";
 import CreatePokedexForm from "./components/CreatePokedexForm";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
@@ -15,6 +13,8 @@ import { fireSynchronize } from "./functions/my-dex";
 import store from "./store";
 import UserPage from "./views/UserPage";
 import Footer from "./components/Footer";
+import sprite from "./components/Sprite";
+import "./icons.scss";
 
 const App = () => {
   useEffect(() => {
@@ -34,6 +34,7 @@ const App = () => {
       }
     });
   }, []);
+
   return (
     <Router>
       <Header />
@@ -52,7 +53,6 @@ const App = () => {
         <Route path="/" exact component={HomePage} />
       </Switch>
       <CreatePokedexForm />
-      <Footer />
     </Router>
   );
 };

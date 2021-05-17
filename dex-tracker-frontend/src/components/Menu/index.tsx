@@ -19,6 +19,7 @@ import { RouteComponentProps, withRouter } from "react-router";
 import DexLink from "../Links/Dex";
 import { LoggedInState, SessionState } from "../../store/session";
 import { Typography } from "@material-ui/core";
+import sprite from "../Sprite";
 
 const useStyles = makeStyles({
   list: {
@@ -117,7 +118,7 @@ const Menu = (props: MenuProps) => {
                       }}
                     >
                       <ListItemIcon>
-                        <span className={`pokesprite pokemon bulbasaur`} />
+                        <sprite.icon gen={dex.game.gen} pokemon="bulbasaur" />
                       </ListItemIcon>
                       <ListItemText className="h-100 center">
                         <Typography noWrap>

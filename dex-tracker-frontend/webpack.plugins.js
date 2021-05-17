@@ -20,7 +20,6 @@ const base = [
   }),
   new CopyWebpackPlugin([
     { from: "images", to: "images" },
-    { from: "eva", to: "eva" },
     { from: "stylesheets", to: "stylesheets" },
   ]),
 ];

@@ -1,6 +1,7 @@
 export type Game = {
   name: string;
   displayName: string;
+  gen: number;
 };
 
 export type PokedexType = "NATIONAL" | "REGIONAL";
