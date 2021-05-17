@@ -2,7 +2,7 @@
 
 ### Pokedex
 
-GET `/api/v1/pokedex/`
+GET `/api/v1/pokedex/
 
 ```json
 [
