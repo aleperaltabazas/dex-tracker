@@ -232,3 +232,105 @@ Response:
 POST `/api/v1/logout`
 
 Requires `dex-token` to be sent.
+
+### Pokemon
+
+GET `/api/v1/games/:game/pokemon/:key`
+
+`:key` may be the pokemon's name or its pokedex number.
+
+Response:
+```json
+{
+  "name": "pichu",
+  "nationalPokedexNumber": 172,
+  "primaryAbility": "static",
+  "hiddenAbility": "lightning-rod",
+  "evolutions": [
+    {
+      "name": "pikachu",
+      "method": {
+        "type": "LEVEL_UP",
+        "friendship": 220,
+        "upsideDown": false
+      }
+    }
+  ],
+  "forms": [
+    {
+      "name": "spiky-eared-pichu"
+    }
+  ],
+  "gen": 4
+}
+```
+
+```json
+{
+  "name": "eevee",
+  "nationalPokedexNumber": 133,
+  "primaryAbility": "run-away",
+  "secondaryAbility": "adaptability",
+  "hiddenAbility": "anticipation",
+  "evolutions": [
+    {
+      "name": "vaporeon",
+      "method": {
+        "type": "USE_ITEM",
+        "item": "water-stone"
+      }
+    },
+    {
+      "name": "jolteon",
+      "method": {
+        "type": "USE_ITEM",
+        "item": "thunder-stone"
+      }
+    },
+    {
+      "name": "flareon",
+      "method": {
+        "type": "USE_ITEM",
+        "item": "fire-stone"
+      }
+    },
+    {
+      "name": "espeon",
+      "method": {
+        "type": "LEVEL_UP",
+        "friendship": 220,
+        "time": "day",
+        "upsideDown": false
+      }
+    },
+    {
+      "name": "umbreon",
+      "method": {
+        "type": "LEVEL_UP",
+        "friendship": 220,
+        "time": "night",
+        "upsideDown": false
+      }
+    },
+    {
+      "name": "leafeon",
+      "method": {
+        "type": "LEVEL_UP",
+        "location": "eterna-forest",
+        "upsideDown": false
+      }
+    },
+    {
+      "name": "glaceon",
+      "method": {
+        "type": "LEVEL_UP",
+        "location": "sinnoh-route-217",
+        "upsideDown": false
+      }
+    }
+  ],
+  "forms": [],
+  "gen": 4
+}
+```
+
