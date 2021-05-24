@@ -26,7 +26,7 @@ export function oauthLogin(
     withCredentials: true,
     data: {
       mail: succ.profileObj.email,
-      googleToken: succ.tokenId,
+      googleToken: succ.tokenObj.id_token,
     },
   };
 

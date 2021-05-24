@@ -1,6 +1,7 @@
 package com.github.aleperaltabazas.dex.config
 
 import com.github.aleperaltabazas.dex.cache.pokedex.PokedexCache
+import com.github.aleperaltabazas.dex.datasource.google.GoogleOAuthValidator
 import com.github.aleperaltabazas.dex.service.*
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.HashHelper
@@ -40,12 +41,13 @@ class ServiceModule : AbstractModule() {
     @Singleton
     @Named("loginService")
     fun loginService(
-        @Named("storage") storage: Storage,
         @Named("usersService") usersService: UsersService,
         @Named("sessionService") sessionService: SessionService,
+        @Named("googleValidator") googleOAuthValidator: GoogleOAuthValidator,
     ) = LoginService(
         usersService = usersService,
         sessionService = sessionService,
+        google = googleOAuthValidator,
     )
 
     @Provides

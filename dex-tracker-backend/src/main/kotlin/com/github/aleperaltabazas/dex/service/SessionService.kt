@@ -9,7 +9,7 @@ import org.bson.Document
 
 open class SessionService(
     private val storage: Storage,
-    private val hash: HashHelper
+    private val hash: HashHelper,
 ) {
     open fun findSession(key: String): Session? = storage.query(Collection.SESSIONS)
         .where(Document("token", key))

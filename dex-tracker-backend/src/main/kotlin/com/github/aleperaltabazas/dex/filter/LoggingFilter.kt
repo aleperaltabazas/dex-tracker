@@ -33,7 +33,7 @@ object LoggingFilter {
         ".*[.]js",
         ".*[.]png",
     )
-    private val IGNORED_HEADERS: List<String> = listOf("Cookie", "Set-Cookie")
+    private val IGNORED_HEADERS: List<String> = listOf("Cookie", "Set-Cookie", "dex-token")
     private val LOGGER = LoggerFactory.getLogger(LoggingFilter::class.java)
 
     fun register() {
