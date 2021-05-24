@@ -51,7 +51,7 @@ open class RestConnector(
             objectMapper = objectMapper
         ).right()
     } catch (e: Throwable) {
-        NetworkException(cause = e, message = "An error ocurred when executing the http request").left()
+        NetworkException(cause = e, message = "An error occurred when executing the http request").left()
     }
 
     private fun HttpEntityEnclosingRequestBase.setBody(body: Any?): HttpEntityEnclosingRequestBase = body?.let { b ->

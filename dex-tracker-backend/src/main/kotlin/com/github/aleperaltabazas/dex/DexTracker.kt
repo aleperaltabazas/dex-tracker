@@ -70,6 +70,7 @@ class DexTracker {
                 ConfigModule(),
                 ControllerModule(),
                 DatabaseModule(),
+                DatasourceModule(),
                 EnvironmentModule(),
                 FileSystemModule(),
                 HashModule(),

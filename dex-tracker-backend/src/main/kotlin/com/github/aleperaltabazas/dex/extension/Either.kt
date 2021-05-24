@@ -6,7 +6,7 @@ import arrow.core.left
 import arrow.core.right
 import kotlinx.coroutines.runBlocking
 
-fun <R> Either.Companion.catchBlocking(f: suspend () -> R): Either<Throwable, R> = runBlocking { Either.catch(f) }
+fun <R> Either.Companion.catchBlocking(f: suspend () -> R): Either<Throwable, R> = runBlocking { catch(f) }
 
 fun <A> List<Either<Throwable, A>>.sequence(): Either<Throwable, List<A>> {
     if (this.isEmpty()) {
