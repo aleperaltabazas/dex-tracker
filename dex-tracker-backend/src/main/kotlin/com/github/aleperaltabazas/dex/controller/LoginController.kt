@@ -6,6 +6,7 @@ import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
 import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
 import com.github.aleperaltabazas.dex.dto.dex.LoginRequestDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
+import com.github.aleperaltabazas.dex.extension.dexToken
 import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.service.LoginService
 import com.github.aleperaltabazas.dex.service.SessionService
@@ -25,7 +26,7 @@ class LoginController(
     }
 
     private fun login(req: Request, res: Response): User {
-        val dexToken = req.cookie(DEX_TOKEN) ?: req.headers(DEX_TOKEN)
+        val dexToken = req.dexToken()
 
         return if (dexToken != null) {
             loginService.loginFromToken(dexToken)
@@ -40,7 +41,7 @@ class LoginController(
     }
 
     private fun logout(req: Request, res: Response) {
-        req.cookie(DEX_TOKEN)?.let { loginService.logout(it) }
+        req.dexToken()?.let { loginService.logout(it) }
         res.cookie("/", DEX_TOKEN, "", 0, false)
     }
 

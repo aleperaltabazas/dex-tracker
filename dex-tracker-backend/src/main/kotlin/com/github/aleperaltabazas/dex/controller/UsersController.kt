@@ -9,6 +9,7 @@ import com.github.aleperaltabazas.dex.dto.dex.UpdateUserDTO
 import com.github.aleperaltabazas.dex.exception.ForbiddenException
 import com.github.aleperaltabazas.dex.exception.NotFoundException
 import com.github.aleperaltabazas.dex.exception.UnauthorizedException
+import com.github.aleperaltabazas.dex.extension.dexToken
 import com.github.aleperaltabazas.dex.extension.paramNotNull
 import com.github.aleperaltabazas.dex.model.Session
 import com.github.aleperaltabazas.dex.model.User
@@ -80,7 +81,7 @@ class UsersController(
 
     private fun <T> authenticated(f: (Request, Response, Session) -> T): (Request, Response) -> T = { req, res ->
         val userId = req.paramNotNull(":userId")
-        val dexToken = req.cookie(DEX_TOKEN) ?: throw UnauthorizedException("Missing dex-token")
+        val dexToken = req.dexToken() ?: throw UnauthorizedException("Missing dex-token")
 
         val session = sessionService.findSession(dexToken)
             ?: throw UnauthorizedException("Session not found for given token")
