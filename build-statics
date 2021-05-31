@@ -9,10 +9,15 @@ BACKEND_RESOURCES="$BACKEND/src/main/resources"
 
 rm -rf $BACKEND_RESOURCES/assets
 mkdir $BACKEND_RESOURCES/assets
+mkdir $BACKEND_RESOURCES/assets/static
+mkdir $BACKEND_RESOURCES/assets/static/icons
 mkdir $BACKEND_RESOURCES/assets/templates/
 
 npm install --prefix $FRONTEND
 npm run build --prefix $FRONTEND
+
+find "$BACKEND_RESOURCES/assets/static/dex-tracker" -name '*.png' -exec mv {} $BACKEND_RESOURCES/assets/static/icons \;
+find "$BACKEND_RESOURCES/assets/static/dex-tracker" -type f -name '*.css' | xargs sed -i -e 's/static/icons/g'
 
 find "$BACKEND_RESOURCES/assets/static/dex-tracker" -name 'index.html' -exec mv {} $BACKEND_RESOURCES/assets/templates/index.ftl \;
 
