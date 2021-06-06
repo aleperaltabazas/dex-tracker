@@ -45,8 +45,8 @@ class LoginController(
         res.cookie("/", DEX_TOKEN, "", 0, false)
     }
 
-    private fun validate(req: Request, res: Response) {
+    private fun validate(req: Request, res: Response): User {
         val dexToken = req.headers(DEX_TOKEN) ?: throw BadRequestException("Missing $DEX_TOKEN to validate")
-        loginService.loginFromToken(dexToken)
+        return loginService.loginFromToken(dexToken)
     }
 }
