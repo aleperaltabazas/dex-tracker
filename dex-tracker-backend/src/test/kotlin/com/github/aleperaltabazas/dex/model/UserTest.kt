@@ -26,7 +26,7 @@ class UserTest : WordSpec() {
                 UserDexPokemon(
                     name = "bulbasaur",
                     dexNumber = 1,
-                    caught = true,
+                    caught = false,
                 )
             ),
         )
@@ -87,7 +87,7 @@ class UserTest : WordSpec() {
             "find the pokemon in the dex with the given ID and add it to favourites" {
                 val expected = user.copy(
                     pokedex = listOf(
-                        dex.copy(name = "foo"),
+                        dex,
                         dex.copy(userDexId = "456"),
                     ),
                     favourites = listOf(
@@ -107,8 +107,7 @@ class UserTest : WordSpec() {
                 ).update(
                     UpdateUserDTO(
                         dex = mapOf(
-                            "123" to DexUpdateDTO(
-                                name = "foo",
+                            "456" to DexUpdateDTO(
                                 caught = emptyList(),
                                 favourites = listOf(0),
                             )
