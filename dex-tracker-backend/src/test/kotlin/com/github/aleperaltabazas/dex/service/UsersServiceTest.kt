@@ -83,7 +83,7 @@ class UsersServiceTest : WordSpec() {
                         userId = "123",
                         changes = UpdateUserDTO(
                             username = "foo",
-                            dex = mapOf("123" to DexUpdateDTO(caught = emptyList())),
+                            dex = mapOf("123" to DexUpdateDTO(caught = emptyList(), favourites = emptyList())),
                         )
                     )
                 }

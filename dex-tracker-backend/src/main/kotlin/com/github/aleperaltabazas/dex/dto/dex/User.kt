@@ -7,7 +7,8 @@ data class UpdateUserDTO(
 
 data class DexUpdateDTO(
     val name: String? = null,
-    val caught: List<Int>
+    val caught: List<Int>,
+    val favourites: List<Int>,
 )
 
 data class CreateDexDTO(
