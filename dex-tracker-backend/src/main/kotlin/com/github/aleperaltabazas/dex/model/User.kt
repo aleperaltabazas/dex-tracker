@@ -2,6 +2,7 @@ package com.github.aleperaltabazas.dex.model
 
 import com.github.aleperaltabazas.dex.dto.dex.DexUpdateDTO
 import com.github.aleperaltabazas.dex.dto.dex.UpdateUserDTO
+import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.extension.find
 
 data class User(
@@ -10,6 +11,7 @@ data class User(
     val pokedex: List<UserDex>,
     val mail: String,
     val picture: String? = null,
+    val favourites: List<Favourite> = emptyList(),
 ) {
     fun owns(pokedexId: String) = pokedex.any { it.userDexId == pokedexId }
 
@@ -20,6 +22,21 @@ data class User(
                 ?.find { dexId, _ -> dexId == dex.userDexId }
                 ?.let { (_, u) -> dex.update(u) } ?: dex
         },
+        favourites = (changes.dex
+            ?.flatMap { (id, u) ->
+                u.favourites.map { n ->
+                    val dex = this.pokedex.find { it.userDexId == id }
+                    Favourite(
+                        dexId = id,
+                        species = dex
+                            ?.pokemon
+                            ?.get(n)
+                            ?.name
+                            ?: throw BadRequestException("Pokedex $id does not contain pokemon at $n"),
+                        gen = dex.game.gen,
+                    )
+                }
+            } ?: emptyList())
     )
 
     fun addDex(dex: UserDex) = this.copy(
@@ -52,4 +69,10 @@ data class UserDexPokemon(
 data class Session(
     val token: String,
     val userId: String,
+)
+
+data class Favourite(
+    val species: String,
+    val gen: Int,
+    val dexId: String,
 )

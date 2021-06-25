@@ -22,7 +22,13 @@ class UserTest : WordSpec() {
             ),
             type = PokedexType.NATIONAL,
             region = "kanto",
-            pokemon = emptyList(),
+            pokemon = listOf(
+                UserDexPokemon(
+                    name = "bulbasaur",
+                    dexNumber = 1,
+                    caught = true,
+                )
+            ),
         )
 
         "update" should {
@@ -63,7 +69,52 @@ class UserTest : WordSpec() {
                         dex,
                         dex.copy(userDexId = "456"),
                     ),
-                ).update(UpdateUserDTO(dex = mapOf("123" to DexUpdateDTO(name = "foo", caught = emptyList()))))
+                ).update(
+                    UpdateUserDTO(
+                        dex = mapOf(
+                            "123" to DexUpdateDTO(
+                                name = "foo",
+                                caught = emptyList(),
+                                favourites = emptyList(),
+                            )
+                        )
+                    )
+                )
+
+                actual shouldBe expected
+            }
+
+            "find the pokemon in the dex with the given ID and add it to favourites" {
+                val expected = user.copy(
+                    pokedex = listOf(
+                        dex.copy(name = "foo"),
+                        dex.copy(userDexId = "456"),
+                    ),
+                    favourites = listOf(
+                        Favourite(
+                            dexId = "456",
+                            species = "bulbasaur",
+                            gen = 1,
+                        )
+                    )
+                )
+
+                val actual = user.copy(
+                    pokedex = listOf(
+                        dex,
+                        dex.copy(userDexId = "456"),
+                    ),
+                ).update(
+                    UpdateUserDTO(
+                        dex = mapOf(
+                            "123" to DexUpdateDTO(
+                                name = "foo",
+                                caught = emptyList(),
+                                favourites = listOf(0),
+                            )
+                        )
+                    )
+                )
 
                 actual shouldBe expected
             }

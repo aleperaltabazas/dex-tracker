@@ -20,15 +20,32 @@ class UserDexTest : WordSpec() {
 
         "update" should {
             "update the dex name" {
-                dex.update(DexUpdateDTO(name = "foo", caught = emptyList())) shouldBe dex.copy(name = "foo")
-                dex.copy(name = "foo").update(DexUpdateDTO(name = "bar", caught = emptyList())) shouldBe dex.copy(
+                dex.update(
+                    DexUpdateDTO(
+                        name = "foo",
+                        caught = emptyList(),
+                        favourites = emptyList(),
+                    )
+                ) shouldBe dex.copy(name = "foo")
+                dex.copy(name = "foo").update(
+                    DexUpdateDTO(
+                        name = "bar",
+                        caught = emptyList(),
+                        favourites = emptyList(),
+                    )
+                ) shouldBe dex.copy(
                     name = "bar",
                 )
             }
 
             "keep the current name if the update is null" {
-                dex.update(DexUpdateDTO(caught = emptyList())) shouldBe dex
-                dex.copy(name = "foo").update(DexUpdateDTO(caught = emptyList())) shouldBe dex.copy(name = "foo")
+                dex.update(DexUpdateDTO(caught = emptyList(), favourites = emptyList())) shouldBe dex
+                dex.copy(name = "foo").update(
+                    DexUpdateDTO(
+                        caught = emptyList(),
+                        favourites = emptyList(),
+                    )
+                ) shouldBe dex.copy(name = "foo")
             }
 
             val bulbasaur = { caught: Boolean ->
@@ -63,7 +80,7 @@ class UserDexTest : WordSpec() {
                     caught = 2,
                 )
                 val actual = dex.copy(pokemon = listOf(bulbasaur(false), ivysaur(false), venusaur(false)))
-                    .update(DexUpdateDTO(caught = listOf(2, 3)))
+                    .update(DexUpdateDTO(caught = listOf(2, 3), favourites = emptyList()))
 
                 actual shouldBe expected
             }
@@ -79,7 +96,7 @@ class UserDexTest : WordSpec() {
                 )
 
                 val actual = dex.copy(pokemon = listOf(bulbasaur(true), ivysaur(false), venusaur(false)))
-                    .update(DexUpdateDTO(caught = listOf(2)))
+                    .update(DexUpdateDTO(caught = listOf(2), favourites = emptyList()))
 
                 actual shouldBe expected
             }
