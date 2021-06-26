@@ -22,21 +22,7 @@ data class User(
                 ?.find { dexId, _ -> dexId == dex.userDexId }
                 ?.let { (_, u) -> dex.update(u) } ?: dex
         },
-        favourites = (changes.dex
-            ?.flatMap { (id, u) ->
-                u.favourites.map { n ->
-                    val dex = this.pokedex.find { it.userDexId == id }
-                    Favourite(
-                        dexId = id,
-                        species = dex
-                            ?.pokemon
-                            ?.get(n)
-                            ?.name
-                            ?: throw BadRequestException("Pokedex $id does not contain pokemon at $n"),
-                        gen = dex.game.gen,
-                    )
-                }
-            } ?: emptyList())
+        favourites = changes.favourites ?: this.favourites,
     )
 
     fun addDex(dex: UserDex) = this.copy(
