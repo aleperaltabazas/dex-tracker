@@ -24,14 +24,12 @@ class UserDexTest : WordSpec() {
                     DexUpdateDTO(
                         name = "foo",
                         caught = emptyList(),
-                        favourites = emptyList(),
                     )
                 ) shouldBe dex.copy(name = "foo")
                 dex.copy(name = "foo").update(
                     DexUpdateDTO(
                         name = "bar",
                         caught = emptyList(),
-                        favourites = emptyList(),
                     )
                 ) shouldBe dex.copy(
                     name = "bar",
@@ -39,11 +37,10 @@ class UserDexTest : WordSpec() {
             }
 
             "keep the current name if the update is null" {
-                dex.update(DexUpdateDTO(caught = emptyList(), favourites = emptyList())) shouldBe dex
+                dex.update(DexUpdateDTO(caught = emptyList())) shouldBe dex
                 dex.copy(name = "foo").update(
                     DexUpdateDTO(
                         caught = emptyList(),
-                        favourites = emptyList(),
                     )
                 ) shouldBe dex.copy(name = "foo")
             }
@@ -80,7 +77,7 @@ class UserDexTest : WordSpec() {
                     caught = 2,
                 )
                 val actual = dex.copy(pokemon = listOf(bulbasaur(false), ivysaur(false), venusaur(false)))
-                    .update(DexUpdateDTO(caught = listOf(2, 3), favourites = emptyList()))
+                    .update(DexUpdateDTO(caught = listOf(2, 3)))
 
                 actual shouldBe expected
             }
@@ -96,7 +93,7 @@ class UserDexTest : WordSpec() {
                 )
 
                 val actual = dex.copy(pokemon = listOf(bulbasaur(true), ivysaur(false), venusaur(false)))
-                    .update(DexUpdateDTO(caught = listOf(2), favourites = emptyList()))
+                    .update(DexUpdateDTO(caught = listOf(2)))
 
                 actual shouldBe expected
             }
