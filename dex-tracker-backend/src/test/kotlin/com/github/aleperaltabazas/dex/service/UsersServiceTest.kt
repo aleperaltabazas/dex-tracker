@@ -17,6 +17,7 @@ import io.kotest.core.test.TestCase
 import io.kotest.matchers.shouldBe
 import org.bson.Document
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
 import com.nhaarman.mockito_kotlin.any as anyNotNull
 
 class UsersServiceTest : WordSpec() {
@@ -46,7 +47,8 @@ class UsersServiceTest : WordSpec() {
                 val queryMock: Query = mock {}
                 val replaceMock: Replace = mock {}
 
-                whenever(queryMock.findOne(any(TypeReference::class.java))).thenReturn(user)
+                whenever(queryMock.findOneAggregated(any(TypeReference::class.java))).thenReturn(user)
+                whenever(queryMock.join(anyNotNull(), anyString(), anyString(), anyString())).thenReturn(queryMock)
 
                 whenever(queryMock.where(anyNotNull())).thenReturn(queryMock)
 
@@ -74,8 +76,9 @@ class UsersServiceTest : WordSpec() {
             "reject the changes if there is at least one dex id which the user does not own" {
                 val queryMock: Query = mock {}
 
-                whenever(queryMock.findOne(any(TypeReference::class.java))).thenReturn(user)
+                whenever(queryMock.findOneAggregated(any(TypeReference::class.java))).thenReturn(user)
                 whenever(queryMock.where(anyNotNull())).thenReturn(queryMock)
+                whenever(queryMock.join(anyNotNull(), anyString(), anyString(), anyString())).thenReturn(queryMock)
                 whenever(storageMock.query(anyNotNull())).thenReturn(queryMock)
 
                 shouldThrow<ForbiddenException> {
