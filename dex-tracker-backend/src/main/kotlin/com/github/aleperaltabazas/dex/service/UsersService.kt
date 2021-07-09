@@ -47,7 +47,13 @@ open class UsersService(
 
     open fun findUserById(userId: String): User? = storage.query(Collection.USERS)
         .where(Document("user_id", userId))
-        .findOne(USER_REF)
+        .join(
+            collection = Collection.SUBSCRIPTIONS,
+            localField = "user_id",
+            foreignField = "subscriber_user_id",
+            `as` = "subscriptions",
+        )
+        .findOneAggregated(USER_REF)
 
     open fun findUserByMail(mail: String) = storage.query(Collection.USERS)
         .where(Document("mail", mail))

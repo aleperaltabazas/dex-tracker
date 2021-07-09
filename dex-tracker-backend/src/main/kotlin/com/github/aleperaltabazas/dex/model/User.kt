@@ -1,9 +1,7 @@
 package com.github.aleperaltabazas.dex.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.github.aleperaltabazas.dex.dto.dex.DexUpdateDTO
 import com.github.aleperaltabazas.dex.dto.dex.UpdateUserDTO
-import com.github.aleperaltabazas.dex.exception.BadRequestException
 import com.github.aleperaltabazas.dex.extension.find
 
 data class User(
@@ -67,7 +65,7 @@ data class Favourite(
 
 data class Subscription(
     val subscriptionId: String,
-    @JsonIgnore val subscriberUserId: String,
+    val subscriberUserId: String?,
     val userId: String,
     val dexId: String,
 )

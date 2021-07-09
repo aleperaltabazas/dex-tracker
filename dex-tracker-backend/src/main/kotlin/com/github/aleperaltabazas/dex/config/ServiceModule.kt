@@ -71,4 +71,12 @@ class ServiceModule : AbstractModule() {
         pokedexService = pokedexService,
         storage = storage,
     )
+
+    @Provides
+    @Singleton
+    @Named("subscriptionService")
+    fun subscriptionService(
+        @Named("storage") storage: Storage,
+        @Named("idGenerator") idGenerator: IdGenerator,
+    ) = SubscriptionService(storage, idGenerator)
 }

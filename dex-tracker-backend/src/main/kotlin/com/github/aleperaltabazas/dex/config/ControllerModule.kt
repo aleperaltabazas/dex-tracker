@@ -31,11 +31,13 @@ class ControllerModule : AbstractModule() {
         @Named("usersService") usersService: UsersService,
         @Named("pokedexService") pokedexService: PokedexService,
         @Named("sessionService") sessionService: SessionService,
+        @Named("subscriptionService") subscriptionService: SubscriptionService,
     ) = UsersController(
         objectMapper = objectMapper,
         usersService = usersService,
         pokedexService = pokedexService,
         sessionService = sessionService,
+        subscriptionService = subscriptionService,
     )
 
     @Provides
