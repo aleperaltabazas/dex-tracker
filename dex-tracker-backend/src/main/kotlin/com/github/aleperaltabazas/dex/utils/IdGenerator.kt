@@ -11,4 +11,6 @@ open class IdGenerator(
     open fun userDexId() = randomId("UD")
 
     private fun randomId(prefix: String): String = "$prefix-${sdf.format(Date())}-${UUID.randomUUID()}"
+
+    open fun subscriptionId() = randomId("S")
 }

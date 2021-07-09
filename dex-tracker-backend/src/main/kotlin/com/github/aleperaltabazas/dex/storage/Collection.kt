@@ -5,4 +5,5 @@ enum class Collection(val collectionName: String) {
     USERS("users"),
     SESSIONS("sessions"),
     POKEDEX("pokedex"),
+    SUBSCRIPTIONS("subscriptions"),
 }

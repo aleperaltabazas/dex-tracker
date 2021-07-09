@@ -17,3 +17,8 @@ data class CreateDexDTO(
     val game: String,
     val name: String?,
 )
+
+data class SubscribeDTO(
+    val userId: String,
+    val dexId: String,
+)

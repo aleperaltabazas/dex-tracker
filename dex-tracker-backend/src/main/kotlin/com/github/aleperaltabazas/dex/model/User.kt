@@ -1,5 +1,6 @@
 package com.github.aleperaltabazas.dex.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.github.aleperaltabazas.dex.dto.dex.DexUpdateDTO
 import com.github.aleperaltabazas.dex.dto.dex.UpdateUserDTO
 import com.github.aleperaltabazas.dex.exception.BadRequestException
@@ -12,6 +13,7 @@ data class User(
     val mail: String,
     val picture: String? = null,
     val favourites: List<Favourite> = emptyList(),
+    val subscriptions: Set<Subscription> = emptySet(),
 ) {
     fun owns(pokedexId: String) = pokedex.any { it.userDexId == pokedexId }
 
@@ -60,5 +62,12 @@ data class Session(
 data class Favourite(
     val species: String,
     val gen: Int,
+    val dexId: String,
+)
+
+data class Subscription(
+    val subscriptionId: String,
+    @JsonIgnore val subscriberUserId: String,
+    val userId: String,
     val dexId: String,
 )

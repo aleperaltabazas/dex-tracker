@@ -3,8 +3,8 @@ package com.github.aleperaltabazas.dex.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.aleperaltabazas.dex.constants.APPLICATION_JSON
-import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
 import com.github.aleperaltabazas.dex.dto.dex.CreateDexDTO
+import com.github.aleperaltabazas.dex.dto.dex.SubscribeDTO
 import com.github.aleperaltabazas.dex.dto.dex.UpdateUserDTO
 import com.github.aleperaltabazas.dex.exception.ForbiddenException
 import com.github.aleperaltabazas.dex.exception.NotFoundException
@@ -16,6 +16,7 @@ import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.model.UserDex
 import com.github.aleperaltabazas.dex.service.PokedexService
 import com.github.aleperaltabazas.dex.service.SessionService
+import com.github.aleperaltabazas.dex.service.SubscriptionService
 import com.github.aleperaltabazas.dex.service.UsersService
 import spark.Request
 import spark.Response
@@ -26,6 +27,7 @@ class UsersController(
     private val usersService: UsersService,
     private val pokedexService: PokedexService,
     private val sessionService: SessionService,
+    private val subscriptionService: SubscriptionService,
 ) : Controller {
     override fun register() {
         path("/api/v1/users") {
@@ -35,13 +37,19 @@ class UsersController(
                 "/:userId/pokedex",
                 APPLICATION_JSON,
                 authenticated(this::createUserDex),
-                objectMapper::writeValueAsString
+                objectMapper::writeValueAsString,
             )
             patch(
                 "/:userId",
                 APPLICATION_JSON,
                 authenticated(this::updateUser),
-                objectMapper::writeValueAsString
+                objectMapper::writeValueAsString,
+            )
+            post(
+                "/:userId/subscriptions",
+                APPLICATION_JSON,
+                authenticated(this::subscribe),
+                objectMapper::writeValueAsString,
             )
         }
     }
@@ -77,6 +85,19 @@ class UsersController(
         val changes: UpdateUserDTO = objectMapper.readValue(req.body())
 
         return usersService.updateUser(session.userId, changes).orNotFound(session.userId)
+    }
+
+    private fun subscribe(req: Request, res: Response, session: Session): User {
+        val subscribe: SubscribeDTO = objectMapper.readValue(req.body())
+        val user = usersService.findUserById(session.userId).orNotFound(session.userId)
+
+        val subscription = subscriptionService.subscribe(
+            dexId = subscribe.dexId,
+            userId = subscribe.userId,
+            subscriberUserId = user.userId,
+        )
+
+        return user.let { it.copy(subscriptions = it.subscriptions + subscription) }
     }
 
     private fun <T> authenticated(f: (Request, Response, Session) -> T): (Request, Response) -> T = { req, res ->
