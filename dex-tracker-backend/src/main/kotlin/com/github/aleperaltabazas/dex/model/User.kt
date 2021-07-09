@@ -28,6 +28,10 @@ data class User(
     fun addDex(dex: UserDex) = this.copy(
         pokedex = pokedex + dex,
     )
+
+    fun isSubscribed(userId: String, dexId: String) = subscriptions.any { s -> s.dexId == dexId && s.userId == userId }
+
+    fun isSubscribed(subscriptionId: String) = subscriptions.any { s -> s.subscriptionId == subscriptionId }
 }
 
 data class UserDex(

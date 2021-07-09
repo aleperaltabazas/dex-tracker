@@ -51,6 +51,12 @@ class UsersController(
                 authenticated(this::subscribe),
                 objectMapper::writeValueAsString,
             )
+            delete(
+                "/:userId/subscriptions/:subscriptionId",
+                APPLICATION_JSON,
+                authenticated(this::unsubscribe),
+                objectMapper::writeValueAsString,
+            )
         }
     }
 
@@ -91,13 +97,30 @@ class UsersController(
         val subscribe: SubscribeDTO = objectMapper.readValue(req.body())
         val user = usersService.findUserById(session.userId).orNotFound(session.userId)
 
-        val subscription = subscriptionService.subscribe(
-            dexId = subscribe.dexId,
-            userId = subscribe.userId,
-            subscriberUserId = user.userId,
-        )
+        val subscriptions = if (!user.isSubscribed(userId = subscribe.userId, dexId = subscribe.dexId)) {
+            val subscription = subscriptionService.subscribe(
+                dexId = subscribe.dexId,
+                userId = subscribe.userId,
+                subscriberUserId = user.userId,
+            )
 
-        return user.let { it.copy(subscriptions = it.subscriptions + subscription) }
+            user.subscriptions + subscription
+        } else user.subscriptions
+
+        return user.copy(subscriptions = subscriptions)
+    }
+
+    private fun unsubscribe(req: Request, res: Response, session: Session): User {
+        val subscriptionId = req.params(":subscriptionId")
+        val user = usersService.findUserById(session.userId).orNotFound(session.userId)
+
+        if (user.isSubscribed(subscriptionId)) {
+            subscriptionService.unsubscribe(subscriptionId)
+        }
+
+        return user.copy(
+            subscriptions = user.subscriptions.filterNot { s -> s.subscriptionId == subscriptionId }.toSet(),
+        )
     }
 
     private fun <T> authenticated(f: (Request, Response, Session) -> T): (Request, Response) -> T = { req, res ->
