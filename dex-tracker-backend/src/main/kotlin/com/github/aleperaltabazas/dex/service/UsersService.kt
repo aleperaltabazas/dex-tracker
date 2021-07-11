@@ -30,7 +30,7 @@ open class UsersService(
                     changes.dex?.keys?.forEach { id ->
                         notificationService.notifyPokedexChange(
                             user = it,
-                            dexId = id,
+                            userDex = user.pokedex.find { d -> d.userDexId == id }!!,
                         )
                     }
                 }
