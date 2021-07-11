@@ -9,11 +9,11 @@ import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
 import org.slf4j.LoggerFactory
 
-class NotificationService(
+open class NotificationService(
     private val firebase: FirebaseMessageClient,
     private val storage: Storage,
 ) {
-    fun notifyPokedexChange(
+    open fun notifyPokedexChange(
         user: User,
         dexId: String,
     ) {
