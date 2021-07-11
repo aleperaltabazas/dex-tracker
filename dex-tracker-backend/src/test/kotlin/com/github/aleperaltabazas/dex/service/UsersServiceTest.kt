@@ -24,10 +24,12 @@ class UsersServiceTest : WordSpec() {
     private val storageMock: Storage = mock {}
     private val sessionMock: SessionService = mock {}
     private val idGenMock: IdGenerator = mock {}
+    private val notificationMock: NotificationService = mock {}
     private val userService = UsersService(
         storage = storageMock,
         sessionService = sessionMock,
         idGenerator = idGenMock,
+        notificationService = notificationMock
     )
 
     override fun beforeEach(testCase: TestCase) {

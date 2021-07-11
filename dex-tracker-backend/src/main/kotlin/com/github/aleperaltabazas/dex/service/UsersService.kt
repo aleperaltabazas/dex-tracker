@@ -15,6 +15,7 @@ open class UsersService(
     private val storage: Storage,
     private val sessionService: SessionService,
     private val idGenerator: IdGenerator,
+    private val notificationService: NotificationService,
 ) {
     open fun updateUser(userId: String, changes: UpdateUserDTO): User? = findUserById(userId)
         ?.let { user ->
@@ -24,7 +25,15 @@ open class UsersService(
                 ?.let { throw ForbiddenException("User $userId is not allowed to edit dex ${it.joinToString(",")}") }
 
             user.update(changes)
-                .also { updateUser(it) }
+                .also {
+                    updateUser(it)
+                    changes.dex?.keys?.forEach { id ->
+                        notificationService.notifyPokedexChange(
+                            user = it,
+                            dexId = id,
+                        )
+                    }
+                }
         }
 
     open fun updateUser(user: User) {

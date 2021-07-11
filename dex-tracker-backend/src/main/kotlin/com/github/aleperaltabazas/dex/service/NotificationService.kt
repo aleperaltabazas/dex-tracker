@@ -5,25 +5,31 @@ import arrow.core.Ior
 import com.github.aleperaltabazas.dex.datasource.firebase.FirebaseMessageClient
 import com.github.aleperaltabazas.dex.model.User
 import com.github.aleperaltabazas.dex.model.UserDex
+import com.github.aleperaltabazas.dex.storage.Collection
+import com.github.aleperaltabazas.dex.storage.Storage
 import org.slf4j.LoggerFactory
 
 class NotificationService(
     private val firebase: FirebaseMessageClient,
+    private val storage: Storage,
 ) {
     fun notifyPokedexChange(
         user: User,
-        userDex: UserDex,
+        dexId: String,
     ) {
         val response = firebase.notify(
-            to = "/topics/${user.userId}---${userDex.userDexId}",
+            to = "/topics/${user.userId}---$dexId",
             data = mapOf(
                 "userId" to user.userId,
-                "dexId" to userDex.userDexId,
+                "dexId" to dexId,
             ),
         )
 
         when (response){
-            is Either.Right -> LOGGER.info("Notification created, ID: ${response.b.messageId}")
+            is Either.Right -> {
+                LOGGER.info("Notification created, ID: ${response.b.messageId}")
+//                storage.insert(Collection.MESSAGES, response.b.messageId)
+            }
             is Either.Left -> LOGGER.error("Error creating notification", response.a)
         }
     }

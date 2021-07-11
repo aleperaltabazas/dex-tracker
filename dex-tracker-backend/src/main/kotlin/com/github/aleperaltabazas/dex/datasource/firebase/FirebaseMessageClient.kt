@@ -1,6 +1,5 @@
 package com.github.aleperaltabazas.dex.datasource.firebase
 
-import arrow.core.Either
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.connector.RestConnector
 import com.github.aleperaltabazas.dex.dto.MessageDTO
@@ -11,11 +10,23 @@ import com.github.aleperaltabazas.dex.extension.both
 class FirebaseMessageClient(
     private val firebaseConnector: RestConnector,
 ) {
+    fun <T> notify(
+        to: String,
+        title: String,
+        body: String,
+        data: T,
+    ) = doNotify(
+        to = to,
+        title = title,
+        body = body,
+        data = data,
+    )
+
     fun notify(
         to: String,
         title: String,
         body: String,
-    ) = notify(
+    ) = doNotify(
         to = to,
         title = title,
         body = body,
@@ -25,14 +36,14 @@ class FirebaseMessageClient(
     fun <T> notify(
         to: String,
         data: T,
-    ) = notify(
+    ) = doNotify(
         to = to,
         title = null,
         body = null,
         data = data,
     )
 
-    fun <T> notify(
+    private fun <T> doNotify(
         to: String,
         title: String?,
         body: String?,

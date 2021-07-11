@@ -1,6 +1,7 @@
 package com.github.aleperaltabazas.dex.config
 
 import com.github.aleperaltabazas.dex.cache.pokedex.PokedexCache
+import com.github.aleperaltabazas.dex.datasource.firebase.FirebaseMessageClient
 import com.github.aleperaltabazas.dex.datasource.google.GoogleOAuthValidator
 import com.github.aleperaltabazas.dex.service.*
 import com.github.aleperaltabazas.dex.storage.Storage
@@ -31,10 +32,12 @@ class ServiceModule : AbstractModule() {
         @Named("storage") storage: Storage,
         @Named("sessionService") sessionService: SessionService,
         @Named("idGenerator") idGenerator: IdGenerator,
+        @Named("notificationService") notificationService: NotificationService,
     ) = UsersService(
         storage = storage,
         idGenerator = idGenerator,
         sessionService = sessionService,
+        notificationService = notificationService,
     )
 
     @Provides
@@ -79,4 +82,15 @@ class ServiceModule : AbstractModule() {
         @Named("storage") storage: Storage,
         @Named("idGenerator") idGenerator: IdGenerator,
     ) = SubscriptionService(storage, idGenerator)
+
+    @Provides
+    @Singleton
+    @Named("notificationService")
+    fun notificationService(
+        @Named("firebase") firebaseMessageClient: FirebaseMessageClient,
+        @Named("storage") storage: Storage,
+    ) = NotificationService(
+        firebase = firebaseMessageClient,
+        storage = storage,
+    )
 }
