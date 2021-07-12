@@ -72,4 +72,5 @@ data class Subscription(
     val subscriberUserId: String?,
     val userId: String,
     val dexId: String,
+    val token: String?,
 )

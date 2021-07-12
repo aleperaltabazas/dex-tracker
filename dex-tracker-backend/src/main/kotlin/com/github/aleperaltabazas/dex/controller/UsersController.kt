@@ -102,6 +102,7 @@ class UsersController(
                 dexId = subscribe.dexId,
                 userId = subscribe.userId,
                 subscriberUserId = user.userId,
+                token = subscribe.token,
             )
 
             user.subscriptions + subscription

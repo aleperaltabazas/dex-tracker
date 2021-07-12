@@ -21,4 +21,5 @@ data class CreateDexDTO(
 data class SubscribeDTO(
     val userId: String,
     val dexId: String,
+    val token: String?,
 )

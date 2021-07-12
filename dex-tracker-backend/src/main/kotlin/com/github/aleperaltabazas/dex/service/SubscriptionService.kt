@@ -14,6 +14,7 @@ class SubscriptionService(
         dexId: String,
         userId: String,
         subscriberUserId: String,
+        token: String?,
     ): Subscription {
         val id = idGenerator.subscriptionId()
         val subscription = Subscription(
@@ -21,6 +22,7 @@ class SubscriptionService(
             userId = userId,
             dexId = dexId,
             subscriberUserId = subscriberUserId,
+            token = token,
         )
 
         storage.insert(Collection.SUBSCRIPTIONS, subscription)
