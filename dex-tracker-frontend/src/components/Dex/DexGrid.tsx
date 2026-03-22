@@ -6,7 +6,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { useCallback, useEffect, useState } from "react";
-import { hot } from "react-hot-loader";
 import { Pokemon } from "../../types/user";
 import GridColumn from "../Column";
 import GridRow from "../Row";
@@ -143,4 +142,4 @@ const DexGrid = (props: DexGridProps) => {
   );
 };
 
-export default hot(module)(DexGrid);
+export default DexGrid;

@@ -1,6 +1,5 @@
 import { Container, Grid, makeStyles } from "@material-ui/core";
 import React from "react";
-import { hot } from "react-hot-loader";
 import { RouteComponentProps } from "react-router";
 import Loader from "../components/Loader";
 import Row from "../components/Row";
@@ -80,4 +79,4 @@ const UserPage = (props: UserPageProps) => {
   );
 };
 
-export default hot(module)(UserPage);
+export default UserPage;

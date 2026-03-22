@@ -1,6 +1,5 @@
 import { Container, Divider, makeStyles, Typography } from "@material-ui/core";
 import React from "react";
-import { hot } from "react-hot-loader";
 import classNames from "classnames";
 
 const useStyles = makeStyles((theme) => ({
@@ -53,4 +52,4 @@ const Footer = () => {
   );
 };
 
-export default hot(module)(Footer);
+export default Footer;

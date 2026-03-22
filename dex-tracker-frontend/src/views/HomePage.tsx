@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { hot } from "react-hot-loader";
 import { RootState } from "../reducers";
 import { PokedexState } from "../store/pokedex";
 import { SessionState } from "../store/session";
@@ -258,4 +257,4 @@ const mapStateToProps = (root: RootState) => ({
   pokedex: root.pokedex,
 });
 
-export default hot(module)(connect(mapStateToProps)(HomePage));
+export default connect(mapStateToProps)(HomePage);

@@ -1,5 +1,4 @@
 import React from "react";
-import { hot } from "react-hot-loader";
 import { host } from "../config";
 import classNames from "classnames";
 
@@ -46,4 +45,4 @@ const sprite = {
   icon: IconSprite,
 };
 
-export default hot(module)(sprite);
+export default sprite;

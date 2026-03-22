@@ -1,5 +1,4 @@
 import React, { ReactNode } from "react";
-import { hot } from "react-hot-loader";
 import { Link } from "react-router-dom";
 
 type DexLinkProps = {
@@ -17,4 +16,4 @@ const DexLink = (props: DexLinkProps) => (
   </Link>
 );
 
-export default hot(module)(DexLink);
+export default DexLink;

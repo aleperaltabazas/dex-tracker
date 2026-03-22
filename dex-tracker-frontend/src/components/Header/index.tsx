@@ -1,6 +1,5 @@
 import { makeStyles } from "@material-ui/core";
 import React from "react";
-import { hot } from "react-hot-loader";
 import "./styles.scss";
 import classNames from "classnames";
 import OpenMenu from "../Menu/Open";
@@ -54,4 +53,4 @@ const Header = (props: HeaderProps) => {
 
 const mapStateToProps = (root: RootState) => ({ session: root.session });
 
-export default hot(module)(connect(mapStateToProps)(Header));
+export default connect(mapStateToProps)(Header);
