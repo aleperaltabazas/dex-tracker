@@ -18,10 +18,12 @@ const base = [
   new webpack.DefinePlugin({
     VERSION: JSON.stringify(version),
   }),
-  new CopyWebpackPlugin([
-    { from: "images", to: "images" },
-    { from: "stylesheets", to: "stylesheets" },
-  ]),
+  new CopyWebpackPlugin({
+    patterns: [
+      { from: "images", to: "images" },
+      { from: "stylesheets", to: "stylesheets" },
+    ],
+  }),
 ];
 
 const development = [

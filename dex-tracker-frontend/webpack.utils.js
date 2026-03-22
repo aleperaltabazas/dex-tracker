@@ -1,13 +1,11 @@
-const PomParser = require("node-pom-parser");
+const fs = require("fs");
 
 const getPomVersion = () => {
   const pomPath = __dirname + "/../dex-tracker-backend/pom.xml";
-  const pomSettings = {
-    filePath: pomPath,
-  };
-  const pomObj = PomParser.parsePom(pomSettings);
-
-  return pomObj.version;
+  const content = fs.readFileSync(pomPath, "utf8");
+  const match = content.match(/<version>([^<]+)<\/version>/);
+  if (!match) throw new Error("Could not find <version> in pom.xml");
+  return match[1];
 };
 
 module.exports = {
