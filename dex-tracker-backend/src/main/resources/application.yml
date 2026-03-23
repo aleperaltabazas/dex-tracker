@@ -1,0 +1,21 @@
+app:
+  env: dev
+  cors:
+    origins: "http://localhost:8080"
+  google:
+    client-id: "527824744722-4hoj7bcnjvpa6co3tapt6faj5tbj4uor.apps.googleusercontent.com"
+  db:
+    host: "localhost:27017"
+    name: dextracker
+    srv: false
+
+server:
+  port: 9290
+
+spring:
+  freemarker:
+    suffix: .ftl
+    template-loader-path: classpath:/assets/templates/
+  web:
+    resources:
+      static-locations: classpath:/assets/static/

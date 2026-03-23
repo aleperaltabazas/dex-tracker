@@ -1,45 +1,48 @@
 package com.github.aleperaltabazas.dex.config
 
-import com.google.inject.AbstractModule
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.MongoCredential
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
-import com.typesafe.config.Config
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
-class DatabaseModule : AbstractModule() {
-    @Provides
-    @Singleton
-    @Named("mongoClient")
-    fun mongoClient(config: Config): MongoClient {
-        val user = System.getenv("DATABASE_USERNAME") ?: config.getString("db.user")
-        val password = System.getenv("DATABASE_PASSWORD") ?: config.getString("db.password")
-        val host = config.getString("db.host")
-        val database = config.getString("db.name")
-        val srv = config.hasPath("db.srv") && config.getBoolean("db.srv")
-        val string = "mongodb${if (srv) "+srv" else ""}://"
+@Configuration
+open class DatabaseModule {
+    @Bean
+    open fun mongoClient(
+        @Value("\${app.db.host}") host: String,
+        @Value("\${app.db.name}") database: String,
+        @Value("\${app.db.srv:false}") srv: Boolean,
+    ): MongoClient {
+        val user = System.getenv("DATABASE_USERNAME") ?: ""
+        val password = System.getenv("DATABASE_PASSWORD") ?: ""
+        val scheme = "mongodb${if (srv) "+srv" else ""}://"
 
-        val connectionString = ConnectionString("$string$user:$password@$host/$database")
+        val connectionString = if (user.isNotBlank() && password.isNotBlank()) {
+            ConnectionString("$scheme$user:$password@$host/$database")
+        } else {
+            ConnectionString("$scheme$host/$database")
+        }
 
-        val credential = MongoCredential.createCredential(user, database, password.toCharArray())
-
-        val mongoClientSettings = MongoClientSettings.builder()
-            .credential(credential)
+        val settingsBuilder = MongoClientSettings.builder()
             .applyConnectionString(connectionString)
-            .build()
-        return MongoClients.create(mongoClientSettings)
+
+        if (user.isNotBlank() && password.isNotBlank()) {
+            settingsBuilder.credential(
+                MongoCredential.createCredential(user, database, password.toCharArray())
+            )
+        }
+
+        return MongoClients.create(settingsBuilder.build())
     }
 
-    @Provides
-    @Singleton
-    @Named("db")
-    fun db(
-        @Named("mongoClient") mongoClient: MongoClient,
-        config: Config,
-    ): MongoDatabase = mongoClient.getDatabase(config.getString("db.name"))
+    @Bean
+    open fun db(
+        mongoClient: MongoClient,
+        @Value("\${app.db.name}") name: String,
+    ): MongoDatabase = mongoClient.getDatabase(name)
 }

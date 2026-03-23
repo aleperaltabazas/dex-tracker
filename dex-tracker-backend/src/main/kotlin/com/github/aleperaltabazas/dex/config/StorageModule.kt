@@ -2,21 +2,18 @@ package com.github.aleperaltabazas.dex.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.storage.Storage
-import com.google.inject.AbstractModule
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import com.mongodb.client.MongoDatabase
 
-class StorageModule : AbstractModule() {
-    @Provides
-    @Singleton
-    @Named("storage")
-    fun storage(
-        @Named("objectMapperSnakeCase") objectMapper: ObjectMapper,
-        @Named("db") db: MongoDatabase
+@Configuration
+open class StorageModule {
+    @Bean
+    open fun storage(
+        objectMapperSnakeCase: ObjectMapper,
+        db: MongoDatabase,
     ) = Storage(
         db = db,
-        objectMapper = objectMapper
+        objectMapper = objectMapperSnakeCase,
     )
 }

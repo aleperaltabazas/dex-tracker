@@ -5,7 +5,6 @@ import arrow.core.left
 import arrow.core.right
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.exception.NetworkException
-import com.typesafe.config.Config
 import org.apache.http.Header
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.*
@@ -67,12 +66,12 @@ open class RestConnector(
     companion object {
         fun create(
             objectMapper: ObjectMapper,
-            moduleConfig: Config,
+            host: String,
             defaultHeaders: List<Header> = emptyList()
         ): RestConnector {
             return RestConnector(
                 objectMapper = objectMapper,
-                host = moduleConfig.getString("host"),
+                host = host,
                 apacheClient = HttpClientBuilder.create()
                     .setDefaultHeaders(defaultHeaders)
                     .build()

@@ -1,14 +1,11 @@
 package com.github.aleperaltabazas.dex.config
 
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
-import com.google.inject.AbstractModule
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
-open class FileSystemModule : AbstractModule() {
-    @Provides
-    @Singleton
-    @Named("fileSystemHelper")
+@Configuration
+open class FileSystemModule {
+    @Bean
     open fun fileSystemHelper() = FileSystemHelper()
 }
