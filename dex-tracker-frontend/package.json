@@ -8,8 +8,7 @@
     "dev": "vite",
     "prod": "npm run build && http-server dist -p 9290",
     "start": "vite",
-    "build-dev": "vite build",
-    "postinstall": "dex-assets-exe --source ../assets/ --directory src/ --only-icons || true"
+    "build-dev": "vite build"
   },
   "author": "Alejandro Peralta Bazas",
   "license": "ISC",
