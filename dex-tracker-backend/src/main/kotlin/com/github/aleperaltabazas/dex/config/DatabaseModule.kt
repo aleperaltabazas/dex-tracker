@@ -22,6 +22,8 @@ open class DatabaseModule {
         val scheme = "mongodb${if (srv) "+srv" else ""}://"
 
         val connectionString = if (user.isNotBlank() && password.isNotBlank()) {
+            // TODO: replace ?authSource=admin with a dedicated dextracker db user
+            // created via docker-entrypoint-initdb.d/ init script in docker-compose
             ConnectionString("$scheme$user:$password@$host/$database?authSource=admin")
         } else {
             ConnectionString("$scheme$host/$database")
