@@ -54,6 +54,6 @@ function fromPokeapiEntry(p: PokeapiEntry): Entry {
         : p.pokemon_entries.map(fromPokeapiEntry),
   }));
 
-  fs.unlinkSync("pokedex.json");
+  fs.existsSync("pokedex.json") && fs.unlinkSync("pokedex.json");
   fs.writeFileSync("pokedex.json", JSON.stringify(pokedex));
 })();
