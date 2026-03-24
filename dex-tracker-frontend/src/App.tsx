@@ -11,8 +11,6 @@ import { fetchPokedex } from "./functions/pokedex";
 import { fireSynchronize } from "./functions/my-dex";
 import store from "./store";
 import UserPage from "./views/UserPage";
-import Footer from "./components/Footer";
-import sprite from "./components/Sprite";
 import "./icons.scss";
 
 const App = () => {
