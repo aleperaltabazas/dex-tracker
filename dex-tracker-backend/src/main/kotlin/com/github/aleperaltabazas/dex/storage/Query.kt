@@ -36,7 +36,7 @@ open class Query(
         return this
     }
 
-    open fun count(): Int = coll.count(where ?: Document()).toInt()
+    open fun count(): Int = coll.countDocuments(where ?: Document()).toInt()
 
     open fun <T> findOne(`as`: TypeReference<T>?): T? = createMongoQuery()
         .limit(1)
