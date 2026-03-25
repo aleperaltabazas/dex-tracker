@@ -1,7 +1,7 @@
 app:
   env: dev
   cors:
-    origins: "http://localhost:8080"
+    origins: "http://localhost:5173"
   google:
     client-id: "527824744722-4hoj7bcnjvpa6co3tapt6faj5tbj4uor.apps.googleusercontent.com"
   db:
