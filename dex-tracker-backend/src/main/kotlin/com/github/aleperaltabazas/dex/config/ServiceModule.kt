@@ -6,67 +6,55 @@ import com.github.aleperaltabazas.dex.service.*
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.HashHelper
 import com.github.aleperaltabazas.dex.utils.IdGenerator
-import com.google.inject.AbstractModule
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
-class ServiceModule : AbstractModule() {
-    @Provides
-    @Singleton
-    @Named("pokedexService")
-    fun pokedexService(
-        @Named("gamePokedexCache") pokedexCache: PokedexCache,
-        @Named("storage") storage: Storage,
-        @Named("idGenerator") idGenerator: IdGenerator,
+@Configuration
+open class ServiceModule {
+    @Bean
+    open fun pokedexService(
+        gamePokedexCache: PokedexCache,
+        idGenerator: IdGenerator,
     ) = PokedexService(
-        pokedexCache = pokedexCache,
+        pokedexCache = gamePokedexCache,
         idGenerator = idGenerator,
     )
 
-    @Provides
-    @Singleton
-    @Named("usersService")
-    fun usersService(
-        @Named("storage") storage: Storage,
-        @Named("sessionService") sessionService: SessionService,
-        @Named("idGenerator") idGenerator: IdGenerator,
+    @Bean
+    open fun usersService(
+        storage: Storage,
+        sessionService: SessionService,
+        idGenerator: IdGenerator,
     ) = UsersService(
         storage = storage,
         idGenerator = idGenerator,
         sessionService = sessionService,
     )
 
-    @Provides
-    @Singleton
-    @Named("loginService")
-    fun loginService(
-        @Named("usersService") usersService: UsersService,
-        @Named("sessionService") sessionService: SessionService,
-        @Named("googleValidator") googleOAuthValidator: GoogleOAuthValidator,
+    @Bean
+    open fun loginService(
+        usersService: UsersService,
+        sessionService: SessionService,
+        googleOAuthValidator: GoogleOAuthValidator,
     ) = LoginService(
         usersService = usersService,
         sessionService = sessionService,
         google = googleOAuthValidator,
     )
 
-    @Provides
-    @Singleton
-    @Named("sessionService")
-    fun sessionService(
-        @Named("storage") storage: Storage,
-        @Named("hash") hashHelper: HashHelper,
+    @Bean
+    open fun sessionService(
+        storage: Storage,
+        hash: HashHelper,
     ) = SessionService(
-        hash = hashHelper,
+        hash = hash,
         storage = storage,
     )
 
-    @Provides
-    @Singleton
-    @Named("pokemonService")
-    fun pokemonService(
-        @Named("storage") storage: Storage,
-        @Named("pokedexService") pokedexService: PokedexService
+    @Bean
+    open fun pokemonService(
+        storage: Storage,
+        pokedexService: PokedexService,
     ) = PokemonService(
         pokedexService = pokedexService,
         storage = storage,

@@ -3,6 +3,8 @@ package com.github.aleperaltabazas.dex.cache
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
+import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,6 +32,7 @@ abstract class Cache<T>(
 
     open fun get(): T = t ?: throw IllegalStateException("$name is not initialized")
 
+    @PostConstruct
     open fun start() {
         if (fileSystemHelper.doesFileExist(snapshotFilePath)) {
             val json = fileSystemHelper.readFile(snapshotFilePath)
@@ -45,6 +48,7 @@ abstract class Cache<T>(
         }
     }
 
+    @PreDestroy
     open fun stop() {
         LOGGER.info("Stopping cache $name")
         if (saveToDisk) {

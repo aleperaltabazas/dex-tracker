@@ -1,5 +1,4 @@
 import React from "react";
-import { hot } from "react-hot-loader";
 import { GoogleLogin } from "react-google-login";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { makeStyles } from "@material-ui/core";
@@ -32,4 +31,4 @@ const Login = () => {
   );
 };
 
-export default hot(module)(Login);
+export default Login;

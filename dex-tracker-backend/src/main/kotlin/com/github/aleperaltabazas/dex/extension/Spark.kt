@@ -2,19 +2,24 @@ package com.github.aleperaltabazas.dex.extension
 
 import com.github.aleperaltabazas.dex.constants.DEX_TOKEN
 import com.github.aleperaltabazas.dex.exception.BadRequestException
-import spark.Request
-import spark.Response
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
-fun Request.headersMap(): Map<String, String> = headers().map { it to this.headers(it) }.toMap()
+fun HttpServletRequest.headersMap(): Map<String, String> =
+    headerNames.asSequence().map { it to getHeader(it) }.toMap()
 
-fun Response.headersMap(): Map<String, String> = this.raw().let { res ->
-    res.headerNames.map { it to res.getHeader(it) }.toMap()
-}
+fun HttpServletResponse.headersMap(): Map<String, String> =
+    headerNames.map { it to getHeader(it) }.toMap()
 
 fun Map<String, String>.prettyHeaders() = this.map { (k, v) -> "\"$k:${v}\"" }.joinToString(",")
 
-fun Request.paramNotNull(param: String) = requireNotNull(this.params(param)) {
-    throw BadRequestException("$param path param should not be null")
+fun HttpServletRequest.paramNotNull(param: String): String =
+    getParameter(param) ?: throw BadRequestException("$param path param should not be null")
+
+fun HttpServletRequest.pathVariable(name: String, uri: String): String {
+    // Simple extraction helper — used via @PathVariable in controllers; kept for filter use
+    return uri
 }
 
-fun Request.dexToken(): String? = headers(DEX_TOKEN) ?: cookie(DEX_TOKEN)
+fun HttpServletRequest.dexToken(): String? =
+    getHeader(DEX_TOKEN) ?: cookies?.find { it.name == DEX_TOKEN }?.value

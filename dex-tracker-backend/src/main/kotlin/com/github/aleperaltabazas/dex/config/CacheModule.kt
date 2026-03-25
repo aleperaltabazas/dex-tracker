@@ -4,22 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.cache.pokedex.PokedexCache
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
-import com.google.inject.AbstractModule
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
-open class CacheModule : AbstractModule() {
-    @Provides
-    @Singleton
-    @Named("gamePokedexCache")
-    fun gamePokedexCache(
-        @Named("fileSystemHelper") fileSystemHelper: FileSystemHelper,
-        @Named("objectMapperSnakeCase") objectMapper: ObjectMapper,
-        @Named("storage") storage: Storage,
-    ) = PokedexCache(
+@Configuration
+open class CacheModule {
+    @Bean
+    open fun gamePokedexCache(
+        fileSystemHelper: FileSystemHelper,
+        @Qualifier("objectMapperSnakeCase") objectMapperSnakeCase: ObjectMapper,
+        storage: Storage,
+    ): PokedexCache = PokedexCache(
         fileSystemHelper = fileSystemHelper,
-        objectMapper = objectMapper,
+        objectMapper = objectMapperSnakeCase,
         storage = storage,
     )
 }

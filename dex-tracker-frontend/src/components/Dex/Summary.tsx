@@ -1,6 +1,5 @@
 import { makeStyles, Paper, Theme, Typography } from "@material-ui/core";
 import React from "react";
-import { hot } from "react-hot-loader";
 import DexLink from "../Links/Dex";
 import classNames from "classnames";
 import LinearProgress from "../Progress/Linear";
@@ -60,4 +59,4 @@ const Summary = (props: SummaryProps) => {
   );
 };
 
-export default hot(module)(Summary);
+export default Summary;

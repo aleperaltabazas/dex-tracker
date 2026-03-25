@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { hot } from "react-hot-loader";
 import Header from "./components/Header";
 import "./styles.scss";
 import Menu from "./components/Menu";
@@ -12,8 +11,6 @@ import { fetchPokedex } from "./functions/pokedex";
 import { fireSynchronize } from "./functions/my-dex";
 import store from "./store";
 import UserPage from "./views/UserPage";
-import Footer from "./components/Footer";
-import sprite from "./components/Sprite";
 import "./icons.scss";
 
 const App = () => {
@@ -57,4 +54,4 @@ const App = () => {
   );
 };
 
-export default hot(module)(App);
+export default App;

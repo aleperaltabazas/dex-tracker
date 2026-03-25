@@ -148,3 +148,4 @@ buildNumber.properties
 
 sensitive.conf
 src/main/resources/assets/
+application-local.yml

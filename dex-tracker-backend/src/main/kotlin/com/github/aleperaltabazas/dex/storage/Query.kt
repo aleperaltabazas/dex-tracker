@@ -36,15 +36,15 @@ open class Query(
         return this
     }
 
-    open fun count(): Int = coll.count(where ?: Document()).toInt()
+    open fun count(): Int = coll.countDocuments(where ?: Document()).toInt()
 
     open fun <T> findOne(`as`: TypeReference<T>?): T? = createMongoQuery()
         .limit(1)
-        .map { objectMapper.convertValue(it, `as`) }
+        .map { objectMapper.convertValue(it, `as`)!! }
         .firstOrNull()
 
     open fun <T> findAll(`as`: TypeReference<T>?): List<T> = createMongoQuery()
-        .map { objectMapper.convertValue(it, `as`) }
+        .map { objectMapper.convertValue(it, `as`)!! }
         .toList()
 
     private fun createMongoQuery() = coll.find(where ?: Document())

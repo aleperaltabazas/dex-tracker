@@ -10,14 +10,14 @@ import com.github.aleperaltabazas.dex.storage.Query
 import com.github.aleperaltabazas.dex.storage.Replace
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.IdGenerator
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.core.test.TestCase
 import io.kotest.matchers.shouldBe
 import org.bson.Document
 import org.mockito.ArgumentMatchers.any
-import com.nhaarman.mockito_kotlin.any as anyNotNull
+import com.nhaarman.mockitokotlin2.any as anyNotNull
 
 class UsersServiceTest : WordSpec() {
     private val storageMock: Storage = mock {}
@@ -29,7 +29,7 @@ class UsersServiceTest : WordSpec() {
         idGenerator = idGenMock,
     )
 
-    override fun beforeEach(testCase: TestCase) {
+    override suspend fun beforeEach(testCase: TestCase) {
         reset(storageMock, sessionMock, idGenMock)
     }
 

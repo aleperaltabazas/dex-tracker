@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { hot } from "react-hot-loader";
 import { Pokemon, UserDex } from "../types/user";
 import { TextField, Typography } from "@material-ui/core";
 import useStyles from "./Dex/styles";
@@ -127,4 +126,4 @@ const Dex = (props: DexProps) => {
   );
 };
 
-export default hot(module)(Dex);
+export default Dex;

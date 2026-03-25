@@ -1,5 +1,4 @@
 import React from "react";
-import { hot } from "react-hot-loader";
 import ReactLoader from "react-loader-spinner";
 
 type LoaderProps = {
@@ -39,4 +38,4 @@ const Loader = (props: LoaderProps) => {
   );
 };
 
-export default hot(module)(Loader);
+export default Loader;
