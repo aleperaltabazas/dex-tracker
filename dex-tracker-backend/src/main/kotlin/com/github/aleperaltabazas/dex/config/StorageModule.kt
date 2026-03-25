@@ -5,12 +5,13 @@ import com.github.aleperaltabazas.dex.storage.Storage
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import com.mongodb.client.MongoDatabase
+import org.springframework.beans.factory.annotation.Qualifier
 
 @Configuration
 open class StorageModule {
     @Bean
     open fun storage(
-        objectMapperSnakeCase: ObjectMapper,
+        @Qualifier("objectMapperSnakeCase") objectMapperSnakeCase: ObjectMapper,
         db: MongoDatabase,
     ) = Storage(
         db = db,
