@@ -11,48 +11,44 @@ import {
   updatePicture,
   updateSessionState,
 } from "../actions/session";
-import {
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "react-google-login";
+import { TokenResponse } from "@react-oauth/google";
 
-export function oauthLogin(
-  response: GoogleLoginResponse | GoogleLoginResponseOffline
-) {
-  const succ = response as GoogleLoginResponse;
-  let config: AxiosRequestConfig = {
-    method: "POST",
-    url: `${host}/api/v1/login`,
-    withCredentials: true,
-    data: {
-      mail: succ.profileObj.email,
-      googleToken: succ.tokenObj.id_token,
-    },
-  };
-
+export async function oauthLogin(tokenResponse: TokenResponse) {
   store.dispatch(uninitialize());
 
-  axios
-    .request<User>(config)
-    .then((res) => res.data)
-    .then((u) => {
-      dispatchUser({
-        ...u,
-        pokedex: u.pokedex,
-      });
-    })
-    .then(() => {
-      store.dispatch(updatePicture(succ.profileObj.imageUrl));
-      Cookies.set("picture", succ.profileObj.imageUrl, { expires: 3600000 });
-    })
-    .catch((err) => {
-      console.error("Error in login", err);
-      store.dispatch(loginError());
-    });
+  try {
+    // Fetch user profile from Google userinfo endpoint using the access token
+    const userInfo = await axios.get<{ email: string; picture: string }>(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
+    );
+
+    const { email, picture } = userInfo.data;
+
+    const config: AxiosRequestConfig = {
+      method: "POST",
+      url: `${host}/api/v1/login`,
+      withCredentials: true,
+      data: {
+        mail: email,
+        googleToken: tokenResponse.access_token,
+      },
+    };
+
+    const res = await axios.request<User>(config);
+    const user = res.data;
+
+    dispatchUser({ ...user, pokedex: user.pokedex });
+    store.dispatch(updatePicture(picture));
+    Cookies.set("picture", picture, { expires: 3600000 });
+  } catch (err) {
+    console.error("Error in login", err);
+    store.dispatch(loginError());
+  }
 }
 
 export function logout(token: string) {
-  let config: AxiosRequestConfig = {
+  const config: AxiosRequestConfig = {
     method: "POST",
     url: `${host}/api/v1/logout`,
     withCredentials: true,
@@ -75,7 +71,7 @@ export function openLocallyStoredSession() {
   const dexToken = Cookies.get("dex-token");
 
   if (dexToken) {
-    let config: AxiosRequestConfig = {
+    const config: AxiosRequestConfig = {
       method: "POST",
       url: `${host}/api/v1/login`,
       withCredentials: true,

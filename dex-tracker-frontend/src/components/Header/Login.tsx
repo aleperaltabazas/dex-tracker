@@ -1,9 +1,8 @@
 import React from "react";
-import { GoogleLogin } from "react-google-login";
+import { useGoogleLogin } from "@react-oauth/google";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
-import { googleClientId as googleClientId } from "../../config";
 import { oauthLogin } from "../../functions/login";
 
 const useStyles = makeStyles(() => ({
@@ -16,17 +15,15 @@ const useStyles = makeStyles(() => ({
 const Login = () => {
   const classes = useStyles();
 
+  const login = useGoogleLogin({
+    onSuccess: oauthLogin,
+    onError: (err) => console.error("Google login error", err),
+  });
+
   return (
-    <GoogleLogin
-      clientId={googleClientId}
-      render={(props) => (
-        <AccountCircleIcon
-          onClick={props.onClick}
-          className={classNames(classes.account, "cursor-pointer")}
-        />
-      )}
-      accessType="online"
-      onSuccess={oauthLogin}
+    <AccountCircleIcon
+      onClick={() => login()}
+      className={classNames(classes.account, "cursor-pointer")}
     />
   );
 };
