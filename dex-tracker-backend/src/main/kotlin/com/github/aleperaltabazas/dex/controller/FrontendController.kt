@@ -1,23 +1,10 @@
 package com.github.aleperaltabazas.dex.controller
 
-import spark.ModelAndView
-import spark.Request
-import spark.Response
-import spark.Spark.get
-import spark.Spark.notFound
-import spark.TemplateEngine
+import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.RequestMapping
 
-class FrontendController(
-    private val engine: TemplateEngine,
-) : Controller {
-    override fun register() {
-        get("", this::home, engine)
-        get("/", this::home, engine)
-        get("/dex/:id", this::home, engine)
-        get("/users/:id", this::home, engine)
-        get("/users/:userId/dex/:dexId", this::home, engine)
-        notFound { _, _ -> engine.render(ModelAndView(null, "index.ftl")) }
-    }
-
-    private fun home(req: Request, res: Response) = ModelAndView(emptyMap<String, Any?>(), "index.ftl")
+@Controller
+class FrontendController {
+    @RequestMapping(value = ["/{path:[^\\.]*}", "/{path:^(?!api).*}/{subpath:[^\\.]*}"])
+    fun forward(): String = "forward:/index.html"
 }

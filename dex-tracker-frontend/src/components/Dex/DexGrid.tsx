@@ -1,18 +1,17 @@
 import {
+  Box,
   Divider,
-  Hidden,
   Input,
   InputAdornment,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
-import { hot } from "react-hot-loader";
 import { Pokemon } from "../../types/user";
 import GridColumn from "../Column";
 import GridRow from "../Row";
 import classNames from "classnames";
 import useStyles from "./styles";
-import { Search } from "@material-ui/icons";
+import { Search } from "@mui/icons-material";
 import { FixedSizeList as List } from "react-window";
 import Row from "./Row";
 
@@ -70,10 +69,10 @@ const DexGrid = (props: DexGridProps) => {
   return (
     <>
       <GridRow style={{ height: "72px" }}>
-        <Hidden smDown>
+        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
           <GridColumn xs={3} md={1} className="center" />
-        </Hidden>
-        <Hidden smDown>
+        </Box>
+        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
           <GridColumn
             md={1}
             className={classNames("center", "bold", classes.listItem)}
@@ -82,7 +81,7 @@ const DexGrid = (props: DexGridProps) => {
               Number
             </Typography>
           </GridColumn>
-        </Hidden>
+        </Box>
         <GridColumn
           xs={9}
           md={8}
@@ -117,7 +116,7 @@ const DexGrid = (props: DexGridProps) => {
         </GridColumn>
       </GridRow>
       <Divider />
-      <Hidden smDown>
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         <List
           height={props.desktopHeight || 720}
           itemCount={items.filter(shouldRender).length}
@@ -127,8 +126,8 @@ const DexGrid = (props: DexGridProps) => {
         >
           {Row}
         </List>
-      </Hidden>
-      <Hidden mdUp>
+      </Box>
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
         <List
           height={props.mobileHeight || 320}
           itemCount={items.filter(shouldRender).length}
@@ -138,9 +137,9 @@ const DexGrid = (props: DexGridProps) => {
         >
           {Row}
         </List>
-      </Hidden>
+      </Box>
     </>
   );
 };
 
-export default hot(module)(DexGrid);
+export default DexGrid;

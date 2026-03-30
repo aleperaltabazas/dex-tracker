@@ -6,7 +6,9 @@ import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.HashHelper
 import org.bson.Document
+import org.springframework.stereotype.Service
 
+@Service
 open class SessionService(
     private val storage: Storage,
     private val hash: HashHelper,

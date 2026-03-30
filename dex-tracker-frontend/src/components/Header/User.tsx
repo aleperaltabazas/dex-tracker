@@ -1,12 +1,13 @@
-import { makeStyles, Menu, MenuItem } from "@material-ui/core";
+import { Menu, MenuItem } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
-import { hot } from "react-hot-loader";
-import { LoggedInState } from "../../store/session";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { LoggedInState } from "../../contexts/session";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import classNames from "classnames";
 import { logout } from "../../functions/login";
 import { Link } from "react-router-dom";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useSession } from "../../contexts/session";
 
 type UserProps = {
   session: LoggedInState;
@@ -22,6 +23,7 @@ const useStyles = makeStyles(() => ({
 
 const User = (props: UserProps) => {
   const classes = useStyles();
+  const { dispatch: sessionDispatch } = useSession();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -59,7 +61,7 @@ const User = (props: UserProps) => {
         <MenuItem
           onClick={() => {
             handleClose();
-            logout(props.session.token);
+            logout(props.session.token, sessionDispatch);
           }}
         >
           <ExitToAppIcon className="pr-1" /> Log out
@@ -69,4 +71,4 @@ const User = (props: UserProps) => {
   );
 };
 
-export default hot(module)(User);
+export default User;

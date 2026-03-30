@@ -4,7 +4,9 @@ import com.github.aleperaltabazas.dex.datasource.google.GoogleOAuthValidator
 import com.github.aleperaltabazas.dex.dto.dex.LoginRequestDTO
 import com.github.aleperaltabazas.dex.exception.UnauthorizedException
 import com.github.aleperaltabazas.dex.model.User
+import org.springframework.stereotype.Service
 
+@Service
 class LoginService(
     private val usersService: UsersService,
     private val sessionService: SessionService,
@@ -15,17 +17,13 @@ class LoginService(
 
     fun loginFromMail(request: LoginRequestDTO): User {
         google.validate(request.googleToken)
-
-        return usersService
-            .findUserByMail(request.mail)
-            ?: create(request)
+        return usersService.findUserByMail(request.mail) ?: create(request)
     }
 
     fun logout(dexToken: String) = sessionService.deleteSession(dexToken)
 
     private fun create(request: LoginRequestDTO): User {
         google.validate(request.googleToken)
-
         return usersService.createUser(mail = request.mail)
     }
 }

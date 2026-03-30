@@ -9,6 +9,8 @@ import com.github.aleperaltabazas.dex.model.Pokedex
 import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
+import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 import java.util.concurrent.TimeUnit
 
 open class PokedexCache(
@@ -20,18 +22,20 @@ open class PokedexCache(
     saveToDisk = true,
     fileSystemHelper = fileSystemHelper,
     objectMapper = objectMapper,
-    refreshRate = RefreshRate(
-        value = 1,
-        unit = TimeUnit.HOURS,
-    ),
+    refreshRate = RefreshRate(value = 1, unit = TimeUnit.HOURS),
     ref = object : TypeReference<List<Pokedex>>() {}
 ) {
+    @PostConstruct
+    fun init() = start()
+
+    @PreDestroy
+    fun cleanup() = stop()
+
     open fun pokedexOf(key: String): Pokedex = this.get()
         .find { it.name == key }
         ?: throw NotFoundException("No regional pokedex found for game $key")
 
-    override fun doRefresh() = storage.query(Collection.POKEDEX)
-        .findAll(POKEDEX_REF)
+    override fun doRefresh() = storage.query(Collection.POKEDEX).findAll(POKEDEX_REF)
 
     companion object {
         private val POKEDEX_REF = object : TypeReference<Pokedex>() {}

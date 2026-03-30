@@ -1,21 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { hot } from "react-hot-loader";
-import { Redirect, RouteComponentProps, withRouter } from "react-router";
-import { RootState } from "../reducers";
-import { connect } from "react-redux";
-import { PokedexState } from "../store/pokedex";
+import React from "react";
+import { Navigate, useParams } from "react-router-dom";
 import Loader from "../components/Loader";
-import { SessionState } from "../store/session";
-import { Container, makeStyles } from "@material-ui/core";
+import { Container } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import classNames from "classnames";
-import { UserDex } from "../types/user";
 import Dex from "../components/Dex";
 import withUserDex from "../hooks/withUserDex";
-
-type MatchParams = {
-  userId: string;
-  dexId: string;
-};
+import { usePokedex } from "../contexts/pokedex";
+import { useSession } from "../contexts/session";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -28,23 +20,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface DexPageProps extends RouteComponentProps<MatchParams> {
-  gamePokedex: PokedexState;
-  session: SessionState;
-}
-
-const DexPage = (props: DexPageProps) => {
+const DexPage = () => {
   const classes = useStyles();
+  const { userId, dexId } = useParams<{ userId: string; dexId: string }>();
+  const { pokedex: gamePokedex } = usePokedex();
+  const { session } = useSession();
 
-  const [dex] = withUserDex(
-    props.match.params.userId,
-    props.match.params.dexId,
-    [props.match.params.userId, props.match.params.dexId]
-  );
+  const [dex] = withUserDex(userId!, dexId!, [userId, dexId]);
 
   if (
-    !props.gamePokedex.loaded ||
-    props.session.type == "UNINITIALIZED" ||
+    !gamePokedex.loaded ||
+    session.type == "UNINITIALIZED" ||
     dex.type == "PENDING"
   ) {
     return (
@@ -54,8 +40,8 @@ const DexPage = (props: DexPageProps) => {
     );
   }
 
-  if (props.session.type == "ERROR") {
-    return <Redirect to="/" />;
+  if (session.type == "ERROR") {
+    return <Navigate to="/" />;
   }
 
   if (dex.type == "ERROR") {
@@ -74,11 +60,4 @@ const DexPage = (props: DexPageProps) => {
   );
 };
 
-const mapStateToProps = (root: RootState) => {
-  return {
-    gamePokedex: root.pokedex,
-    session: root.session,
-  };
-};
-
-export default hot(module)(connect(mapStateToProps)(withRouter(DexPage)));
+export default DexPage;

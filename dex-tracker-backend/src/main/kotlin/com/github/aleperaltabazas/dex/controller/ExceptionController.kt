@@ -1,47 +1,31 @@
 package com.github.aleperaltabazas.dex.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.dto.dex.ErrorDTO
 import com.github.aleperaltabazas.dex.exception.ApiException
-import com.github.aleperaltabazas.dex.utils.Environment
 import org.slf4j.LoggerFactory
-import spark.Spark.exception
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
 
+@RestControllerAdvice
 class ExceptionController(
-    private val objectMapper: ObjectMapper,
-    private val env: Environment,
-    private val corsOrigins: List<String>
-) : Controller {
-    override fun register() {
-        exception(Exception::class.java) { e, req, res ->
-            val status = when (e) {
-                is ApiException -> e.status
-                else -> 500
-            }
-
-            LOGGER.error("Error: {} - {}", status, e.message, e)
-
-            if (req.pathInfo().startsWith("/api/v1")) {
-
-                val body = ErrorDTO(
-                    status = status,
-                    message = e.message,
-                    stackTrace = e.stackTrace.toList().takeIf { env.isDev() }
-
-                )
-                res.body(objectMapper.writeValueAsString(body))
-                res.status(status)
-                res.header("content-type", "application/json")
-
-                if (env.isDev()) {
-                    if (req.headers("Origin") in corsOrigins) {
-                        res.header("Access-Control-Allow-Origin", req.headers("Origin"))
-                    }
-
-                    res.header("Access-Control-Allow-Credentials", "true")
-                }
-            }
+    @Value("\${env}") private val env: String,
+) {
+    @ExceptionHandler(Exception::class)
+    fun handleException(e: Exception): ResponseEntity<ErrorDTO> {
+        val status = when (e) {
+            is ApiException -> e.status
+            else -> 500
         }
+        LOGGER.error("Error: {} - {}", status, e.message, e)
+
+        val body = ErrorDTO(
+            status = status,
+            message = e.message,
+            stackTrace = e.stackTrace.toList().takeIf { env == "dev" || env == "local" },
+        )
+        return ResponseEntity.status(status).body(body)
     }
 
     companion object {

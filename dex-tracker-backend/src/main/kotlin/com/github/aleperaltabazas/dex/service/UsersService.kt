@@ -1,6 +1,5 @@
 package com.github.aleperaltabazas.dex.service
 
-import arrow.core.extensions.list.foldable.nonEmpty
 import com.fasterxml.jackson.core.type.TypeReference
 import com.github.aleperaltabazas.dex.dto.dex.UpdateUserDTO
 import com.github.aleperaltabazas.dex.exception.ForbiddenException
@@ -10,7 +9,9 @@ import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.IdGenerator
 import org.bson.Document
+import org.springframework.stereotype.Service
 
+@Service
 open class UsersService(
     private val storage: Storage,
     private val sessionService: SessionService,
@@ -20,11 +21,10 @@ open class UsersService(
         ?.let { user ->
             changes.dex?.keys
                 ?.filterNot { user.owns(it) }
-                ?.takeIf { it.nonEmpty() }
+                ?.takeIf { it.isNotEmpty() }
                 ?.let { throw ForbiddenException("User $userId is not allowed to edit dex ${it.joinToString(",")}") }
 
-            user.update(changes)
-                .also { updateUser(it) }
+            user.update(changes).also { updateUser(it) }
         }
 
     open fun updateUser(user: User) {
@@ -34,16 +34,11 @@ open class UsersService(
             .replaceOne()
     }
 
-    open fun createUserDex(userId: String, userDex: UserDex): User? = findUserById(userId)
-        ?.addDex(userDex)
-        ?.also { updateUser(it) }
+    open fun createUserDex(userId: String, userDex: UserDex): User? =
+        findUserById(userId)?.addDex(userDex)?.also { updateUser(it) }
 
     open fun findUserByToken(token: String) = sessionService.findSession(token)
-        ?.let {
-            storage.query(Collection.USERS)
-                .where(Document("user_id", it.userId))
-                .findOne(USER_REF)
-        }
+        ?.let { storage.query(Collection.USERS).where(Document("user_id", it.userId)).findOne(USER_REF) }
 
     open fun findUserById(userId: String): User? = storage.query(Collection.USERS)
         .where(Document("user_id", userId))
@@ -58,9 +53,7 @@ open class UsersService(
         username = null,
         pokedex = pokedex,
         mail = mail,
-    ).also {
-        storage.insert(Collection.USERS, it)
-    }
+    ).also { storage.insert(Collection.USERS, it) }
 
     companion object {
         private val USER_REF = object : TypeReference<User>() {}

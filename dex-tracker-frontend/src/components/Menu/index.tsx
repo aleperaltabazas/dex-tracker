@@ -1,25 +1,20 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import { hot } from "react-hot-loader";
-import { RootState } from "../../reducers";
-import { connect } from "react-redux";
-import { closeMenu, openCreateDexForm } from "../../actions/global";
-import store from "../../store";
+import { makeStyles } from "@mui/styles";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import classNames from "classnames";
 import CloseMenu from "./Close";
 import { UserDex } from "../../types/user";
-import { AddCircle } from "@material-ui/icons";
-import { RouteComponentProps, withRouter } from "react-router";
+import { AddCircle } from "@mui/icons-material";
 import DexLink from "../Links/Dex";
-import { LoggedInState, SessionState } from "../../store/session";
-import { Typography } from "@material-ui/core";
+import { Typography } from "@mui/material";
 import sprite from "../Sprite";
+import { useSession } from "../../contexts/session";
+import { useGlobal } from "../../contexts/global";
 
 const useStyles = makeStyles({
   list: {
@@ -39,17 +34,14 @@ const useStyles = makeStyles({
 
 type Anchor = "top" | "left" | "bottom" | "right";
 
-interface MenuProps extends RouteComponentProps {
-  open: boolean;
-  userDex: UserDex[];
-  session: SessionState;
-}
-
-const Menu = (props: MenuProps) => {
+const Menu = () => {
   const classes = useStyles();
+  const { session } = useSession();
+  const { global, dispatch: globalDispatch } = useGlobal();
+
   const [state, setState] = React.useState({
     top: false,
-    left: props.open,
+    left: global.menuOpen,
     bottom: false,
     right: false,
   });
@@ -64,23 +56,20 @@ const Menu = (props: MenuProps) => {
     ) {
       return;
     }
-
     setState({ ...state, [anchor]: open });
   };
 
-  if (props.session.type != "LOGGED_IN") {
-    return null;
-  }
+  if (session.type !== "LOGGED_IN") return null;
 
-  const session = props.session;
+  const userDex: UserDex[] = session.user.pokedex;
 
   return (
     <div>
       <React.Fragment key={"left"}>
         <Drawer
           anchor={"left"}
-          open={props.open}
-          onClose={() => store.dispatch(closeMenu())}
+          open={global.menuOpen}
+          onClose={() => globalDispatch({ type: "UPDATE_MENU_OPEN", payload: false })}
         >
           <div
             className={classNames(classes.list)}
@@ -92,49 +81,39 @@ const Menu = (props: MenuProps) => {
               <CloseMenu />
               <Divider />
               <div
-                className={classNames(
-                  classes.heading,
-                  "pl-1 pt-1",
-                  "uppercase"
-                )}
+                className={classNames(classes.heading, "pl-1 pt-1", "uppercase")}
               >
                 My Pokedex
               </div>
-              {props.userDex.map((dex) => {
-                return (
-                  <DexLink
-                    userId={session.user.userId}
-                    dexId={dex.userDexId}
-                    key={dex.userDexId}
+              {userDex.map((dex) => (
+                <DexLink
+                  userId={session.user.userId}
+                  dexId={dex.userDexId}
+                  key={dex.userDexId}
+                >
+                  <ListItem
+                    disableGutters
+                    className="cursor-pointer"
+                    onClick={() => globalDispatch({ type: "UPDATE_MENU_OPEN", payload: false })}
+                    style={{ height: "72px" }}
                   >
-                    <ListItem
-                      disableGutters
-                      className="cursor-pointer"
-                      onClick={() => {
-                        store.dispatch(closeMenu());
-                      }}
-                      style={{
-                        height: "72px",
-                      }}
-                    >
-                      <ListItemIcon>
-                        <sprite.icon gen={dex.game.gen} pokemon="bulbasaur" />
-                      </ListItemIcon>
-                      <ListItemText className="h-100 center">
-                        <Typography noWrap>
-                          {dex.name || dex.game.displayName}
-                        </Typography>
-                      </ListItemText>
-                    </ListItem>
-                  </DexLink>
-                );
-              })}
+                    <ListItemIcon>
+                      <sprite.icon gen={dex.game.gen} pokemon="bulbasaur" />
+                    </ListItemIcon>
+                    <ListItemText className="h-100 center">
+                      <Typography noWrap>
+                        {dex.name || dex.game.displayName}
+                      </Typography>
+                    </ListItemText>
+                  </ListItem>
+                </DexLink>
+              ))}
               <Divider />
               <ListItem
                 button
                 onClick={() => {
-                  store.dispatch(closeMenu());
-                  store.dispatch(openCreateDexForm());
+                  globalDispatch({ type: "UPDATE_MENU_OPEN", payload: false });
+                  globalDispatch({ type: "UPDATE_CREATE_DEX_FORM_OPEN", payload: true });
                 }}
               >
                 <ListItemIcon>
@@ -154,23 +133,4 @@ const Menu = (props: MenuProps) => {
   );
 };
 
-const mapStateToProps = (root: RootState) => {
-  let userDex: UserDex[];
-
-  switch (root.session.type) {
-    case "LOGGED_IN":
-      userDex = root.session.user.pokedex;
-      break;
-    default:
-      userDex = [];
-      break;
-  }
-
-  return {
-    open: root.global.menuOpen,
-    userDex: userDex,
-    session: root.session,
-  };
-};
-
-export default hot(module)(withRouter(connect(mapStateToProps)(Menu)));
+export default Menu;

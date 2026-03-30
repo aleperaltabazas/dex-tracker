@@ -3,11 +3,10 @@ package com.github.aleperaltabazas.dex.cache
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.aleperaltabazas.dex.utils.FileSystemHelper
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 data class RefreshRate(
@@ -28,6 +27,8 @@ abstract class Cache<T>(
         @Synchronized get
         @Synchronized set
 
+    private val scheduler: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
+
     open fun get(): T = t ?: throw IllegalStateException("$name is not initialized")
 
     open fun start() {
@@ -39,14 +40,17 @@ abstract class Cache<T>(
             refresh()
         }
 
-        GlobalScope.launch {
-            delay(refreshRate.unit.toSeconds(refreshRate.value.toLong()))
-            refresh()
-        }
+        scheduler.scheduleAtFixedRate(
+            { refresh() },
+            refreshRate.unit.toSeconds(refreshRate.value.toLong()),
+            refreshRate.unit.toSeconds(refreshRate.value.toLong()),
+            TimeUnit.SECONDS,
+        )
     }
 
     open fun stop() {
         LOGGER.info("Stopping cache $name")
+        scheduler.shutdown()
         if (saveToDisk) {
             save(body = objectMapper.writeValueAsString(t))
         }
@@ -63,7 +67,6 @@ abstract class Cache<T>(
             LOGGER.warn("There was an error refreshing snapshot $name")
         } else {
             this.t = newT
-
             t.takeIf { saveToDisk }?.let { save(objectMapper.writeValueAsString(it)) }
             LOGGER.debug("Finished refreshing $name")
         }

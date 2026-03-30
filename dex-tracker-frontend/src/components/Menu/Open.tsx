@@ -1,16 +1,15 @@
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import React from "react";
-import { hot } from "react-hot-loader";
-import MenuIcon from "@material-ui/icons/Menu";
-import { openMenu } from "../../actions/global";
-import store from "../../store";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useGlobal } from "../../contexts/global";
 
 const Open = () => {
+  const { dispatch } = useGlobal();
   return (
-    <Button onClick={() => store.dispatch(openMenu())}>
+    <Button onClick={() => dispatch({ type: "UPDATE_MENU_OPEN", payload: true })}>
       <MenuIcon fontSize="large" style={{ color: "white" }} />
     </Button>
   );
 };
 
-export default hot(module)(Open);
+export default Open;

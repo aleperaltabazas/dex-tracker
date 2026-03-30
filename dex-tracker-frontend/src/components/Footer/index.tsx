@@ -1,6 +1,6 @@
-import { Container, Divider, makeStyles, Typography } from "@material-ui/core";
+import { Container, Divider, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React from "react";
-import { hot } from "react-hot-loader";
 import classNames from "classnames";
 
 const useStyles = makeStyles((theme) => ({
@@ -53,4 +53,4 @@ const Footer = () => {
   );
 };
 
-export default hot(module)(Footer);
+export default Footer;

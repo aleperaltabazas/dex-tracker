@@ -1,34 +1,31 @@
 package com.github.aleperaltabazas.dex.filter
 
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.apache.commons.lang3.RandomStringUtils
 import org.slf4j.MDC
-import spark.Spark.before
+import org.springframework.stereotype.Component
+import org.springframework.web.filter.OncePerRequestFilter
 
-object ThreadMap {
-    private val state = ThreadLocal.withInitial<MutableMap<String, String>> { HashMap() }
+@Component
+class TrackingFilter : OncePerRequestFilter() {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain,
+    ) {
+        val requestId = RandomStringUtils.randomAlphanumeric(8)
+        val client = request.getHeader("dex-client") ?: "dex-" + RandomStringUtils.randomAlphanumeric(8)
 
-    fun get(): Map<String, String>? {
-        return state.get()
-    }
+        MDC.put("requestId", requestId)
+        MDC.put("dexClient", client)
+        MDC.put("motive", if (request.requestURI.startsWith("/api/v1")) "api" else "web")
 
-    fun put(key: String, value: String) {
-        state.get()[key] = value
-        MDC.put(key, value)
-    }
-}
-
-object TrackingFilter {
-    fun register() {
-        before({ req, _ ->
-            val requestId = RandomStringUtils.randomAlphanumeric(8)
-            val client = req.headers("dex-client") ?: lazy { "dex-" + RandomStringUtils.randomAlphanumeric(8) }.value
-
-            ThreadMap.put("requestId", requestId)
-            ThreadMap.put("dexClient", client)
-            ThreadMap.put(
-                "motive",
-                if (req.pathInfo().startsWith("/api/v1")) "api" else "web"
-            )
-        })
+        try {
+            filterChain.doFilter(request, response)
+        } finally {
+            MDC.clear()
+        }
     }
 }

@@ -3,12 +3,10 @@ import { areEqual } from "react-window";
 import { Pokemon } from "../../types/user";
 import GridRow from "../Row";
 import GridColumn from "../Column";
-import { Checkbox, Hidden } from "@material-ui/core";
+import { Box, Checkbox } from "@mui/material";
 import classNames from "classnames";
 import useStyles from "./styles";
-import { RootState } from "../../reducers";
-import { connect } from "react-redux";
-import { SessionState } from "../../store/session";
+import { useSession } from "../../contexts/session";
 import sprite from "../Sprite";
 
 type RowProps = {
@@ -20,13 +18,13 @@ type RowProps = {
     displayedItems: Pokemon[];
     gen: number;
   };
-  session: SessionState;
 };
 
 const Row = (props: RowProps) => {
   const { displayedItems, togglePokemonCaught, gen } = props.data;
   const item = displayedItems[props.index];
   const classes = useStyles();
+  const { session } = useSession();
 
   const handleOnClick = () => togglePokemonCaught(item.dexNumber);
 
@@ -39,7 +37,7 @@ const Row = (props: RowProps) => {
       <GridColumn xs={3} md={1} className="center-h">
         <sprite.icon pokemon={item.name} gen={gen} />
       </GridColumn>
-      <Hidden smDown>
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         <GridColumn
           item
           md={1}
@@ -47,7 +45,7 @@ const Row = (props: RowProps) => {
         >
           {item.dexNumber}
         </GridColumn>
-      </Hidden>
+      </Box>
       <GridColumn
         item
         xs={6}
@@ -73,6 +71,4 @@ const Row = (props: RowProps) => {
   );
 };
 
-const mapStateToProps = (root: RootState) => ({ session: root.session });
-
-export default React.memo(connect(mapStateToProps)(Row), areEqual);
+export default React.memo(Row, areEqual);

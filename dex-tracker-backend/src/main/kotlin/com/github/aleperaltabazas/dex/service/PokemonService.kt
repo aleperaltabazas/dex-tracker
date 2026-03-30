@@ -7,25 +7,27 @@ import com.github.aleperaltabazas.dex.model.Pokemon
 import com.github.aleperaltabazas.dex.storage.Collection
 import com.github.aleperaltabazas.dex.storage.Storage
 import org.bson.Document
+import org.springframework.stereotype.Service
 
+@Service
 open class PokemonService(
     private val pokedexService: PokedexService,
     private val storage: Storage,
 ) {
     open fun pokemon(gameKey: String, numberOrName: Either<Int, String>): Pokemon = pokedexService
         .pokedex(gameKey)
-        .let {
-            val gen = it.gen
+        .let { pokedex ->
+            val gen = pokedex.gen
             numberOrName.fold(
-                ifLeft = {
+                ifLeft = { num ->
                     storage.query(Collection.POKEMON)
-                        .where(Document("gen", gen).append("national_pokedex_number", it))
+                        .where(Document("gen", gen).append("national_pokedex_number", num))
                         .limit(1)
                         .findOne(POKEMON_REF)
                 },
-                ifRight = {
+                ifRight = { name ->
                     storage.query(Collection.POKEMON)
-                        .where(Document("gen", gen).append("name", it))
+                        .where(Document("gen", gen).append("name", name))
                         .limit(1)
                         .findOne(POKEMON_REF)
                 },

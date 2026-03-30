@@ -1,73 +1,46 @@
 package com.github.aleperaltabazas.dex.filter
 
-import com.github.aleperaltabazas.dex.extension.headersMap
-import com.github.aleperaltabazas.dex.extension.prettyHeaders
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
-import spark.Spark.after
-import spark.Spark.before
+import org.springframework.stereotype.Component
+import org.springframework.web.filter.OncePerRequestFilter
 
-object LoggingFilter {
-    private val IGNORED_PATHS: List<String> = listOf()
-    private val IGNORE_REQUEST_BODY_PATHS: List<String> = listOf(
-        "/api/v1/users",
-        "/api/v1/games",
-        "/api/v1/users",
-        "/api/v1/users/.*",
-        "/api/v1/pokedex/.*",
-        "/api/v1/login",
-        ".*[.]html",
-        ".*[.]css",
-        ".*[.]js",
-        ".*[.]png",
-    )
-    private val IGNORE_METHODS = listOf("OPTIONS")
-    private val IGNORE_RESPONSE_BODY_PATHS: List<String> = listOf(
-        "/api/v1/users",
-        "/api/v1/games",
-        "/api/v1/users",
-        "/api/v1/users/.*",
-        "/api/v1/pokedex/.*",
-        "/api/v1/login",
-        ".*[.]html",
-        ".*[.]css",
-        ".*[.]js",
-        ".*[.]png",
-    )
-    private val IGNORED_HEADERS: List<String> = listOf("Cookie", "Set-Cookie", "dex-token")
-    private val LOGGER = LoggerFactory.getLogger(LoggingFilter::class.java)
+@Component
+class LoggingFilter : OncePerRequestFilter() {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain,
+    ) {
+        val path = request.requestURI
+        val method = request.method
 
-    fun register() {
-        before({ req, _ ->
-            val requestPath = req.pathInfo()
-            val headers = req
-                .headersMap()
-                .filterKeys { it !in IGNORED_HEADERS }
-                .prettyHeaders()
-            if (IGNORE_METHODS.contains(req.requestMethod()) || IGNORED_PATHS.none { requestPath.matches(it.toRegex()) }) {
-                LOGGER.info("[REQUEST] ${req.requestMethod()} $requestPath")
-                LOGGER.info("[REQUEST] Headers: [$headers]")
+        if (method !in IGNORE_METHODS && IGNORED_PATHS.none { path.matches(it.toRegex()) }) {
+            val headers = request.headerNames.toList()
+                .filterNot { it in IGNORED_HEADERS }
+                .joinToString(",") { "\"$it:${request.getHeader(it)}\"" }
 
-                if (!IGNORE_REQUEST_BODY_PATHS.any { requestPath.matches(it.toRegex()) }) {
-                    LOGGER.info("[REQUEST] Body: ${req.body()}")
-                }
-            }
-        })
+            LOGGER.info("[REQUEST] $method $path")
+            LOGGER.info("[REQUEST] Headers: [$headers]")
+        }
 
-        after({ req, res ->
-            val requestPath = req.pathInfo()
-            if (IGNORE_METHODS.contains(req.requestMethod()) || IGNORED_PATHS.none { requestPath.matches(it.toRegex()) }) {
-                val headers = res
-                    .headersMap()
-                    .filterKeys { it !in IGNORED_HEADERS }
-                    .prettyHeaders()
+        filterChain.doFilter(request, response)
 
-                LOGGER.info("[RESPONSE] ${res.status()}")
-                LOGGER.info("[RESPONSE] Headers: [$headers]")
+        if (method !in IGNORE_METHODS && IGNORED_PATHS.none { path.matches(it.toRegex()) }) {
+            val headers = response.headerNames
+                .filterNot { it in IGNORED_HEADERS }
+                .joinToString(",") { "\"$it:${response.getHeader(it)}\"" }
+            LOGGER.info("[RESPONSE] ${response.status}")
+            LOGGER.info("[RESPONSE] Headers: [$headers]")
+        }
+    }
 
-                if (!IGNORE_RESPONSE_BODY_PATHS.any { requestPath.matches(it.toRegex()) }) {
-                    LOGGER.info("[RESPONSE] Body: ${req.body()}")
-                }
-            }
-        })
+    companion object {
+        private val IGNORED_PATHS: List<String> = listOf()
+        private val IGNORE_METHODS = listOf("OPTIONS")
+        private val IGNORED_HEADERS: List<String> = listOf("Cookie", "Set-Cookie", "dex-token")
+        private val LOGGER = LoggerFactory.getLogger(LoggingFilter::class.java)
     }
 }
