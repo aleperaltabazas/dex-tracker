@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { hot } from "react-hot-loader";
 import { Redirect, RouteComponentProps, withRouter } from "react-router";
 import { RootState } from "../reducers";
 import { connect } from "react-redux";
@@ -81,4 +80,4 @@ const mapStateToProps = (root: RootState) => {
   };
 };
 
-export default hot(module)(connect(mapStateToProps)(withRouter(DexPage)));
+export default connect(mapStateToProps)(withRouter(DexPage));

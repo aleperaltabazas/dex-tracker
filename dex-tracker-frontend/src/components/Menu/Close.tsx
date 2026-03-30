@@ -1,6 +1,5 @@
 import { Button } from "@material-ui/core";
 import React from "react";
-import { hot } from "react-hot-loader";
 import CloseIcon from "@material-ui/icons/Close";
 import store from "../../store";
 import { closeMenu } from "../../actions/global";
@@ -13,4 +12,4 @@ const CloseMenu = () => {
   );
 };
 
-export default hot(module)(CloseMenu);
+export default CloseMenu;

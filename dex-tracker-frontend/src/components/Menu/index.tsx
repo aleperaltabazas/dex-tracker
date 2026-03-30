@@ -6,7 +6,6 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import { hot } from "react-hot-loader";
 import { RootState } from "../../reducers";
 import { connect } from "react-redux";
 import { closeMenu, openCreateDexForm } from "../../actions/global";
@@ -173,4 +172,4 @@ const mapStateToProps = (root: RootState) => {
   };
 };
 
-export default hot(module)(withRouter(connect(mapStateToProps)(Menu)));
+export default withRouter(connect(mapStateToProps)(Menu));

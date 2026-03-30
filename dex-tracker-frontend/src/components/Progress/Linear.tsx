@@ -5,7 +5,6 @@ import {
   LinearProgress as MuiLinearProgress,
 } from "@material-ui/core";
 import React from "react";
-import { hot } from "react-hot-loader";
 
 type LinearProps = LinearProgressProps & { value: number };
 
@@ -24,4 +23,4 @@ const LinearProgress = (props: LinearProps) => {
   );
 };
 
-export default hot(module)(LinearProgress);
+export default LinearProgress;

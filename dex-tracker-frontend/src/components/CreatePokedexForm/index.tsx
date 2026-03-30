@@ -12,7 +12,6 @@ import {
   TextField,
 } from "@material-ui/core";
 import React, { useState } from "react";
-import { hot } from "react-hot-loader";
 import Column from "../../components/Column";
 import Row from "../../components/Row";
 import { Pokedex } from "../../types/pokedex";

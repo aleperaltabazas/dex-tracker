@@ -1,6 +1,5 @@
 import { makeStyles, Menu, MenuItem } from "@material-ui/core";
 import React, { useState } from "react";
-import { hot } from "react-hot-loader";
 import { LoggedInState } from "../../store/session";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import classNames from "classnames";
@@ -69,4 +68,4 @@ const User = (props: UserProps) => {
   );
 };
 
-export default hot(module)(User);
+export default User;

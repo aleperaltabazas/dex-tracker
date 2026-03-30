@@ -1,6 +1,5 @@
 import { Button } from "@material-ui/core";
 import React from "react";
-import { hot } from "react-hot-loader";
 import MenuIcon from "@material-ui/icons/Menu";
 import { openMenu } from "../../actions/global";
 import store from "../../store";
@@ -13,4 +12,4 @@ const Open = () => {
   );
 };
 
-export default hot(module)(Open);
+export default Open;
