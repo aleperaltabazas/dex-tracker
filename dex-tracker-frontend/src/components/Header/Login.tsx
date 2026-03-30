@@ -1,10 +1,10 @@
 import React from "react";
-import { GoogleLogin } from "react-google-login";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import { makeStyles } from "@material-ui/core";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { makeStyles } from "@mui/styles";
 import classNames from "classnames";
-import { googleClientId as googleClientId } from "../../config";
 import { oauthLogin } from "../../functions/login";
+import { useSession } from "../../contexts/session";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const useStyles = makeStyles(() => ({
   account: {
@@ -15,18 +15,18 @@ const useStyles = makeStyles(() => ({
 
 const Login = () => {
   const classes = useStyles();
+  const { dispatch: sessionDispatch } = useSession();
+
+  const login = useGoogleLogin({
+    onSuccess: (response) => oauthLogin(response, sessionDispatch),
+    onError: () => sessionDispatch({ type: "LOG_IN_ERROR" }),
+    flow: "auth-code",
+  });
 
   return (
-    <GoogleLogin
-      clientId={googleClientId}
-      render={(props) => (
-        <AccountCircleIcon
-          onClick={props.onClick}
-          className={classNames(classes.account, "cursor-pointer")}
-        />
-      )}
-      accessType="online"
-      onSuccess={oauthLogin}
+    <AccountCircleIcon
+      onClick={() => login()}
+      className={classNames(classes.account, "cursor-pointer")}
     />
   );
 };

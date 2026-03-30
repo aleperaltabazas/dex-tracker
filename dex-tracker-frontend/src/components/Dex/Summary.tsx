@@ -1,4 +1,5 @@
-import { makeStyles, Paper, Theme, Typography } from "@material-ui/core";
+import { Paper, Theme, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React from "react";
 import DexLink from "../Links/Dex";
 import classNames from "classnames";

@@ -1,26 +1,24 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Pokemon, UserDex } from "../types/user";
-import { TextField, Typography } from "@material-ui/core";
+import { TextField, Typography } from "@mui/material";
 import useStyles from "./Dex/styles";
 import classNames from "classnames";
 import { applyChanges, fireSynchronize } from "../functions/my-dex";
-import store from "../store";
-import { updatePokedex as updateUserDex } from "../actions/session";
-import EditIcon from "@material-ui/icons/Edit";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import {
-  caughtPokemon,
-  clearSynchronizeQueue,
-  updateDexName,
-} from "../actions/syncQueue";
+import EditIcon from "@mui/icons-material/Edit";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DexGrid from "./Dex/DexGrid";
 import sprite from "./Sprite";
+import { useSession } from "../contexts/session";
+import { useSyncQueue } from "../contexts/syncQueue";
 
 type DexProps = {
   dex: UserDex;
 };
 
 const Dex = (props: DexProps) => {
+  const { session, dispatch: sessionDispatch } = useSession();
+  const { syncQueue, dispatch: syncDispatch } = useSyncQueue();
+
   const changes = useRef<Array<number>>(
     props.dex.pokemon.filter((p) => p.caught).map((p) => p.dexNumber)
   );
@@ -29,10 +27,8 @@ const Dex = (props: DexProps) => {
     if (b && !changes.current.includes(n)) {
       changes.current.push(n);
     } else if (!b && changes.current.includes(n)) {
-      changes.current = changes.current.filter((n) => n != n);
+      changes.current = changes.current.filter((x) => x != n);
     }
-
-    console.log(changes);
   };
 
   const classes = useStyles();
@@ -41,48 +37,42 @@ const Dex = (props: DexProps) => {
   const [name, setName] = useState(props.dex.name);
 
   const forceSynchronize = () => {
-    const session = store.getState().session;
+    if (session.type !== "LOGGED_IN") return;
+    const userId = session.user.userId;
+    const queue = syncQueue.queue;
 
-    if (session.type == "LOGGED_IN") {
-      const sync = store.getState().syncQueue;
-
-      if (sync.timeout) {
-        clearTimeout(sync.timeout);
-      }
-
-      fireSynchronize(
-        session.user.userId,
-        sync.queue.some((u) => u.dexId == props.dex.userDexId)
-          ? sync.queue.map((u) =>
-              u.dexId == props.dex.userDexId
-                ? {
-                    ...u,
-                    caught: changes.current,
-                    name: name,
-                  }
-                : u
-            )
-          : [
-              {
-                dexId: props.dex.userDexId,
-                name: name,
-                caught: changes.current,
-              },
-            ]
-      );
-      store.dispatch(clearSynchronizeQueue());
+    if (syncQueue.timeout) {
+      clearTimeout(syncQueue.timeout);
     }
+
+    const syncData = queue.some((u) => u.dexId == props.dex.userDexId)
+      ? queue.map((u) =>
+          u.dexId == props.dex.userDexId
+            ? { ...u, caught: changes.current, name }
+            : u
+        )
+      : [{ dexId: props.dex.userDexId, name, caught: changes.current }];
+
+    fireSynchronize(userId, syncData);
+    syncDispatch({ type: "CLEAR_SYNCHRONIZE_QUEUE" });
   };
 
   useEffect(() => {
     window.addEventListener("beforeunload", forceSynchronize);
     return () => {
       window.removeEventListener("beforeunload", forceSynchronize);
-      store.dispatch(
-        updateUserDex(props.dex.userDexId, applyChanges(changes.current))
-      );
-      if (changes.current.length > 0) {
-        store.dispatch(caughtPokemon(props.dex.userDexId, changes.current));
+      sessionDispatch({
+        type: "UPDATE_USER_DEX",
+        payload: {
+          dexId: props.dex.userDexId,
+          update: applyChanges(changes.current),
+        },
+      });
+      if (changes.current.length > 0 && session.type === "LOGGED_IN") {
+        syncDispatch(
+          { type: "UPDATE_DEX", payload: { dexId: props.dex.userDexId, caught: changes.current } },
+          session.user.userId
+        );
       }
     };
   }, [props.dex.userDexId]);
@@ -108,9 +98,12 @@ const Dex = (props: DexProps) => {
                 color="action"
                 onClick={() => {
                   setIsEditing(false);
-                  store.dispatch(
-                    updateDexName({ name: name!, dexId: props.dex.userDexId })
-                  );
+                  if (session.type === "LOGGED_IN") {
+                    syncDispatch(
+                      { type: "UPDATE_DEX", payload: { dexId: props.dex.userDexId, name: name! } },
+                      session.user.userId
+                    );
+                  }
                 }}
               />
             )}

@@ -1,0 +1,25 @@
+server:
+  port: ${PORT:9290}
+
+spring:
+  web:
+    resources:
+      static-locations: classpath:/assets/static/
+  mvc:
+    static-path-pattern: /**
+
+env: ${ENV:dev}
+
+cors:
+  origins:
+    - http://localhost:8080
+
+db:
+  host: ${DB_HOST:localhost:27017}
+  name: ${DB_NAME:dextracker}
+  user: ${DATABASE_USERNAME:dextracker}
+  password: ${DATABASE_PASSWORD:dextracker}
+
+google:
+  client-id: "527824744722-4hoj7bcnjvpa6co3tapt6faj5tbj4uor.apps.googleusercontent.com"
+  client-secret: ${GOOGLE_CLIENT_SECRET:}

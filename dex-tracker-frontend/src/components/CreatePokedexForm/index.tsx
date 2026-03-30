@@ -10,46 +10,43 @@ import {
   MenuItem,
   Select,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { useState } from "react";
 import Column from "../../components/Column";
 import Row from "../../components/Row";
 import { Pokedex } from "../../types/pokedex";
 import classNames from "classnames";
 import { createPokedex } from "../../functions/my-dex";
-import { addUserDex } from "../../actions/session";
-import store from "../../store";
-import { RootState } from "../../reducers";
-import { connect } from "react-redux";
-import { closeCreateDexForm } from "../../actions/global";
-import { RouteComponentProps, withRouter } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Loader from "../Loader";
 import useStyles from "./styles";
-import { LoggedInState, SessionState } from "../../store/session";
+import { LoggedInState } from "../../contexts/session";
 import sprite from "../Sprite";
+import { useSession } from "../../contexts/session";
+import { usePokedex } from "../../contexts/pokedex";
+import { useGlobal } from "../../contexts/global";
 
-interface CreatePokedexFormProps extends RouteComponentProps {
-  pokedex: Pokedex[];
-  open: boolean;
-  session: SessionState;
-}
-
-const CreatePokedexForm = (props: CreatePokedexFormProps) => {
+const CreatePokedexForm = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
+  const { session, dispatch: sessionDispatch } = useSession();
+  const { pokedex: pokedexState } = usePokedex();
+  const { global, dispatch: globalDispatch } = useGlobal();
 
   const [game, setGame] = useState<string>("gsc-national");
   const [name, setName] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
-  const dex = props.pokedex.find((p) => p.name == game);
+  const pokedex: Pokedex[] = pokedexState.loaded ? pokedexState.pokedex : [];
+  const dex = pokedex.find((p) => p.name == game);
 
   return (
     <React.Fragment>
       <Dialog
         fullWidth
         maxWidth="md"
-        open={props.open}
-        onClose={() => store.dispatch(closeCreateDexForm())}
+        open={global.createDexFormOpen}
+        onClose={() => globalDispatch({ type: "UPDATE_CREATE_DEX_FORM_OPEN", payload: false })}
         aria-labelledby="max-width-dialog-title"
       >
         <DialogTitle id="max-width-dialog-title">
@@ -71,7 +68,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
                           onChange={(e) => setGame(e.target.value as string)}
                           value={game}
                         >
-                          {props.pokedex.map((g, idx) => (
+                          {pokedex.map((g, idx) => (
                             <MenuItem key={idx} value={g.name}>
                               {g.displayName}
                             </MenuItem>
@@ -121,7 +118,7 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
         <Divider />
         <DialogActions className={classes.buttons}>
           <Button
-            onClick={() => store.dispatch(closeCreateDexForm())}
+            onClick={() => globalDispatch({ type: "UPDATE_CREATE_DEX_FORM_OPEN", payload: false })}
             color="secondary"
             className={classNames(classes.close)}
           >
@@ -130,24 +127,20 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
           <Button
             onClick={() => {
               setLoading(true);
-              createPokedex({ game, name }, props.session)
-                .then((dex) => {
-                  props.history.push(
-                    `/users/${
-                      (props.session as LoggedInState).user.userId
-                    }/dex/${dex.userDexId}`
+              createPokedex({ game, name }, session)
+                .then((newDex) => {
+                  navigate(
+                    `/users/${(session as LoggedInState).user.userId}/dex/${newDex.userDexId}`
                   );
-                  return dex;
+                  return newDex;
                 })
-                .then(addUserDex)
-                .then(store.dispatch)
-
-                .then(() => {
+                .then((newDex) => {
+                  sessionDispatch({ type: "ADD_USER_DEX", payload: newDex });
                   setLoading(false);
-                  store.dispatch(closeCreateDexForm());
+                  globalDispatch({ type: "UPDATE_CREATE_DEX_FORM_OPEN", payload: false });
                 })
-                .catch(console.error)
-                .then(() => {
+                .catch((err) => {
+                  console.error(err);
                   setLoading(false);
                 });
             }}
@@ -162,12 +155,4 @@ const CreatePokedexForm = (props: CreatePokedexFormProps) => {
   );
 };
 
-const mapStateToProps = (root: RootState) => ({
-  pokedex: root.pokedex.loaded ? root.pokedex.pokedex : [],
-  open: root.global.createDexFormOpen,
-  session: root.session,
-});
-
-export default hot(module)(
-  connect(mapStateToProps)(withRouter(CreatePokedexForm))
-);
+export default CreatePokedexForm;

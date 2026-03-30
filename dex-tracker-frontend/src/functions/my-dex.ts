@@ -1,7 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { clearSynchronizeQueue, resetTimeout } from "../actions/syncQueue";
 import { host } from "../config";
-import store from "../store";
 import { SessionState } from "../store/session";
 import { Sync } from "../types/sync";
 import { Pokemon, UserDex } from "../types/user";
@@ -33,18 +31,6 @@ export async function createPokedex(
       return Promise.reject(
         new Error(`Illegal session state: ${session.type}`)
       );
-  }
-}
-
-export async function synchronize(userId: string, syncQueue: Array<Sync>) {
-  if (syncQueue.length > 0) {
-    fireSynchronize(userId, syncQueue)
-      .then(() => {
-        store.dispatch(clearSynchronizeQueue());
-      })
-      .catch(() => {
-        store.dispatch(resetTimeout());
-      });
   }
 }
 

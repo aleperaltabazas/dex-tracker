@@ -1,4 +1,5 @@
-import { Container, Divider, makeStyles, Typography } from "@material-ui/core";
+import { Container, Divider, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React from "react";
 import classNames from "classnames";
 

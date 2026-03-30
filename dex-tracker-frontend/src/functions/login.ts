@@ -2,80 +2,57 @@ import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { host } from "../config";
 import { User } from "../types/user";
 import Cookies from "js-cookie";
-import store from "../store";
-import {
-  invalidateSession,
-  loginError,
-  noLogin,
-  uninitialize,
-  updatePicture,
-  updateSessionState,
-} from "../actions/session";
-import {
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "react-google-login";
+import { CodeResponse } from "@react-oauth/google";
 
-export function oauthLogin(
-  response: GoogleLoginResponse | GoogleLoginResponseOffline
-) {
-  const succ = response as GoogleLoginResponse;
-  let config: AxiosRequestConfig = {
+type SessionDispatch = React.Dispatch<any>;
+
+export function oauthLogin(response: CodeResponse, sessionDispatch: SessionDispatch) {
+  const config: AxiosRequestConfig = {
     method: "POST",
     url: `${host}/api/v1/login`,
     withCredentials: true,
     data: {
-      mail: succ.profileObj.email,
-      googleToken: succ.tokenObj.id_token,
+      googleToken: response.code,
     },
   };
 
-  store.dispatch(uninitialize());
+  sessionDispatch({ type: "UNINITIALIZE_SESSION" });
 
   axios
     .request<User>(config)
-    .then((res) => res.data)
-    .then((u) => {
-      dispatchUser({
-        ...u,
-        pokedex: u.pokedex,
+    .then((res) => {
+      const token = Cookies.get("dex-token")!;
+      sessionDispatch({
+        type: "LOG_IN_ACTION",
+        payload: { token, user: res.data, type: "LOGGED_IN" },
       });
-    })
-    .then(() => {
-      store.dispatch(updatePicture(succ.profileObj.imageUrl));
-      Cookies.set("picture", succ.profileObj.imageUrl, { expires: 3600000 });
     })
     .catch((err) => {
       console.error("Error in login", err);
-      store.dispatch(loginError());
+      sessionDispatch({ type: "LOG_IN_ERROR" });
     });
 }
 
-export function logout(token: string) {
-  let config: AxiosRequestConfig = {
+export function logout(token: string, sessionDispatch: SessionDispatch) {
+  const config: AxiosRequestConfig = {
     method: "POST",
     url: `${host}/api/v1/logout`,
     withCredentials: true,
   };
 
-  store.dispatch(uninitialize());
+  sessionDispatch({ type: "UNINITIALIZE_SESSION" });
 
   return axios
     .request(config)
     .catch(console.error)
-    .then(invalidateSession)
-    .then(store.dispatch);
+    .then(() => sessionDispatch({ type: "INVALIDATE_SESSION" }));
 }
 
-function dispatchUser(user: User) {
-  store.dispatch(updateSessionState(Cookies.get("dex-token")!, user));
-}
-
-export function openLocallyStoredSession() {
+export function openLocallyStoredSession(sessionDispatch: SessionDispatch) {
   const dexToken = Cookies.get("dex-token");
 
   if (dexToken) {
-    let config: AxiosRequestConfig = {
+    const config: AxiosRequestConfig = {
       method: "POST",
       url: `${host}/api/v1/login`,
       withCredentials: true,
@@ -83,24 +60,26 @@ export function openLocallyStoredSession() {
 
     axios
       .request<User>(config)
-      .then((res) => store.dispatch(updateSessionState(dexToken, res.data)))
-      .then(() => {
+      .then((res) => {
+        sessionDispatch({
+          type: "LOG_IN_ACTION",
+          payload: { token: dexToken, user: res.data, type: "LOGGED_IN" },
+        });
         const picture = Cookies.get("picture");
         if (picture) {
-          store.dispatch(updatePicture(picture));
+          sessionDispatch({ type: "UPDATE_PICTURE", payload: picture });
         }
       })
       .catch((err: AxiosError) => {
         console.error("Error logging in", err);
-
         if (err.response?.status == 404) {
           Cookies.remove("dex-token");
-          store.dispatch(noLogin());
+          sessionDispatch({ type: "NO_LOG_IN" });
         } else {
-          store.dispatch(loginError());
+          sessionDispatch({ type: "LOG_IN_ERROR" });
         }
       });
   } else {
-    store.dispatch(noLogin());
+    sessionDispatch({ type: "NO_LOG_IN" });
   }
 }

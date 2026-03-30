@@ -10,27 +10,25 @@ import com.github.aleperaltabazas.dex.storage.Query
 import com.github.aleperaltabazas.dex.storage.Replace
 import com.github.aleperaltabazas.dex.storage.Storage
 import com.github.aleperaltabazas.dex.utils.IdGenerator
-import com.nhaarman.mockito_kotlin.*
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.core.test.TestCase
 import io.kotest.matchers.shouldBe
+import io.mockk.*
 import org.bson.Document
-import org.mockito.ArgumentMatchers.any
-import com.nhaarman.mockito_kotlin.any as anyNotNull
 
 class UsersServiceTest : WordSpec() {
-    private val storageMock: Storage = mock {}
-    private val sessionMock: SessionService = mock {}
-    private val idGenMock: IdGenerator = mock {}
+    private val storageMock: Storage = mockk()
+    private val sessionMock: SessionService = mockk()
+    private val idGenMock: IdGenerator = mockk()
     private val userService = UsersService(
         storage = storageMock,
         sessionService = sessionMock,
         idGenerator = idGenMock,
     )
 
-    override fun beforeEach(testCase: TestCase) {
-        reset(storageMock, sessionMock, idGenMock)
+    override suspend fun beforeEach(testCase: TestCase) {
+        clearMocks(storageMock, sessionMock, idGenMock)
     }
 
     init {
@@ -40,43 +38,37 @@ class UsersServiceTest : WordSpec() {
             mail = "test@test.com",
         )
 
-
         "updateUser" should {
             "return the user with the changes applied and run an update" {
-                val queryMock: Query = mock {}
-                val replaceMock: Replace = mock {}
+                val queryMock: Query = mockk()
+                val replaceMock: Replace = mockk()
 
-                whenever(queryMock.findOne(any(TypeReference::class.java))).thenReturn(user)
-
-                whenever(queryMock.where(anyNotNull())).thenReturn(queryMock)
-
-                whenever(replaceMock.set(anyNotNull())).thenReturn(replaceMock)
-                whenever(replaceMock.where(anyNotNull())).thenReturn(replaceMock)
-
-                whenever(storageMock.replace(anyNotNull())).thenReturn(replaceMock)
-                whenever(storageMock.query(anyNotNull())).thenReturn(queryMock)
+                every { queryMock.findOne(any<TypeReference<User>>()) } returns user
+                every { queryMock.where(any()) } returns queryMock
+                every { replaceMock.set(any()) } returns replaceMock
+                every { replaceMock.where(any()) } returns replaceMock
+                every { replaceMock.replaceOne() } returns null
+                every { storageMock.replace(any()) } returns replaceMock
+                every { storageMock.query(any()) } returns queryMock
 
                 val expected = user.copy(username = "foo")
-
                 val actual = userService.updateUser("123", UpdateUserDTO(username = "foo"))
 
                 actual shouldBe expected
 
-                verify(storageMock).query(eq(Collection.USERS))
-                verify(storageMock).replace(eq(Collection.USERS))
-
-                verify(queryMock).where(eq(Document("user_id", user.userId)))
-
-                verify(replaceMock).set(eq(actual))
-                verify(replaceMock).where(eq(Document("user_id", user.userId)))
+                verify { storageMock.query(Collection.USERS) }
+                verify { storageMock.replace(Collection.USERS) }
+                verify { queryMock.where(Document("user_id", user.userId)) }
+                verify { replaceMock.set(expected) }
+                verify { replaceMock.where(Document("user_id", user.userId)) }
             }
 
             "reject the changes if there is at least one dex id which the user does not own" {
-                val queryMock: Query = mock {}
+                val queryMock: Query = mockk()
 
-                whenever(queryMock.findOne(any(TypeReference::class.java))).thenReturn(user)
-                whenever(queryMock.where(anyNotNull())).thenReturn(queryMock)
-                whenever(storageMock.query(anyNotNull())).thenReturn(queryMock)
+                every { queryMock.findOne(any<TypeReference<User>>()) } returns user
+                every { queryMock.where(any()) } returns queryMock
+                every { storageMock.query(any()) } returns queryMock
 
                 shouldThrow<ForbiddenException> {
                     userService.updateUser(
@@ -88,10 +80,9 @@ class UsersServiceTest : WordSpec() {
                     )
                 }
 
-                verify(storageMock).query(eq(Collection.USERS))
-                verify(storageMock, never()).replace(eq(Collection.USERS))
-
-                verify(queryMock).where(eq(Document("user_id", user.userId)))
+                verify { storageMock.query(Collection.USERS) }
+                verify(exactly = 0) { storageMock.replace(Collection.USERS) }
+                verify { queryMock.where(Document("user_id", user.userId)) }
             }
         }
     }

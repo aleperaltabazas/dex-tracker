@@ -3,7 +3,7 @@ import {
   LinearProgressProps,
   Typography,
   LinearProgress as MuiLinearProgress,
-} from "@material-ui/core";
+} from "@mui/material";
 import React from "react";
 
 type LinearProps = LinearProgressProps & { value: number };

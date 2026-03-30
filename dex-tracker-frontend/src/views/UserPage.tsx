@@ -1,6 +1,7 @@
-import { Container, Grid, makeStyles } from "@material-ui/core";
+import { Container, Grid } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React from "react";
-import { RouteComponentProps } from "react-router";
+import { useParams } from "react-router-dom";
 import Loader from "../components/Loader";
 import Row from "../components/Row";
 import Column from "../components/Column";
@@ -8,12 +9,6 @@ import withFetch from "../hooks/withFetch";
 import { User } from "../types/user";
 import classNames from "classnames";
 import Summary from "../components/Dex/Summary";
-
-type MatchParams = {
-  userId: string;
-};
-
-interface UserPageProps extends RouteComponentProps<MatchParams> {}
 
 const useStyles = makeStyles(() => ({
   picture: {
@@ -28,14 +23,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const UserPage = (props: UserPageProps) => {
+const UserPage = () => {
   const classes = useStyles();
+  const { userId } = useParams<{ userId: string }>();
 
   const [user] = withFetch<User>(
     {
-      path: `api/v1/users/${props.match.params.userId}`,
+      path: `api/v1/users/${userId}`,
     },
-    [props.match.params.userId]
+    [userId]
   );
 
   if (user.type == "PENDING") {

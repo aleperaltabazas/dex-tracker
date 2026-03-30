@@ -1,20 +1,13 @@
-import React, { useState } from "react";
-import { RootState } from "../reducers";
-import { PokedexState } from "../store/pokedex";
-import { SessionState } from "../store/session";
-import { connect } from "react-redux";
+import { useState } from "react";
 import classNames from "classnames";
+import { makeStyles } from "@mui/styles";
 import {
   Button,
   Container,
-  InputLabel,
-  makeStyles,
   MenuItem,
   Select,
   Typography,
-} from "@material-ui/core";
-import store from "../store";
-import { openCreateDexForm } from "../actions/global";
+} from "@mui/material";
 import Loader from "../components/Loader";
 import DexSummary from "../components/Dex/Summary";
 import { UserDex } from "../types/user";
@@ -22,12 +15,10 @@ import { Pokedex } from "../types/pokedex";
 import Row from "../components/Row";
 import Column from "../components/Column";
 import DexGrid from "../components/Dex/DexGrid";
-import GitHubIcon from "@material-ui/icons/GitHub";
-
-type HomePageProps = {
-  pokedex: PokedexState;
-  session: SessionState;
-};
+import GitHubIcon from "@mui/icons-material/GitHub";
+import { useSession } from "../contexts/session";
+import { usePokedex } from "../contexts/pokedex";
+import { useGlobal } from "../contexts/global";
 
 const useStyles = makeStyles((theme) => ({
   noPokedexHeading: {
@@ -63,16 +54,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const HomePage = (props: HomePageProps) => {
+const HomePage = () => {
   const classes = useStyles();
+  const { session } = useSession();
+  const { pokedex: pokedexState } = usePokedex();
+  const { dispatch: globalDispatch } = useGlobal();
 
   const [previewDex, setPreviewDex] = useState("gsc-regional");
 
-  if (props.session.type == "ERROR") {
+  if (session.type == "ERROR") {
     return <div>se rompió algo perrito :(</div>;
   }
 
-  if (props.session.type == "UNINITIALIZED" || !props.pokedex.loaded) {
+  if (session.type == "UNINITIALIZED" || !pokedexState.loaded) {
     return (
       <div className="center h-100 w-100">
         <Loader />
@@ -116,7 +110,7 @@ const HomePage = (props: HomePageProps) => {
               <div className="center-h mt-1">
                 <Button
                   color="primary"
-                  onClick={() => store.dispatch(openCreateDexForm())}
+                  onClick={() => globalDispatch({ type: "UPDATE_CREATE_DEX_FORM_OPEN", payload: true })}
                   variant="contained"
                 >
                   Create your first Pokedex
@@ -129,8 +123,8 @@ const HomePage = (props: HomePageProps) => {
     </div>
   );
 
-  if (props.session.type == "NONE") {
-    const selectedPreviewPokedex = props.pokedex.pokedex.find(
+  if (session.type == "NONE") {
+    const selectedPreviewPokedex = pokedexState.pokedex.find(
       (d) => d.name == previewDex
     )!;
     const pokemon = selectedPreviewPokedex.entries.map((p) => ({
@@ -196,7 +190,7 @@ const HomePage = (props: HomePageProps) => {
                       value={previewDex}
                       onChange={(e) => setPreviewDex(e.target.value as string)}
                     >
-                      {props.pokedex.pokedex.map((d) => (
+                      {pokedexState.pokedex.map((d) => (
                         <MenuItem key={d.name} value={d.name}>
                           {d.displayName}
                         </MenuItem>
@@ -245,16 +239,11 @@ const HomePage = (props: HomePageProps) => {
 
   return (
     <PokedexList
-      userId={props.session.user.userId}
-      dex={props.session.user.pokedex}
-      gamePokedex={props.pokedex.pokedex}
+      userId={session.user.userId}
+      dex={session.user.pokedex}
+      gamePokedex={pokedexState.pokedex}
     />
   );
 };
 
-const mapStateToProps = (root: RootState) => ({
-  session: root.session,
-  pokedex: root.pokedex,
-});
-
-export default connect(mapStateToProps)(HomePage);
+export default HomePage;
